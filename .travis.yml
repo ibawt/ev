@@ -2,7 +2,7 @@ language: cpp
 compiler:
   - clang
 before_install:
-  - sudo add-apt-repository ppa:josebagar/sdl2
+  - echo | sudo add-apt-repository ppa:josebagar/sdl2
   - sudo apt-get install libsdl2
 before_script:
   - mkdir build
