@@ -1,6 +1,9 @@
 language: cpp
 compiler:
   - clang
+before_install:
+  - sudo apt-get install sdl2
+  
 before_script:
   - mkdir build
   - cd build
