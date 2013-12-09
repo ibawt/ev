@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 2.8)
 Project ( Cavebound )
 set(
   SOURCES
-	src/main.cpp
+	main.cpp
 )
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/../modules/")
 
 ADD_DEFINITIONS(
   -std=c++11

@@ -38,7 +38,7 @@ void error(const char *fmt, ... )
 
 
 static SDL_Window *window = nullptr;
-static SDL_GLContext context;
+static SDL_GLContext context = nullptr;
 
 static bool initGL()
 {
