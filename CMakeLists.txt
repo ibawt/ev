@@ -4,13 +4,17 @@ set(
   SOURCES
 	src/main.cpp
 )
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
 
-Find_Package( SDL REQUIRED )
-Find_Package( SDL_image REQUIRED )
+ADD_DEFINITIONS(
+  -std=c++11
+)
 find_package(OpenGL)
+find_package(SDL2)
 link_libraries(
-  ${SDL_LIBRARY}
-	${SDLIMAGE_LIBRARY}
+  ${SDL2_LIBRARY}
+	${SDL2IMAGE_LIBRARY}
+	${OPENGL_LIBRARY}
 	SDLmain
 )
 
