@@ -4,7 +4,7 @@ compiler:
 before_install:
   - sudo add-apt-repository ppa:josebagar/sdl2 -y
   - sudo apt-get update -qq -y
-  - sudo apt-get install libsdl2 -y
+  - sudo apt-get install sdl2 -y
 before_script:
   - mkdir build
   - cd build
