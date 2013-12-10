@@ -4,7 +4,7 @@ compiler:
 before_install:
   - sudo add-apt-repository ppa:zoogie/sdl2-snapshots -y
   - sudo apt-get update -qq -y
-  - sudo apt-get install libsdl2 -y
+  - sudo apt-get install libsdl2 libsdl2-dev -y
 before_script:
   - mkdir build
   - cd build
