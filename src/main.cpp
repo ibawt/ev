@@ -7,8 +7,8 @@
 #include <SDL2/SDL_opengl.h>
 #else
 #include "GL/glu.h"
-#include "SDL.h"
-#include "SDL_opengl.h"
+#include "SDL2/SDL.h"
+#include "SD2/SDL_opengl.h"
 #endif
 
 
