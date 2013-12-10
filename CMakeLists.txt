@@ -23,7 +23,7 @@ target_link_libraries( cavebound
   ${SDL2_LIBRARY}
 	${SDL2IMAGE_LIBRARY}
 	${OPENGL_LIBRARY}
-	SDLmain
+	SDL2main
 )
 
 add_executable(
