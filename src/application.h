@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "evil.h"
+
 namespace evil {
 	
 class Application
@@ -17,10 +18,16 @@ public:
 
     virtual void keyEvent(int keycode) { }
     virtual void mouseEvent(int x, int y, int button) { }
-    
-    void main();
+
+		uint32_t getWidth() const { return width; }
+		uint32_t getHeight() const { return height; }
+		
+    int  main();
     void quit();
-protected:
+private:
+		bool initGL();
+		bool initSDL();
+		
     uint32_t      width;
     uint32_t      height;
     SDL_Window   *window;

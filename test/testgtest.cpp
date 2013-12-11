@@ -1,6 +1,34 @@
 #include "gtest/gtest.h"
+#include "evil.h"
+#include "application.h"
+#include "sprite_batch.h"
 
-TEST( sample_test_case, sample_test)
+using namespace evil;
+
+class ApplicationTest : public Application
 {
-    EXPECT_EQ(1,1);
+public:
+    using Application::Application;
+    bool init() { return true; }
+    void render() { }
+    void update(const float dt) { }
+};
+
+TEST( Application, construction )
+{
+    ApplicationTest test(5,5);
+    EXPECT_EQ(5, test.getWidth());
+    EXPECT_EQ(5, test.getHeight());
 }
+
+
+TEST( SpriteBatch, spriteSheet )
+{
+    SpriteBatch batch;
+
+    ASSERT_FALSE( batch.load("this_file_doesn't_exist.json"));
+    
+    ASSERT_TRUE( batch.load("../test/fixtures/bats.json") );
+
+}
+        
