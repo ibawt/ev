@@ -8,7 +8,7 @@ using namespace evil;
 class ApplicationTest : public Application
 {
 public:
-    using Application::Application;
+    ApplicationTest(uint32_t w, uint32_t h ) : Application(w,h) { }
     bool init() { return true; }
     void render() { }
     void update(const float dt) { }

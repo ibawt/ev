@@ -12,7 +12,7 @@ using namespace std;
 class TestApplication : public Application
 {
 public:
-    using Application::Application;
+    TestApplication(uint32_t w, uint32_t h) : Application(w,h) {}
     ~TestApplication();
     bool init();
     void render();
