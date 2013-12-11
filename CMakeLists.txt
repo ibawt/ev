@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-Project ( Cavebound )
+Project ( evil )
 set(
   SOURCES
 	src/main.cpp

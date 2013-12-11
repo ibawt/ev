@@ -10,7 +10,7 @@ before_install:
 before_script:
   - mkdir build
   - cd build
-  - cmake ..
+  - CXX=g++-4.8 CC=gcc-4.8 cmake ..
 script:
   make && ./runUnitTests
   
