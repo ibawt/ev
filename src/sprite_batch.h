@@ -40,6 +40,8 @@ public:
     void render();
     void setTexture(shared_ptr<Texture> t) {  texture = t; }
     shared_ptr<Sprite> get(string name);
+
+    const SpriteSheet& getSheet() const { return sheet; }
 private:
     SpriteSheet sheet;
     shared_ptr<Texture> texture;

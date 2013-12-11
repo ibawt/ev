@@ -52,7 +52,7 @@ static Vector2 parseVector(json_t *obj, const char *key ) {
 bool SpriteBatch::load(string json)
 {
     sheet.frames.clear();
-    
+
     json_t *root;
     json_error_t err;
 
@@ -68,11 +68,11 @@ bool SpriteBatch::load(string json)
         json_decref(root);
         return false;
     }
-    
+
     printf("%s\n", output);
     free( output );
 #endif
-    
+
     json_t* frames = json_object_get(root, "frames");
 
     if( !frames ) {
@@ -89,7 +89,6 @@ bool SpriteBatch::load(string json)
 
         frame.sourceSize = parseSize(value, "spriteSourceSize");
         frame.size = parseSize(value, "spriteSize");
-
         frame.trimmed = json_is_true(json_object_get(value, "spriteTrimmed"));
         frame.textureRect = parseRect(value, "textureRect");
         frame.offset = parseVector(value, "spriteOffset");
@@ -97,7 +96,7 @@ bool SpriteBatch::load(string json)
         frame.colorRect = parseRect(value, "spriteColorRect");
         sheet.frames[key] = frame;
     }
-    
+
     json_decref( root );
 
     return true;
