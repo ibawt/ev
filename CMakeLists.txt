@@ -8,6 +8,7 @@ set(
 	src/sprite_batch.cpp
 	src/texture.cpp
 )
+SET(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
 add_subdirectory( gtest )
 add_subdirectory( vendor/jansson)
