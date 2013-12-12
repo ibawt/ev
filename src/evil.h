@@ -3,13 +3,14 @@
 
 #include <math.h>
 
-#include "SDL.h"
 #include "SDL_opengl.h"
 #include "SDL_image.h"
 
 #ifdef  __APPLE__
 #include <OpenGL/glu.h>
+#include "SDL2/SDL.h"
 #else
+#include "SDL.h"
 #include "GL/glu.h"
 #endif
 
