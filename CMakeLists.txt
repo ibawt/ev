@@ -15,9 +15,14 @@ add_subdirectory( vendor/jansson)
 
 enable_testing()
 
+find_package(OpenGL)
+find_package(SDL2)
+find_package(SDL2_image)
+message(${SDL2_IMAGE_INCLUDE_DIRS})
 include_directories(${gtest_SOURCE_DIR}/include
 	${gtest_SOURCE_DIR}
 	${SDL2_INCLUDE}
+	${SDL2_IMAGE_INCLUDE_DIRS}
 	${jansson_BINARY_DIR}/include
 	src)
 # Compiler-specific C++11 activation.
@@ -35,18 +40,16 @@ else ()
     message(FATAL_ERROR "Your C++ compiler does not support C++11.")
 endif ()
 
-find_package(OpenGL)
-find_package(SDL2)
 
 add_library( evil STATIC
 	${SOURCES} )
 
 target_link_libraries( evil
   ${SDL2_LIBRARY}
-	${SDL2IMAGE_LIBRARY}
+	${SDL2_IMAGE_LIBRARY}
 	${OPENGL_LIBRARY}
 	jansson
-	SDL2main
+	SDLmain
 )
 
 add_executable( test_app

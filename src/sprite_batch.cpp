@@ -2,51 +2,64 @@
 #include "sprite_batch.h"
 #include "sprite.h"
 #include "jansson.h"
+#include "utils.h"
 
 #include <stdio.h>
 
+
 namespace evil {
 
-static Rect parseRect(json_t *obj, const char *key)
+static bool parseRect(json_t *obj, const char *key, Rect& r)
 {
-    Rect r;
     if( obj ) {
         json_t *value = json_object_get(obj,key);
         if( value && json_is_string(value)) {
             const char *data = json_string_value(value);
             int x,y,w,h;
-
-            sscanf(data, "{{%d, %d}, {%d, %d}}", &x, &y, &w, &h );
-
+            
+            if( sscanf(data, "{{%d, %d}, {%d, %d}}", &x, &y, &w, &h ) != 4 )
+                return false;
+            
             r.x = x;
             r.y = y;
             r.w = w;
             r.h = h;
+            
+            return true;
         }
     }
-    return r;
+    return false;
 }
 
 
-static Rect parseSize(json_t *obj, const char *key)
+static bool parseSize(json_t *obj, const char *key, Rect& r)
 {
-    Rect r;
     if( obj ) {
         json_t *value = json_object_get(obj, key );
         if( value && json_is_string(value) ) {
             const char *data = json_string_value(value);
             int w,h;
-            sscanf(data, "{%d, %d}", &w, &h);
+            if (sscanf(data, "{%d, %d}", &w, &h) < 2 ) {
+                return false;
+            }
             r.w = w;
             r.h = h;
+            
+            return true;
         }
     }
-    return r;
+    return false;
 }
 
-static Vector2 parseVector(json_t *obj, const char *key ) {
-    Rect r = parseSize(obj, key);
-    return Vector2( r.w, r.h );
+static bool parseVector(json_t *obj, const char *key, Vector2& v ) {
+    Rect r;
+    if( parseSize(obj, key, r) ) {
+        v.x = r.w;
+        v.y = r.h;
+
+        return true;
+    }
+    return false;
 }
 
 bool SpriteBatch::load(string json)
@@ -57,11 +70,14 @@ bool SpriteBatch::load(string json)
     json_error_t err;
 
     root = json_load_file( json.c_str(), 0, &err );
-
+    
     if( !root ) {
         error("File didn't load");
         return false;
     }
+
+    auto dl = MakeScopeExit([&root]() { json_decref(root); root = nullptr; });
+
 #if 0
     char *output = json_dumps(root, JSON_INDENT(1) );
     if( !output ) {
@@ -86,18 +102,18 @@ bool SpriteBatch::load(string json)
     json_object_foreach( frames, key, value ) {
         SpriteFrame frame;
         frame.key = string(key);
-
-        frame.sourceSize = parseSize(value, "spriteSourceSize");
-        frame.size = parseSize(value, "spriteSize");
         frame.trimmed = json_is_true(json_object_get(value, "spriteTrimmed"));
-        frame.textureRect = parseRect(value, "textureRect");
-        frame.offset = parseVector(value, "spriteOffset");
         frame.rotated = json_is_true(json_object_get(value, "textureRotated"));
-        frame.colorRect = parseRect(value, "spriteColorRect");
+
+        if( !(parseSize(value, "spriteSourceSize", frame.sourceSize ) &&
+              parseSize(value, "spriteSize", frame.size ) &&
+              parseRect(value, "textureRect", frame.textureRect) &&
+              parseVector(value, "spriteOffset", frame.offset) &&
+              parseRect(value, "spriteColorRect", frame.colorRect)) ) {
+            return false;
+        }
         sheet.frames[key] = frame;
     }
-
-    json_decref( root );
 
     return true;
 }

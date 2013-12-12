@@ -44,6 +44,23 @@ TestApplication::~TestApplication()
 void TestApplication::render()
 {
     glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    texture->bind();
+    
+    glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0,0);
+    glVertex2f(0,0);
+    glTexCoord2f(1,0);
+    glVertex2f(500,0);
+    glTexCoord2f(1,1);
+    glVertex2f(500,500);
+    glTexCoord2f(0,1);
+    glVertex2f(0,500);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    
     spriteBatch.render();
 }
 

@@ -31,6 +31,7 @@ struct SpriteFrame
 struct SpriteSheet
 {
     unordered_map<string,SpriteFrame> frames;
+    unordered_map<string, string> metadata;
 };
 
 class SpriteBatch

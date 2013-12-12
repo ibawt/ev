@@ -10,14 +10,13 @@ namespace evil {
 class Texture
 {
 public:
-    Texture() : textureID(0) { }
-    ~Texture();
+	  Texture();
+	  ~Texture();
 
     void bind() const;
     void dispose();
     
     bool load(std::string filename);
-    
 private:
     GLuint textureID;
 };

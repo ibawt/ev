@@ -1,4 +1,5 @@
 #include "application.h"
+#include <SDL_image.h>
 
 namespace evil {
 
@@ -15,6 +16,7 @@ void Application::quit()
         SDL_DestroyWindow(window);
         window = nullptr;
     }
+    IMG_Quit();
     SDL_Quit();
 }
 
@@ -28,8 +30,8 @@ bool Application::initSDL()
         return false;
     }
 
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1);
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 1);
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 2);
 
     window = SDL_CreateWindow( "Evil", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                                width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
@@ -49,6 +51,13 @@ bool Application::initSDL()
         error("Couldn't set VSYNC: %s", SDL_GetError());
         return false;
     }
+
+    int flags = IMG_INIT_JPG | IMG_INIT_PNG;
+    if( IMG_Init(flags) != flags ) {
+        error("couldn't init image library: %s", IMG_GetError());
+        return false;
+    }
+    
     return true;
 }
 
@@ -58,7 +67,10 @@ bool Application::initGL()
     
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+    glOrtho(0, width, height, 1, -1, 1 );
     CHECK_GL();
+
+    glDisable(GL_DEPTH_TEST);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -66,6 +78,8 @@ bool Application::initGL()
 
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f);
     CHECK_GL();
+
+    glViewport( 0, 0, width, height );
     return true;
 }
 
