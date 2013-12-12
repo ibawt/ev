@@ -18,7 +18,13 @@ enable_testing()
 find_package(OpenGL)
 find_package(SDL2)
 find_package(SDL2_image)
-message(${SDL2_INCLUDE_DIR})
+
+if("${CMAKE_SYSTEM_NAME}" MATCHES "Linux" )
+	set( SDL_MAIN "SDL2main")
+else()
+	set( SDL_MAIN "SDLmain")
+endif()
+
 include_directories(${gtest_SOURCE_DIR}/include
 	${gtest_SOURCE_DIR}
 	${SDL2_INCLUDE_DIR}
@@ -49,7 +55,7 @@ target_link_libraries( evil
 	${SDL2_IMAGE_LIBRARY}
 	${OPENGL_LIBRARY}
 	jansson
-	SDLmain
+	${SDL_MAIN}
 )
 
 add_executable( test_app
