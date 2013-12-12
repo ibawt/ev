@@ -18,10 +18,10 @@ enable_testing()
 find_package(OpenGL)
 find_package(SDL2)
 find_package(SDL2_image)
-message(${SDL2_IMAGE_INCLUDE_DIRS})
+message(${SDL2_INCLUDE_DIR})
 include_directories(${gtest_SOURCE_DIR}/include
 	${gtest_SOURCE_DIR}
-	${SDL2_INCLUDE}
+	${SDL2_INCLUDE_DIR}
 	${SDL2_IMAGE_INCLUDE_DIRS}
 	${jansson_BINARY_DIR}/include
 	src)
