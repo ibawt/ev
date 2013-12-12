@@ -8,9 +8,9 @@ before_install:
   - sudo apt-get update -qq -y
   - sudo apt-get install libsdl2 libsdl2-dev g++-4.8 -y
 	- wget http://www.libsdl.org/projects/SDL_image/release/SDL2_image-2.0.0.tar.gz
-	- tar -xf SDL2_image-2.0.0.tar.gz
-	- cd SDL2_image-2.0.0
-	- ./configure && make && sudo make install
+  - tar -xf SDL2_image-2.0.0.tar.gz
+  - cd SDL2_image-2.0.0
+  - ./configure && make && sudo make install
 	- cd -
 before_script:
   - mkdir build
