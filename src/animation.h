@@ -51,9 +51,9 @@ public:
 				return index;
 		}
 private:
-		Mode mode;
-		float time;
-		float delay;
+		Mode mode = LOOP;
+		float time = 0.0f;
+		float delay = 0.0f;
 		unsigned index = 0;
 		vector<shared_ptr<SpriteFrame>> frames;
 };

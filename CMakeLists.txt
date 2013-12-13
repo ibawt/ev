@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 Project ( evil )
+
+SET( evil_SOURCE_DIR src)
 set(
   SOURCES
 	src/main.cpp
@@ -66,6 +68,8 @@ add_executable( test_app
 target_link_libraries( test_app evil)
 add_executable(
   runUnitTests
-	test/testgtest.cpp)
+	test/testgtest.cpp
+	test/animation_test.cpp
+	)
 target_link_libraries(runUnitTests gtest gtest_main evil ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARY} ${OPENGL_LIBRARY})
 add_test(runUnitTests runUnitTests)

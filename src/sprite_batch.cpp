@@ -133,7 +133,7 @@ shared_ptr<Sprite> SpriteBatch::get(const string& name)
 {
 		auto s = make_shared<Sprite>();
 
-		auto frame = sheet.frames[name];
+		auto& frame = sheet.frames[name];
 
 		s->setFrame(frame);
 		return s;
