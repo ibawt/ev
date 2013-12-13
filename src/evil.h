@@ -30,6 +30,11 @@ struct Vector2 {
     }
 
     void normalize() {
+			float length = getLength();
+			if( length ) {
+				x /= length;
+				y /= length;
+			}
     }
     
     float x = 0.0f;
