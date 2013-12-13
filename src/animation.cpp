@@ -6,7 +6,7 @@ void Animation::update(const float dt)
 {
     time += dt;
 
-    if( time >= delay ) {
+    while( time >= delay ) {
         time -= delay;
 
         switch( mode ) {
