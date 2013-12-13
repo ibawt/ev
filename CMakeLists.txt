@@ -7,6 +7,7 @@ set(
 	src/sprite.cpp
 	src/sprite_batch.cpp
 	src/texture.cpp
+	src/animation.cpp
 )
 SET(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")

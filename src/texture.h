@@ -5,20 +5,31 @@
 
 #include <string>
 
+using namespace std;
+
 namespace evil {
-	
+
 class Texture
 {
 public:
-	  Texture();
-	  ~Texture();
+		Texture();
+		~Texture();
 
-    void bind() const;
-    void dispose();
-    
-    bool load(std::string filename);
+		void bind() const;
+		void dispose();
+
+		int getWidth() const {
+			return width;
+		}
+		int getHeight() const {
+			return height;
+		}
+
+		bool load(const string& filename);
 private:
-    GLuint textureID;
+		int width;
+		int height;
+		GLuint textureID;
 };
 
 }

@@ -30,17 +30,17 @@ struct SpriteFrame
 
 struct SpriteSheet
 {
-    unordered_map<string,SpriteFrame> frames;
+    unordered_map<string,shared_ptr<SpriteFrame>> frames;
     unordered_map<string, string> metadata;
 };
 
 class SpriteBatch
 {
 public:
-    bool load(string json);
+    bool load(const string& json);
     void render();
-    void setTexture(shared_ptr<Texture> t) {  texture = t; }
-    shared_ptr<Sprite> get(string name);
+    void setTexture(shared_ptr<Texture>& t);
+    shared_ptr<Sprite> get(const string& name);
 
     const SpriteSheet& getSheet() const { return sheet; }
 private:

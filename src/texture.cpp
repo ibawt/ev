@@ -33,7 +33,7 @@ void Texture::dispose()
     }
 }
 
-bool Texture::load(string filename)
+bool Texture::load(const string& filename)
 {
     SDL_Surface *surface = IMG_Load(filename.c_str());
     if( !surface ) {
@@ -47,6 +47,9 @@ bool Texture::load(string filename)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
+
+    width = surface->w;
+    height = surface->h;
     
     return true;
 }
