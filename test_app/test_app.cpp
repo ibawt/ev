@@ -38,12 +38,12 @@ float get_random(float min, float max) {
 bool TestApplication::init()
 {
 		texture = make_shared<Texture>();
-		texture->load("../test_app/bats.png");
+		texture->load("/Users/ianquick/evil/evil/test_app/bats.png");
 
-		spriteBatch.load("../test_app/bats.json");
+		spriteBatch.load("/Users/ianquick/evil/evil/test_app/bats.json");
 		spriteBatch.setTexture(texture);
 
-		for( int i = 0 ; i < 100000 ; ++i ) {
+		for( int i = 0 ; i < 1000 ; ++i ) {
 				auto s = make_shared<Sprite>();
 				s->setPosition(get_random(0, getWidth()), get_random(0,getHeight()));
 

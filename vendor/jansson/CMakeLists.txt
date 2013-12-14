@@ -305,7 +305,7 @@ install (FILES
          DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 # For building Documentation (uses Sphinx)
-OPTION (BUILD_DOCS "Build documentation (uses python-sphinx)." ON)
+OPTION (BUILD_DOCS "Build documentation (uses python-sphinx)." OFF)
 if (BUILD_DOCS)
    find_package(Sphinx)
 

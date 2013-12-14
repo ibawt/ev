@@ -15,7 +15,7 @@ SET(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
 add_subdirectory( gtest )
 add_subdirectory( vendor/jansson)
-
+add_subdirectory( vendor/glew )
 enable_testing()
 
 find_package(OpenGL)
@@ -33,6 +33,7 @@ include_directories(${gtest_SOURCE_DIR}/include
 	${SDL2_INCLUDE_DIR}
 	${SDL2_IMAGE_INCLUDE_DIRS}
 	${jansson_BINARY_DIR}/include
+	vendor/glew/include
 	src)
 # Compiler-specific C++11 activation.
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
@@ -57,6 +58,7 @@ target_link_libraries( evil
   ${SDL2_LIBRARY}
 	${SDL2_IMAGE_LIBRARY}
 	${OPENGL_LIBRARY}
+	libglew_static
 	jansson
 	${SDL_MAIN}
 )

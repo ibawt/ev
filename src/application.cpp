@@ -80,6 +80,12 @@ bool Application::initGL()
 		CHECK_GL();
 
 		glViewport( 0, 0, width, height );
+
+		if( (error =  glewInit() ) != GLEW_OK ) {
+				evil::error("error initializing glew: %d", glewGetErrorString(error));
+				return false;
+		}
+
 		return true;
 }
 

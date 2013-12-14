@@ -1,0 +1,13 @@
+*.pc
+.DS_Store
+._.*
+/build/vc6/*.rc
+/auto/extensions
+/auto/registry
+/bin
+/lib
+/tmp
+CMakeScripts
+kuuko.build
+*.xcodeproj
+cmake_install.cmake
