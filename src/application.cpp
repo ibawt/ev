@@ -99,8 +99,10 @@ int Application::main()
     
     SDL_StartTextInput();
     bool running = true;
-
+    float dt = 0.0f;
     while( running ) {
+        uint32_t t1 = SDL_GetTicks();
+        
         SDL_Event e;
         while( SDL_PollEvent(&e) ) {
             switch( e.type ) {
@@ -109,8 +111,11 @@ int Application::main()
                 break;
             }
         }
+        update(dt);
         render();
         SDL_GL_SwapWindow(window);
+
+        dt = ( SDL_GetTicks() - t1 ) / 1000.0f;
     }
     SDL_StopTextInput();
     quit();

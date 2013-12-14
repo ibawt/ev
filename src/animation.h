@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <assert.h>
 
 #include "evil.h"
 #include "sprite_batch.h"
@@ -21,6 +22,10 @@ public:
 				return frames.size();
 		}
 
+    bool empty() const {
+        return frames.empty();
+    }
+
 		void addFrame(std::shared_ptr<SpriteFrame>& frame) {
 				frames.push_back(frame);
 		}
@@ -34,15 +39,18 @@ public:
 		float getDelay() const { return delay; }
 
 		const std::shared_ptr<SpriteFrame>& getFrame() const {
+        assert( !empty() );
 				return frames[index];
 		}
 		void update(const float dt);
 
 		void setFrameIndex(unsigned i) {
-				if( i >= getNumFrames() ) {
-						i = getNumFrames() - 1;
-				}
-				index = i;
+        if( !empty() ) {
+            if( i >= getNumFrames() ) {
+                i = getNumFrames() - 1;
+            }
+            index = i;
+        }
 		}
 
 		unsigned getFrameIndex() const {

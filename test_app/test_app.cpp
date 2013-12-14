@@ -40,8 +40,7 @@ bool TestApplication::init()
     p->addFrame( spriteBatch.getSheet().frames["bats_fly1.png"]);
     p->addFrame( spriteBatch.getSheet().frames["bats_fly2.png"]);
     p->addFrame( spriteBatch.getSheet().frames["bats_fly3.png"]);
-
-
+    p->setDelay(0.3f);
     sprite->setAnimation(p);
     
     return true;
