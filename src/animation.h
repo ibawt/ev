@@ -7,8 +7,6 @@
 #include "evil.h"
 #include "sprite_batch.h"
 
-using namespace std;
-
 namespace evil {
 
 class Animation
@@ -23,7 +21,7 @@ public:
 				return frames.size();
 		}
 
-		void addFrame(shared_ptr<SpriteFrame>& frame) {
+		void addFrame(std::shared_ptr<SpriteFrame>& frame) {
 				frames.push_back(frame);
 		}
 
@@ -35,7 +33,7 @@ public:
 		void setDelay(float d) { delay = d; }
 		float getDelay() const { return delay; }
 
-		const shared_ptr<SpriteFrame>& getFrame() const {
+		const std::shared_ptr<SpriteFrame>& getFrame() const {
 				return frames[index];
 		}
 		void update(const float dt);
@@ -55,7 +53,7 @@ private:
 		float time = 0.0f;
 		float delay = 0.0f;
 		unsigned index = 0;
-		vector<shared_ptr<SpriteFrame>> frames;
+    std::vector<std::shared_ptr<SpriteFrame>> frames;
 };
 
 }

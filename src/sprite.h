@@ -8,6 +8,9 @@
 #include <memory>
 
 namespace evil {
+
+class Animation;
+
 class Sprite
 {
 public:
@@ -23,14 +26,14 @@ public:
 		}
 		void update(const float dt);
 
-		void setAnimation(unique_ptr<Animation>& a) {
+		void setAnimation(std::unique_ptr<Animation>& a) {
 			animation = move(a);
 		}
 
-		void setFrame(shared_ptr<SpriteFrame>& f) { frame = f; }
+		void setFrame(std::shared_ptr<SpriteFrame>& f) { frame = f; }
 private:
-		shared_ptr<SpriteFrame> frame;
-		unique_ptr<Animation> animation;
+		std::shared_ptr<SpriteFrame> frame;
+		std::unique_ptr<Animation> animation;
 		Vector2 position;
 };
 }

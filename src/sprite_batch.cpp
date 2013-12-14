@@ -6,6 +6,8 @@
 
 #include <stdio.h>
 
+using namespace std;
+
 namespace evil {
 
 static bool parseRect(json_t *obj, const char *key, Rect& r)

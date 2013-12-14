@@ -9,7 +9,7 @@ void Sprite::update(const float dt)
 
 void Sprite::render()
 {
-    const shared_ptr<SpriteFrame>& f = ( animation ? animation->getFrame() : frame );
+    const auto& f = ( animation ? animation->getFrame() : frame );
     
     const auto& textureRect = f->textureRect;
     glBegin(GL_QUADS);

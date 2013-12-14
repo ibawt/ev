@@ -3,13 +3,13 @@
 
 #include "evil.h"
 #include "texture.h"
+#include "rect.h"
+#include "vector2.h"
 
 #include <vector>
 #include <memory>
 #include <string>
 #include <unordered_map>
-
-using namespace std;
 
 namespace evil {
 
@@ -17,8 +17,8 @@ class Sprite;
 
 struct SpriteFrame
 {
-    string key;
-    vector<string> aliases;
+    std::string key;
+    std::vector<std::string> aliases;
     Rect sourceSize;
     Rect size;
     bool trimmed;
@@ -30,22 +30,22 @@ struct SpriteFrame
 
 struct SpriteSheet
 {
-    unordered_map<string,shared_ptr<SpriteFrame>> frames;
-    unordered_map<string, string> metadata;
+    std::unordered_map<std::string,std::shared_ptr<SpriteFrame>> frames;
+    std::unordered_map<std::string, std::string> metadata;
 };
 
 class SpriteBatch
 {
 public:
-    bool load(const string& json);
+    bool load(const std::string& json);
     void render();
-    void setTexture(shared_ptr<Texture>& t);
-    shared_ptr<Sprite> get(const string& name);
+    void setTexture(std::shared_ptr<Texture>& t);
+    std::shared_ptr<Sprite> get(const std::string& name);
 
     SpriteSheet& getSheet() { return sheet; }
 private:
     SpriteSheet sheet;
-    shared_ptr<Texture> texture;
+    std::shared_ptr<Texture> texture;
 };
 
 

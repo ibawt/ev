@@ -4,7 +4,9 @@
 #include "animation.h"
 #include "sprite_batch.h"
 
+using namespace std;
 using namespace evil;
+
 class AnimationTest : public ::testing::Test
 {
 public:

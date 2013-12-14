@@ -5,8 +5,6 @@
 
 #include <string>
 
-using namespace std;
-
 namespace evil {
 
 class Texture
@@ -25,7 +23,7 @@ public:
 			return height;
 		}
 
-		bool load(const string& filename);
+		bool load(const std::string& filename);
 private:
 		int width;
 		int height;
