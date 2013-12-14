@@ -5,7 +5,9 @@
 #include "sprite.h"
 #include "utils.h"
 
+#include <stdlib.h>
 #include <memory>
+#include <vector>
 
 using namespace evil;
 using namespace std;
@@ -13,37 +15,48 @@ using namespace std;
 class TestApplication : public Application
 {
 public:
-    TestApplication(uint32_t w, uint32_t h) : Application(w,h) {}
-    ~TestApplication();
-    bool init();
-    void render();
-    void update(float dt);
+		TestApplication(uint32_t w, uint32_t h) : Application(w,h) {
+				srand(time(NULL));
+		}
+		~TestApplication();
+		bool init();
+		void render();
+		void update(float dt);
 private:
-    shared_ptr<Texture> texture;
-    SpriteBatch spriteBatch;
-    shared_ptr<Sprite> sprite;
+		shared_ptr<Texture> texture;
+		SpriteBatch spriteBatch;
+		shared_ptr<Sprite> sprite;
+		vector<shared_ptr<Sprite>> sprites;
 };
+
+float get_random(float min, float max) {
+		double scaled = (double)rand()/RAND_MAX;
+
+		return (max - min +1)*scaled + min;
+}
 
 bool TestApplication::init()
 {
-    texture = std::make_shared<Texture>();
-    texture->load("../test_app/bats.png");
-    
-    spriteBatch.load("../test_app/bats.json");
-    spriteBatch.setTexture(texture);
+		texture = make_shared<Texture>();
+		texture->load("../test_app/bats.png");
 
-    sprite = spriteBatch.get("bats_fly1.png");
-    sprite->setPosition(100.0f, 100.0f);
+		spriteBatch.load("../test_app/bats.json");
+		spriteBatch.setTexture(texture);
 
-    auto p = make_unique<Animation>();
+		for( int i = 0 ; i < 100000 ; ++i ) {
+				auto s = make_shared<Sprite>();
+				s->setPosition(get_random(0, getWidth()), get_random(0,getHeight()));
 
-    p->addFrame( spriteBatch.getSheet().frames["bats_fly1.png"]);
-    p->addFrame( spriteBatch.getSheet().frames["bats_fly2.png"]);
-    p->addFrame( spriteBatch.getSheet().frames["bats_fly3.png"]);
-    p->setDelay(0.3f);
-    sprite->setAnimation(p);
-    
-    return true;
+				auto p = make_unique<Animation>();
+
+				p->addFrame( spriteBatch.getSheet().frames["bats_fly1.png"]);
+				p->addFrame( spriteBatch.getSheet().frames["bats_fly2.png"]);
+				p->addFrame( spriteBatch.getSheet().frames["bats_fly3.png"]);
+				p->setDelay(0.2f);
+				s->setAnimation(p);
+				sprites.push_back(s);
+		}
+		return true;
 }
 
 TestApplication::~TestApplication()
@@ -52,34 +65,26 @@ TestApplication::~TestApplication()
 
 void TestApplication::render()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    texture->bind();
-    glEnable(GL_TEXTURE_2D);
-    sprite->render();
-    // glBegin(GL_QUADS);
-    // glTexCoord2f(0,0);
-    // glVertex2f(0,0);
-    // glTexCoord2f(1,0);
-    // glVertex2f(500,0);
-    // glTexCoord2f(1,1);
-    // glVertex2f(500,500);
-    // glTexCoord2f(0,1);
-    // glVertex2f(0,500);
-    // glEnd();
-    // glDisable(GL_TEXTURE_2D);
-    //spriteBatch.render();
+		glClear(GL_COLOR_BUFFER_BIT);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		texture->bind();
+		glEnable(GL_TEXTURE_2D);
+		for( const auto& s : sprites ) {
+				s->render();
+		}
 }
 
 void TestApplication::update(float dt)
 {
-    sprite->update(dt);
+		for(auto& s: sprites) {
+				s->update(dt);
+		}
 }
 
 int main(int argc, char **argv)
 {
-    TestApplication app(800,600);
+		TestApplication app(800,600);
 
-    return app.main();
+		return app.main();
 }

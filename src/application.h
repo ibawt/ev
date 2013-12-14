@@ -22,12 +22,13 @@ public:
 		uint32_t getWidth() const { return width; }
 		uint32_t getHeight() const { return height; }
 		
+		float getFPS() const { return fps; }
     int  main();
     void quit();
 private:
 		bool initGL();
 		bool initSDL();
-		
+		float         fps = 0.0f;
     uint32_t      width;
     uint32_t      height;
     SDL_Window   *window;
