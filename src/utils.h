@@ -1,11 +1,13 @@
 #ifndef EV_UTILS_H_
 #define EV_UTILS_H_
 
+#ifdef __APPLE__
 template <typename T, typename ...Args>
 std::unique_ptr<T> make_unique( Args&& ...args )
 {
     return std::unique_ptr<T>( new T( std::forward<Args>(args)... ) );
 }
+#endif
 
 template <typename F>
 struct ScopeExit {
