@@ -3,6 +3,7 @@
 #include "texture.h"
 #include "sprite_batch.h"
 #include "sprite.h"
+#include "utils.h"
 
 #include <memory>
 
@@ -33,6 +34,15 @@ bool TestApplication::init()
 
     sprite = spriteBatch.get("bats_fly1.png");
     sprite->setPosition(100.0f, 100.0f);
+
+    auto p = make_unique<Animation>();
+
+    p->addFrame( spriteBatch.getSheet().frames["bats_fly1.png"]);
+    p->addFrame( spriteBatch.getSheet().frames["bats_fly2.png"]);
+    p->addFrame( spriteBatch.getSheet().frames["bats_fly3.png"]);
+
+
+    sprite->setAnimation(p);
     
     return true;
 }
@@ -65,6 +75,7 @@ void TestApplication::render()
 
 void TestApplication::update(float dt)
 {
+    sprite->update(dt);
 }
 
 int main(int argc, char **argv)

@@ -42,7 +42,7 @@ public:
     void setTexture(shared_ptr<Texture>& t);
     shared_ptr<Sprite> get(const string& name);
 
-    const SpriteSheet& getSheet() const { return sheet; }
+    SpriteSheet& getSheet() { return sheet; }
 private:
     SpriteSheet sheet;
     shared_ptr<Texture> texture;

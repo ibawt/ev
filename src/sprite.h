@@ -21,7 +21,11 @@ public:
 		const Vector2& getPosition() const {
 				return position;
 		}
-		void update(float dt);
+		void update(const float dt);
+
+		void setAnimation(unique_ptr<Animation>& a) {
+			animation = move(a);
+		}
 
 		void setFrame(shared_ptr<SpriteFrame>& f) { frame = f; }
 private:

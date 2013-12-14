@@ -73,3 +73,16 @@ TEST_F(AnimationTest, oneShot)
 
 		EXPECT_EQ(2, animation.getFrameIndex());
 }
+
+
+TEST_F(AnimationTest, reverse)
+{
+    animation.setMode(Animation::REVERSE);
+    animation.setDelay(1.0f);
+    animation.setFrameIndex( 2 );
+    animation.update(1.0f);
+    EXPECT_EQ( 1, animation.getFrameIndex());
+}
+
+
+
