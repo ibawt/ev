@@ -17,6 +17,7 @@
 
 #include "animation.h"
 #include "sprite.h"
+#include "shader.h"
 #include "sprite_batch.h"
 #include "texture.h"
 #include "utils.h"
@@ -26,7 +27,8 @@ namespace evil {
 void log(const char *fmt, ...);
 void error(const char *fmt, ... );
 void SetError(const char *);
+#define CHECK_GL() { GLenum error; if( (error = glGetError() ) != GL_NO_ERROR ) { log("ERROR: %s",gluErrorString(error)); } }
 
-}   
+}
 
 #endif

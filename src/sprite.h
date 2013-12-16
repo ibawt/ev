@@ -29,7 +29,7 @@ public:
 		void setAnimation(std::unique_ptr<Animation>& a) {
 			animation = move(a);
 		}
-
+		void fill(std::vector<BatchVertex>& verts);
 		void setFrame(std::shared_ptr<SpriteFrame>& f) { frame = f; }
 private:
 		std::shared_ptr<SpriteFrame> frame;

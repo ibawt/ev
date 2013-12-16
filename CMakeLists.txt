@@ -3,13 +3,14 @@ Project ( evil )
 
 SET( evil_SOURCE_DIR src)
 set(
-  SOURCES
+	SOURCES
 	src/main.cpp
 	src/application.cpp
 	src/sprite.cpp
 	src/sprite_batch.cpp
 	src/texture.cpp
 	src/animation.cpp
+	src/shader.cpp
 )
 SET(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
@@ -37,17 +38,17 @@ include_directories(${gtest_SOURCE_DIR}/include
 	src)
 # Compiler-specific C++11 activation.
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-    execute_process(
-        COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
-    if (NOT (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7))
-        message(FATAL_ERROR "${PROJECT_NAME} requires g++ 4.7 or greater.")
-				
-    endif ()
+		execute_process(
+				COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
+		if (NOT (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7))
+				message(FATAL_ERROR "${PROJECT_NAME} requires g++ 4.7 or greater.")
+
+		endif ()
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ -Wall")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ -Wall")
 else ()
-    message(FATAL_ERROR "Your C++ compiler does not support C++11.")
+		message(FATAL_ERROR "Your C++ compiler does not support C++11.")
 endif ()
 
 
@@ -55,7 +56,7 @@ add_library( evil STATIC
 	${SOURCES} )
 
 target_link_libraries( evil
-  ${SDL2_LIBRARY}
+	${SDL2_LIBRARY}
 	${SDL2_IMAGE_LIBRARY}
 	${OPENGL_LIBRARY}
 	libglew_static
@@ -69,7 +70,7 @@ add_executable( test_app
 
 target_link_libraries( test_app evil)
 add_executable(
-  runUnitTests
+	runUnitTests
 	test/testgtest.cpp
 	test/animation_test.cpp
 	)

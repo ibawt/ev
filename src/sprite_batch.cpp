@@ -10,6 +10,34 @@ using namespace std;
 
 namespace evil {
 
+static const string defaultVertexShader(
+"attribute vec4 a_position;\n"
+"attribute vec4 a_color;\n"
+"attribute vec2 a_texCoord0;\n"
+"uniform mat4 u_projTrans;\n"
+"varying vec4 v_color;\n"
+"varying vec2 v_texCoords;\n"
+"void main()\n"
+"{\n"
+"v_color = a_color;\n"
+"v_texCoords = a_texCoord0;\n"
+"gl_Position = u_projTrans * a_position;\n"
+"}\n"
+		);
+
+static const string defaultFragmentShader(
+"varying vec4 v_color;\n"
+"varying vec2 v_texCoords;\n"
+"uniform sampler2D u_texture;\n"
+"void main()\n"
+"{\n"
+"gl_FragColor - v_color * texture2D(u_texture, v_texCoords);\n"
+"}\n");
+
+SpriteBatch::SpriteBatch()
+{
+}
+
 static bool parseRect(json_t *obj, const char *key, Rect& r)
 {
 		if( obj ) {
@@ -63,14 +91,28 @@ static bool parseVector(json_t *obj, const char *key, Vector2& v ) {
 		return false;
 }
 
+void SpriteBatch::generateBuffer()
+{
+		verts.clear();
+		vboID = 0;
+
+		for(auto& s : sprites ) {
+						s->fill(verts);
+		}
+
+		glGenBuffers( 1, &vboID);
+		glBindBuffer(GL_ARRAY_BUFFER, vboID);
+
+		glBufferData(GL_ARRAY_BUFFER, verts.size()*sizeof(BatchVertex), &verts[0], GL_STATIC_DRAW);
+}
 
 void SpriteBatch::setTexture( shared_ptr<Texture>& t )
 {
 		texture = t;
 
 		for( auto& frame : sheet.frames ) {
-        frame.second->textureRect.x /= t->getWidth();
-        frame.second->textureRect.y /= t->getHeight();
+				frame.second->textureRect.x /= t->getWidth();
+				frame.second->textureRect.y /= t->getHeight();
 				frame.second->textureRect.w /= t->getWidth();
 				frame.second->textureRect.h /= t->getHeight();
 		}
@@ -130,6 +172,13 @@ bool SpriteBatch::load(const string& json)
 				sheet.frames[key] = frame;
 		}
 
+		program.setVertexShader(defaultVertexShader);
+		program.setFragmentShader(defaultFragmentShader);
+
+		if( !program.compile() ) {
+				return false;
+		}
+
 		return true;
 }
 
@@ -145,6 +194,18 @@ shared_ptr<Sprite> SpriteBatch::get(const string& name)
 
 void SpriteBatch::render()
 {
+		glBindBuffer(GL_ARRAY_BUFFER, vboID);
+		glEnable(GL_TEXTURE_2D);
+		texture->bind();
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState (GL_TEXTURE_COORD_ARRAY);
+		glVertexPointer(2, GL_FLOAT,  sizeof(BatchVertex), 0);
+		glTexCoordPointer(2, GL_FLOAT, sizeof(BatchVertex), (void*)8 );
+		glDrawArrays(GL_QUADS, 0, sprites.size()*4);
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisable(GL_TEXTURE_2D);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 }

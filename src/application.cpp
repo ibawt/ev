@@ -3,8 +3,6 @@
 
 namespace evil {
 
-#define CHECK_GL() if( (error = glGetError() ) != GL_NO_ERROR ) { SetError((const char*)gluErrorString(error)); return false; }
-
 Application::Application(uint32_t w, uint32_t h) :
 		width(w), height(h), window(nullptr)
 {
@@ -29,10 +27,9 @@ bool Application::initSDL()
 				error("SDL init failed: %s", SDL_GetError());
 				return false;
 		}
-
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 1);
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 2);
-
+		//SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 1);
+		//SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 5);
+				//SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		window = SDL_CreateWindow( "Evil", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 															 width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 
@@ -81,10 +78,13 @@ bool Application::initGL()
 
 		glViewport( 0, 0, width, height );
 
-		if( (error =  glewInit() ) != GLEW_OK ) {
+		error = glewInit();
+		if(error != GLEW_OK ) {
 				evil::error("error initializing glew: %d", glewGetErrorString(error));
 				return false;
 		}
+
+		log("using GLEW: %s", glewGetString(GLEW_VERSION));
 
 		return true;
 }

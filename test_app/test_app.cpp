@@ -43,19 +43,23 @@ bool TestApplication::init()
 		spriteBatch.load("/Users/ianquick/evil/evil/test_app/bats.json");
 		spriteBatch.setTexture(texture);
 
-		for( int i = 0 ; i < 1000 ; ++i ) {
+		for( int i = 0 ; i < 50000; ++i ) {
 				auto s = make_shared<Sprite>();
-				s->setPosition(get_random(0, getWidth()), get_random(0,getHeight()));
-
+                s->setPosition(get_random(0, getWidth()), get_random(0,getHeight()));
+     //       s->setPosition(0, 0);
 				auto p = make_unique<Animation>();
 
-				p->addFrame( spriteBatch.getSheet().frames["bats_fly1.png"]);
+				p->addFrame( spriteBatch.getSheet().frames["sonic_boom.png"]);
 				p->addFrame( spriteBatch.getSheet().frames["bats_fly2.png"]);
 				p->addFrame( spriteBatch.getSheet().frames["bats_fly3.png"]);
 				p->setDelay(0.2f);
 				s->setAnimation(p);
 				sprites.push_back(s);
+				spriteBatch.addSprite(s);
 		}
+
+		spriteBatch.generateBuffer();
+
 		return true;
 }
 
@@ -65,21 +69,17 @@ TestApplication::~TestApplication()
 
 void TestApplication::render()
 {
-		glClear(GL_COLOR_BUFFER_BIT);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		texture->bind();
-		glEnable(GL_TEXTURE_2D);
-		for( const auto& s : sprites ) {
-				s->render();
-		}
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    spriteBatch.render();
 }
 
 void TestApplication::update(float dt)
 {
-		for(auto& s: sprites) {
-				s->update(dt);
-		}
+    for(auto& s: sprites) {
+        s->update(dt);
+    }
 }
 
 int main(int argc, char **argv)
