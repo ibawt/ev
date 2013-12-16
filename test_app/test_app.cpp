@@ -45,8 +45,8 @@ bool TestApplication::init()
 
 		for( int i = 0 ; i < 50000; ++i ) {
 				auto s = make_shared<Sprite>();
-                s->setPosition(get_random(0, getWidth()), get_random(0,getHeight()));
-     //       s->setPosition(0, 0);
+				s->setPosition(get_random(0, getWidth()), get_random(0,getHeight()));
+				//       s->setPosition(0, 0);
 				auto p = make_unique<Animation>();
 
 				p->addFrame( spriteBatch.getSheet().frames["sonic_boom.png"]);
@@ -60,6 +60,10 @@ bool TestApplication::init()
 
 		spriteBatch.generateBuffer();
 
+		Matrix4 matrix;
+		matrix.setOrtho(0, getWidth(), getHeight(), 1, -1, 1 );
+		spriteBatch.setTransform(matrix);
+
 		return true;
 }
 
@@ -69,17 +73,17 @@ TestApplication::~TestApplication()
 
 void TestApplication::render()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    spriteBatch.render();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		spriteBatch.render();
 }
 
 void TestApplication::update(float dt)
 {
-    for(auto& s: sprites) {
-        s->update(dt);
-    }
+		for(auto& s: sprites) {
+				s->update(dt);
+		}
 }
 
 int main(int argc, char **argv)

@@ -6,6 +6,7 @@
 #include "vector2.h"
 #include "shader.h"
 #include "evil.h"
+#include "matrix4.h"
 
 #include <vector>
 #include <memory>
@@ -58,7 +59,13 @@ public:
 
 		void generateBuffer();
 		SpriteSheet& getSheet() { return sheet; }
+
+		void setTransform(Matrix4 t) {
+				transform = t;
+		}
+
 private:
+		Matrix4 transform;
 		ShaderProgram program;
 		GLuint vboID;
 		std::vector<std::shared_ptr<Sprite>> sprites;

@@ -27,8 +27,8 @@ bool Application::initSDL()
 				error("SDL init failed: %s", SDL_GetError());
 				return false;
 		}
-		//SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 1);
-		//SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 5);
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1);
 				//SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		window = SDL_CreateWindow( "Evil", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 															 width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);

@@ -84,4 +84,21 @@ bool ShaderProgram::compile()
 
 		return true;
 }
+
+const GLint ShaderProgram::getUniformLocation(const string& name) const
+{
+		return glGetUniformLocation(programID, name.c_str());
+}
+
+const GLint ShaderProgram::getAttribLocation(const string& name) const
+{
+		return glGetAttribLocation(programID, name.c_str());
+}
+
+void ShaderProgram::setUniformMatrix(const string& name, const Matrix4& matrix) const
+{
+		glUniformMatrix4fv(getUniformLocation( name), 1, false, matrix.m);
+}
+
+
 }

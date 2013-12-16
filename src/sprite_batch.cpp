@@ -11,27 +11,25 @@ using namespace std;
 namespace evil {
 
 static const string defaultVertexShader(
+"#version 120\n"
 "attribute vec4 a_position;\n"
-"attribute vec4 a_color;\n"
 "attribute vec2 a_texCoord0;\n"
 "uniform mat4 u_projTrans;\n"
-"varying vec4 v_color;\n"
 "varying vec2 v_texCoords;\n"
 "void main()\n"
 "{\n"
-"v_color = a_color;\n"
 "v_texCoords = a_texCoord0;\n"
 "gl_Position = u_projTrans * a_position;\n"
 "}\n"
 		);
 
 static const string defaultFragmentShader(
-"varying vec4 v_color;\n"
+"#version 120\n"
 "varying vec2 v_texCoords;\n"
 "uniform sampler2D u_texture;\n"
 "void main()\n"
 "{\n"
-"gl_FragColor - v_color * texture2D(u_texture, v_texCoords);\n"
+"gl_FragColor = texture2D(u_texture, v_texCoords);\n"
 "}\n");
 
 SpriteBatch::SpriteBatch()
@@ -194,6 +192,7 @@ shared_ptr<Sprite> SpriteBatch::get(const string& name)
 
 void SpriteBatch::render()
 {
+#ifdef NO_SHADERS
 		glBindBuffer(GL_ARRAY_BUFFER, vboID);
 		glEnable(GL_TEXTURE_2D);
 		texture->bind();
@@ -206,6 +205,29 @@ void SpriteBatch::render()
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		glDisable(GL_TEXTURE_2D);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+#else
+		glBindBuffer(GL_ARRAY_BUFFER, vboID);
+		glEnable(GL_TEXTURE_2D);
+		texture->bind();
+		program.use();
+		glEnableClientState( GL_VERTEX_ARRAY);
+		glEnableClientState( GL_TEXTURE_COORD_ARRAY);
+
+		program.setUniformMatrix("u_projTrans", transform);
+		glEnableVertexAttribArray(program.getAttribLocation("a_position"));
+		glEnableVertexAttribArray(program.getAttribLocation("a_texCoord0"));
+		glVertexAttribPointer(program.getAttribLocation("a_position"), 2, GL_FLOAT, GL_TRUE,
+													sizeof(BatchVertex), 0 );
+		glVertexAttribPointer(program.getAttribLocation("a_texCoord0"),
+													2, GL_FLOAT, GL_TRUE, sizeof(BatchVertex), (void*)8);
+
+		glDrawArrays(GL_QUADS, 0, sprites.size()*4);
+
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif
 }
 
 }
