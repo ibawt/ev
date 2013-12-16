@@ -37,6 +37,7 @@ public:
 		const GLint getAttribLocation(const std::string& name) const;
 		const GLint getUniformLocation(const std::string &name) const;
 		bool compile();
+		bool checkProgram();
 private:
 		GLuint programID = 0;
 		Shader vertexShader;

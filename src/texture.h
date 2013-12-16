@@ -23,6 +23,9 @@ public:
 			return height;
 		}
 
+		const GLuint getID() const {
+				return textureID;
+		}
 		bool load(const std::string& filename);
 private:
 		int width;

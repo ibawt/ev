@@ -78,10 +78,26 @@ bool ShaderProgram::compile()
 		}
 
 		glAttachShader(programID, vertexShader.getID());
+		checkProgram();
 		glAttachShader(programID, fragmentShader.getID());
-
+		checkProgram();
 		glLinkProgram(programID);
+		checkProgram();
+		return true;
+}
 
+bool ShaderProgram::checkProgram()
+{
+		int loglength;
+		string info;
+
+		glGetProgramiv( programID,GL_INFO_LOG_LENGTH, &loglength);
+
+		if( loglength > 0 ) {
+				info.resize(loglength);
+				glGetProgramInfoLog(programID, loglength, &loglength, &info[0]);
+				log("Program IV: %s", info.c_str() );
+		}
 		return true;
 }
 
