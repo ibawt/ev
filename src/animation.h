@@ -13,54 +13,54 @@ namespace evil {
 class Animation
 {
 public:
-		typedef enum  {
-				LOOP,
-				ONE_SHOT,
-				REVERSE
-		} Mode;
-		unsigned getNumFrames() const {
-				return frames.size();
-		}
+    typedef enum  {
+        LOOP,
+        ONE_SHOT,
+        REVERSE
+    } Mode;
+    unsigned getNumFrames() const {
+        return frames.size();
+    }
 
     bool empty() const {
         return frames.empty();
     }
 
-		void addFrame(std::shared_ptr<SpriteFrame>& frame) {
-				frames.push_back(frame);
-		}
+    void addFrame(std::shared_ptr<SpriteFrame>& frame) {
+        frames.push_back(frame);
+    }
 
-		Mode getMode() const {  return mode; }
-		void setMode(Mode m) {
-				mode = m;
-		}
+    Mode getMode() const {  return mode; }
+    void setMode(Mode m) {
+        mode = m;
+    }
 
-		void setDelay(float d) { delay = d; }
-		float getDelay() const { return delay; }
+    void setDelay(float d) { delay = d; }
+    float getDelay() const { return delay; }
 
-		const std::shared_ptr<SpriteFrame>& getFrame() const {
+    const std::shared_ptr<SpriteFrame>& getFrame() const {
         assert( !empty() );
-				return frames[index];
-		}
-		void update(const float dt);
+        return frames[index];
+    }
+    void update(const float dt);
 
-		void setFrameIndex(unsigned i) {
+    void setFrameIndex(unsigned i) {
         if( !empty() ) {
             if( i >= getNumFrames() ) {
                 i = getNumFrames() - 1;
             }
             index = i;
         }
-		}
+    }
 
-		unsigned getFrameIndex() const {
-				return index;
-		}
+    unsigned getFrameIndex() const {
+        return index;
+    }
 private:
-		Mode mode = LOOP;
-		float time = 0.0f;
-		float delay = 0.0f;
-		unsigned index = 0;
+    Mode mode = LOOP;
+    float time = 0.0f;
+    float delay = 0.0f;
+    unsigned index = 0;
     std::vector<std::shared_ptr<SpriteFrame>> frames;
 };
 

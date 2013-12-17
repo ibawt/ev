@@ -14,27 +14,27 @@ class Animation;
 class Sprite
 {
 public:
-		void render();
+    void render();
 
-		void setPosition(float x, float y) {
-				position.x = x;
-				position.y = y;
-		}
+    void setPosition(float x, float y) {
+        position.x = x;
+        position.y = y;
+    }
 
-		const Vector2& getPosition() const {
-				return position;
-		}
-		void update(const float dt);
+    const Vector2& getPosition() const {
+        return position;
+    }
+    void update(const float dt);
 
-		void setAnimation(std::unique_ptr<Animation>& a) {
-			animation = move(a);
-		}
-		void fill(std::vector<BatchVertex>& verts);
-		void setFrame(std::shared_ptr<SpriteFrame>& f) { frame = f; }
+    void setAnimation(std::unique_ptr<Animation>& a) {
+      animation = move(a);
+    }
+    void fill(std::vector<BatchVertex>& verts);
+    void setFrame(std::shared_ptr<SpriteFrame>& f) { frame = f; }
 private:
-		std::shared_ptr<SpriteFrame> frame;
-		std::unique_ptr<Animation> animation;
-		Vector2 position;
+    std::shared_ptr<SpriteFrame> frame;
+    std::unique_ptr<Animation> animation;
+    Vector2 position;
 };
 }
 

@@ -10,27 +10,27 @@ namespace evil {
 class Texture
 {
 public:
-		Texture();
-		~Texture();
+    Texture();
+    ~Texture();
 
-		void bind() const;
-		void dispose();
+    void bind() const;
+    void dispose();
 
-		int getWidth() const {
-			return width;
-		}
-		int getHeight() const {
-			return height;
-		}
+    int getWidth() const {
+      return width;
+    }
+    int getHeight() const {
+      return height;
+    }
 
-		const GLuint getID() const {
-				return textureID;
-		}
-		bool load(const std::string& filename);
+    const GLuint getID() const {
+        return textureID;
+    }
+    bool load(const std::string& filename);
 private:
-		int width;
-		int height;
-		GLuint textureID;
+    int width;
+    int height;
+    GLuint textureID;
 };
 
 }

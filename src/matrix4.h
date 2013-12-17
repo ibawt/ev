@@ -6,9 +6,9 @@ namespace evil {
 class Matrix4
 {
 public:
-		float m[16];
-		void setOrtho(float left, float right, float bottom,
-									float top, float near, float far);
+    float m[16];
+    void setOrtho(float left, float right, float bottom,
+                  float top, float near, float far);
 };
 }
 
