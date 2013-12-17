@@ -6,7 +6,7 @@
 #include "evil.h"
 
 namespace evil {
-	
+
 class Application
 {
 public:
@@ -19,16 +19,17 @@ public:
     virtual void keyEvent(int keycode) { }
     virtual void mouseEvent(int x, int y, int button) { }
 
-		uint32_t getWidth() const { return width; }
-		uint32_t getHeight() const { return height; }
-		
-		float getFPS() const { return fps; }
+    uint32_t getWidth() const { return width; }
+    uint32_t getHeight() const { return height; }
+
+    float getFPS() const { return fps; }
     int  main();
     void quit();
+    bool initGL();
+    bool initSDL();
+
 private:
-		bool initGL();
-		bool initSDL();
-		float         fps = 0.0f;
+    float         fps = 0.0f;
     uint32_t      width;
     uint32_t      height;
     SDL_Window   *window;
