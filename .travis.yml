@@ -2,6 +2,8 @@ language: cpp
 env:
   - CXX=g++-4.8 CC=gcc-4.8
 before_install:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo add-apt-repository ppa:zoogie/sdl2-snapshots -y
   - sudo add-apt-repository ppa:h-rayflood/llvm -y
@@ -18,4 +20,3 @@ before_script:
   - CXX=g++-4.8 CC=gcc-4.8 cmake ..
 script:
   make && ./runUnitTests
-  
