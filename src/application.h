@@ -29,7 +29,7 @@ public:
     bool initSDL();
 
 private:
-    float         fps = 0.0f;
+		float         fps;
     uint32_t      width;
     uint32_t      height;
     SDL_Window   *window;

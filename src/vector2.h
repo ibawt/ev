@@ -5,7 +5,7 @@ namespace evil {
 
 struct Vector2
 {
-    Vector2() = default;
+    Vector2() : x(0.0f), y(0.0f) { }
     Vector2( float xx, float yy) : x(xx), y(yy) { }
 
     float getLength() const {
@@ -20,8 +20,8 @@ struct Vector2
       }
     }
 
-    float x = 0.0f;
-    float y = 0.0f;
+    float x;
+    float y;
 };
 
 }

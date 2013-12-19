@@ -13,14 +13,16 @@ namespace evil {
 class Animation
 {
 public:
-    typedef enum  {
-        LOOP,
-        ONE_SHOT,
-        REVERSE
-    } Mode;
-    unsigned getNumFrames() const {
-        return frames.size();
-    }
+	typedef enum  {
+		LOOP,
+		ONE_SHOT,
+		REVERSE
+	} Mode;
+    Animation() : mode( LOOP), time(0.0f), delay(0.0f), index(0) { }
+		
+		unsigned getNumFrames() const {
+				return frames.size();
+		}
 
     bool empty() const {
         return frames.empty();
@@ -57,10 +59,10 @@ public:
         return index;
     }
 private:
-    Mode mode = LOOP;
-    float time = 0.0f;
-    float delay = 0.0f;
-    unsigned index = 0;
+		Mode mode;
+		float time;
+		float delay;
+		unsigned index;
     std::vector<std::shared_ptr<SpriteFrame>> frames;
 };
 

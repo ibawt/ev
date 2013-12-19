@@ -37,7 +37,10 @@ void Sprite::fill(vector<BatchVertex>& verts)
     verts.push_back(v1);
     verts.push_back(v2);
     verts.push_back(v3);
+
     verts.push_back(v4);
+	verts.push_back(v3);
+	verts.push_back(v1);
 }
 
 void Sprite::render()

@@ -50,7 +50,7 @@
 
 #ifndef GTEST_INCLUDE_GTEST_GTEST_H_
 #define GTEST_INCLUDE_GTEST_GTEST_H_
-
+#define _VARIADIC_MAX 10
 #include <limits>
 #include <ostream>
 #include <vector>

@@ -12,12 +12,12 @@ set(
 	src/animation.cpp
 	src/shader.cpp
 	src/matrix4.cpp
+	vendor/glew/src/glew.c
 )
 SET(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
 add_subdirectory( gtest )
 add_subdirectory( vendor/jansson)
-add_subdirectory( vendor/glew )
 enable_testing()
 
 find_package(OpenGL)
@@ -26,8 +26,10 @@ find_package(SDL2_image)
 
 if("${CMAKE_SYSTEM_NAME}" MATCHES "Linux" )
 	set( SDL_MAIN "SDL2main")
+elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
+    set (SDL_MAIN "c:/SDL2/lib/x86/SDL2main.lib")
 else()
-	set( SDL_MAIN "SDLmain")
+	set( SDL_MAIN "SDL2main")
 endif()
 
 include_directories(${gtest_SOURCE_DIR}/include
@@ -49,9 +51,11 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ -Wall -g")
 else ()
-		message(FATAL_ERROR "Your C++ compiler does not support C++11.")
+		#message(FATAL_ERROR "Your C++ compiler does not support C++11.")
 endif ()
-
+add_definitions(
+  -DGLEW_STATIC
+ )
 
 add_library( evil STATIC
 	${SOURCES} )
@@ -60,7 +64,6 @@ target_link_libraries( evil
 	${SDL2_LIBRARY}
 	${SDL2_IMAGE_LIBRARY}
 	${OPENGL_LIBRARY}
-	libglew_static
 	jansson
 	${SDL_MAIN}
 )

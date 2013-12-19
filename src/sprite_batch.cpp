@@ -206,25 +206,23 @@ void SpriteBatch::render()
     glDisable(GL_TEXTURE_2D);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 #else
-    glBindBuffer(GL_ARRAY_BUFFER, vboID);
-    glEnable(GL_TEXTURE_2D);
-    texture->bind();
-    program.use();
-    glEnableClientState( GL_VERTEX_ARRAY);
-    glEnableClientState( GL_TEXTURE_COORD_ARRAY);
-    program.setUniformMatrix("u_projTrans", transform);
-    glEnableVertexAttribArray(program.getAttribLocation("a_position"));
-    glEnableVertexAttribArray(program.getAttribLocation("a_texCoord0"));
-    glVertexAttribPointer(program.getAttribLocation("a_position"), 2, GL_FLOAT, GL_TRUE,
-                          sizeof(BatchVertex), 0 );
-    glVertexAttribPointer(program.getAttribLocation("a_texCoord0"),
-                          2, GL_FLOAT, GL_TRUE, sizeof(BatchVertex), (void*)8);
 
-    glDrawArrays(GL_QUADS, 0, sprites.size()*4);
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glBindBuffer(GL_ARRAY_BUFFER, vboID);
+		glEnable(GL_TEXTURE_2D);
+		texture->bind();
+		program.use();
+		program.setUniformMatrix("u_projTrans", transform);
+		glEnableVertexAttribArray(program.getAttribLocation("a_position"));
+		glEnableVertexAttribArray(program.getAttribLocation("a_texCoord0"));
+		glVertexAttribPointer(program.getAttribLocation("a_position"), 2, GL_FLOAT, GL_TRUE,
+													sizeof(BatchVertex), 0 );
+		glVertexAttribPointer(program.getAttribLocation("a_texCoord0"),
+													2, GL_FLOAT, GL_TRUE, sizeof(BatchVertex), (void*)8);
+
+		glDrawArrays(GL_TRIANGLES, 0, sprites.size());
+
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
 #endif
 }
 

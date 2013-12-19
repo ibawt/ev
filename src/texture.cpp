@@ -33,6 +33,12 @@ void Texture::dispose()
     }
 }
 
+#ifdef WIN32
+#define COLOR_FMT GL_RGBA
+#else
+#define COLOR_FMT GL_BGRA
+#endif
+
 bool Texture::load(const string& filename)
 {
     SDL_Surface *surface = IMG_Load(filename.c_str());
@@ -46,7 +52,7 @@ bool Texture::load(const string& filename)
     glBindTexture(GL_TEXTURE_2D, textureID);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, COLOR_FMT, GL_UNSIGNED_BYTE, surface->pixels);
 
     width = surface->w;
     height = surface->h;

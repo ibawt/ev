@@ -4,7 +4,7 @@
 #include "sprite_batch.h"
 #include "sprite.h"
 #include "utils.h"
-
+#include <time.h>
 #include <stdlib.h>
 #include <memory>
 #include <vector>
@@ -21,7 +21,7 @@ public:
 		~TestApplication();
 		bool init();
 		void render();
-		void update(float dt);
+		virtual void update(const float dt);
 private:
 		shared_ptr<Texture> texture;
 		SpriteBatch spriteBatch;
@@ -38,9 +38,9 @@ float get_random(float min, float max) {
 bool TestApplication::init()
 {
 		texture = make_shared<Texture>();
-		texture->load("/Users/ianquick/evil/evil/test_app/bats.png");
+		texture->load("../test_app/bats.png");
 
-		spriteBatch.load("/Users/ianquick/evil/evil/test_app/bats.json");
+		spriteBatch.load("../test_app/bats.json");
 		spriteBatch.setTexture(texture);
 
 		for( int i = 0 ; i < 5000; ++i ) {
@@ -49,7 +49,7 @@ bool TestApplication::init()
 				//       s->setPosition(0, 0);
 				auto p = make_unique<Animation>();
 
-				p->addFrame( spriteBatch.getSheet().frames["sonic_boom.png"]);
+				p->addFrame( spriteBatch.getSheet().frames["bats_fly1.png"]);
 				p->addFrame( spriteBatch.getSheet().frames["bats_fly2.png"]);
 				p->addFrame( spriteBatch.getSheet().frames["bats_fly3.png"]);
 				p->setDelay(0.2f);

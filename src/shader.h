@@ -27,7 +27,7 @@ private:
 class ShaderProgram
 {
 public:
-		ShaderProgram() { }
+		ShaderProgram() : programID(0) { }
 		~ShaderProgram();
 		void use() const;
 
@@ -39,7 +39,7 @@ public:
 		bool compile();
 		bool checkProgram();
 private:
-		GLuint programID = 0;
+		GLuint programID;
 		Shader vertexShader;
 		Shader fragmentShader;
 };
