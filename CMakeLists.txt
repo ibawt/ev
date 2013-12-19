@@ -80,3 +80,13 @@ add_executable(
 	)
 target_link_libraries(runUnitTests gtest gtest_main evil ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARY} ${OPENGL_LIBRARY})
 add_test(runUnitTests runUnitTests)
+
+
+ADD_CUSTOM_COMMAND( TARGET CopyDlls POST_BUILD
+
+                COMMAND copy “${SDL2IMAGE_LIBRARY}/*.dll”  “${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>”
+				OMMAND copy “${SDL2_LIBRARY}/*.dll”  “${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>”
+                COMMENT “copying dlls …”
+
+                )
+ 
