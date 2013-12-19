@@ -11,7 +11,7 @@
 #include <vector>
 #include <memory>
 #include <string>
-#include <unordered_map>
+#include <map>
 
 namespace evil {
 
@@ -32,8 +32,18 @@ struct SpriteFrame
 
 struct SpriteSheet
 {
-    std::unordered_map<std::string,std::shared_ptr<SpriteFrame>> frames;
-    std::unordered_map<std::string, std::string> metadata;
+    std::map<std::string,std::shared_ptr<SpriteFrame>> frames;
+    std::map<std::string, std::string> metadata;
+};
+
+struct UniformFrame
+{
+    float tx;
+    float ty;
+    float tw;
+    float th;
+    float width;
+    float height;
 };
 
 struct BatchVertex
@@ -65,6 +75,8 @@ public:
     }
 
 private:
+    void fillUniformFrames();
+    float time;
     Matrix4 transform;
     ShaderProgram program;
     GLuint vboID;
@@ -72,6 +84,9 @@ private:
     std::vector<BatchVertex> verts;
     SpriteSheet sheet;
     std::shared_ptr<Texture> texture;
+
+    std::vector<UniformFrame> texFrames;
+    std::map<std::string, uint16_t> texMap;
 };
 
 

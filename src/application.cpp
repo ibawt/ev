@@ -46,7 +46,6 @@ bool Application::initSDL()
 
     if( SDL_GL_SetSwapInterval(1) < 0 ) {
         error("Couldn't set VSYNC: %s", SDL_GetError());
-        return false;
     }
 
     int flags = IMG_INIT_JPG | IMG_INIT_PNG;

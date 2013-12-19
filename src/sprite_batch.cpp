@@ -10,18 +10,40 @@ using namespace std;
 
 namespace evil {
 
-static const string defaultVertexShader(
+// static const string defaultVertexShader(
+// "#version 120\n"
+// "attribute vec4 a_position;\n"
+// "attribute vec2 a_texCoord0;\n"
+// "uniform mat4 u_projTrans;\n"
+// "varying vec2 v_texCoords;\n"
+// "void main()\n"
+// "{\n"
+// "v_texCoords = a_texCoord0;\n"
+// "gl_Position = u_projTrans * a_position;\n"
+// "}\n"
+//     );
+// static const string defaultVertexShader(
+// "void main()\n"
+// "{\n"
+// "gl_FrontColor = gl_Color;\n"
+// "gl_Position = ftransform();\n"
+// "}\n"
+//     );
+
+static const string animationVertexShader(
 "#version 120\n"
 "attribute vec4 a_position;\n"
 "attribute vec2 a_texCoord0;\n"
 "uniform mat4 u_projTrans;\n"
+"uniform float[6*128] u_texFrames;\n"
 "varying vec2 v_texCoords;\n"
 "void main()\n"
 "{\n"
 "v_texCoords = a_texCoord0;\n"
 "gl_Position = u_projTrans * a_position;\n"
 "}\n"
-    );
+ );
+
 
 static const string defaultFragmentShader(
 "#version 120\n"
@@ -170,14 +192,34 @@ bool SpriteBatch::load(const string& json)
         sheet.frames[key] = frame;
     }
 
-    program.setVertexShader(defaultVertexShader);
+    program.setVertexShader(animationVertexShader);
     program.setFragmentShader(defaultFragmentShader);
 
     if( !program.compile() ) {
         return false;
     }
 
+    fillUniformFrames();
+
     return true;
+}
+
+void SpriteBatch::fillUniformFrames()
+{
+    uint16_t index = 0;
+    for( const auto &fp : sheet.frames) {
+        UniformFrame frame;
+
+        frame.tx = fp.second->textureRect.x;
+        frame.ty = fp.second->textureRect.y;
+        frame.tw = fp.second->textureRect.w + frame.tx;
+        frame.th = fp.second->textureRect.h + frame.ty;
+        frame.width = fp.second->size.w;
+        frame.height = fp.second->size.h;
+
+        texFrames.push_back(frame);
+        texMap[fp.first] = index++;
+    }
 }
 
 shared_ptr<Sprite> SpriteBatch::get(const string& name)
@@ -206,23 +248,22 @@ void SpriteBatch::render()
     glDisable(GL_TEXTURE_2D);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 #else
+    glBindBuffer(GL_ARRAY_BUFFER, vboID);
+    glEnable(GL_TEXTURE_2D);
+    texture->bind();
+    program.use();
+    program.setUniformMatrix("u_projTrans", transform);
+    glEnableVertexAttribArray(program.getAttribLocation("a_position"));
+    glEnableVertexAttribArray(program.getAttribLocation("a_texCoord0"));
+    glVertexAttribPointer(program.getAttribLocation("a_position"), 2, GL_FLOAT, GL_TRUE,
+                          sizeof(BatchVertex), 0 );
+    glVertexAttribPointer(program.getAttribLocation("a_texCoord0"),
+                          2, GL_FLOAT, GL_TRUE, sizeof(BatchVertex), (void*)8);
 
-		glBindBuffer(GL_ARRAY_BUFFER, vboID);
-		glEnable(GL_TEXTURE_2D);
-		texture->bind();
-		program.use();
-		program.setUniformMatrix("u_projTrans", transform);
-		glEnableVertexAttribArray(program.getAttribLocation("a_position"));
-		glEnableVertexAttribArray(program.getAttribLocation("a_texCoord0"));
-		glVertexAttribPointer(program.getAttribLocation("a_position"), 2, GL_FLOAT, GL_TRUE,
-													sizeof(BatchVertex), 0 );
-		glVertexAttribPointer(program.getAttribLocation("a_texCoord0"),
-													2, GL_FLOAT, GL_TRUE, sizeof(BatchVertex), (void*)8);
+    glDrawArrays(GL_TRIANGLES, 0, sprites.size());
 
-		glDrawArrays(GL_TRIANGLES, 0, sprites.size());
-
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
 #endif
 }
 
