@@ -38,10 +38,10 @@ struct SpriteSheet
 
 struct UniformFrame
 {
-    float tx;
-    float ty;
-    float tw;
-    float th;
+    float top_left[2];
+    float top_right[2];
+    float bottom_right[2];
+    float bottom_left[2];
     float width;
     float height;
 };
@@ -50,8 +50,7 @@ struct BatchVertex
 {
     float x;
     float y;
-    float u;
-    float v;
+    float corner;
 };
 
 class SpriteBatch

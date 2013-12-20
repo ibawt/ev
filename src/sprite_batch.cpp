@@ -33,13 +33,15 @@ namespace evil {
 static const string animationVertexShader(
 "#version 120\n"
 "attribute vec4 a_position;\n"
-"attribute vec2 a_texCoord0;\n"
+"attribute float corner;\n"
 "uniform mat4 u_projTrans;\n"
-"uniform float[6*128] u_texFrames;\n"
+//"uniform float u_texFrames[6*32];\n"
 "varying vec2 v_texCoords;\n"
 "void main()\n"
 "{\n"
-"v_texCoords = a_texCoord0;\n"
+"v_texCoords = a_position;\n"
+//"v_texCoords.x = u_texFrames[0];\n"
+//"v_texCoords.y = u_texFrames[1];\n"
 "gl_Position = u_projTrans * a_position;\n"
 "}\n"
  );
@@ -51,7 +53,7 @@ static const string defaultFragmentShader(
 "uniform sampler2D u_texture;\n"
 "void main()\n"
 "{\n"
-"gl_FragColor = texture2D(u_texture, v_texCoords);\n"
+"gl_FragColor = vec4(1,1,1,1);\n"//texture2D(u_texture, v_texCoords);\n"
 "}\n");
 
 SpriteBatch::SpriteBatch()
@@ -136,6 +138,7 @@ void SpriteBatch::setTexture( shared_ptr<Texture>& t )
         frame.second->textureRect.w /= t->getWidth();
         frame.second->textureRect.h /= t->getHeight();
     }
+    fillUniformFrames();
 }
 
 bool SpriteBatch::load(const string& json)
@@ -199,7 +202,6 @@ bool SpriteBatch::load(const string& json)
         return false;
     }
 
-    fillUniformFrames();
 
     return true;
 }
@@ -210,10 +212,23 @@ void SpriteBatch::fillUniformFrames()
     for( const auto &fp : sheet.frames) {
         UniformFrame frame;
 
-        frame.tx = fp.second->textureRect.x;
-        frame.ty = fp.second->textureRect.y;
-        frame.tw = fp.second->textureRect.w + frame.tx;
-        frame.th = fp.second->textureRect.h + frame.ty;
+        auto tx = fp.second->textureRect.x;
+        auto ty = fp.second->textureRect.y;
+        auto tw = fp.second->textureRect.w + tx;
+        auto th = fp.second->textureRect.h + ty;
+
+        frame.top_left[0] = tx;
+        frame.top_left[1] = ty;
+
+        frame.top_right[0] = tw;
+        frame.top_right[1] = ty;
+
+        frame.bottom_right[0] = tw;
+        frame.bottom_right[1] = th;
+
+        frame.bottom_left[0] = tx;
+        frame.bottom_left[1] = th;
+
         frame.width = fp.second->size.w;
         frame.height = fp.second->size.h;
 
@@ -254,17 +269,21 @@ void SpriteBatch::render()
     program.use();
     program.setUniformMatrix("u_projTrans", transform);
     glEnableVertexAttribArray(program.getAttribLocation("a_position"));
-    glEnableVertexAttribArray(program.getAttribLocation("a_texCoord0"));
+    glEnableVertexAttribArray(program.getAttribLocation("corner"));
     glVertexAttribPointer(program.getAttribLocation("a_position"), 2, GL_FLOAT, GL_TRUE,
                           sizeof(BatchVertex), 0 );
-    glVertexAttribPointer(program.getAttribLocation("a_texCoord0"),
-                          2, GL_FLOAT, GL_TRUE, sizeof(BatchVertex), (void*)8);
+    glVertexAttribPointer(program.getAttribLocation("corner"),
+                          1, GL_FLOAT, GL_TRUE, sizeof(BatchVertex), (void*)8);
 
+    glUniform1fv(program.getAttribLocation("u_texFrames"), sizeof(UniformFrame)*texFrames.size(), &texFrames[0].top_left[0]);
+
+    float * p = &texFrames[0].top_left[0];
     glDrawArrays(GL_TRIANGLES, 0, sprites.size());
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
 #endif
+    CHECK_GL();
 }
 
 }

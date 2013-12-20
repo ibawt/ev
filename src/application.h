@@ -29,9 +29,9 @@ public:
     bool initSDL();
 
 private:
-		float         fps;
     uint32_t      width;
     uint32_t      height;
+    float         fps;
     SDL_Window   *window;
     SDL_GLContext context;
 };

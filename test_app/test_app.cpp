@@ -38,9 +38,9 @@ float get_random(float min, float max) {
 bool TestApplication::init()
 {
     texture = make_shared<Texture>();
-    texture->load("../test_app/bats.png");
+    texture->load("/Users/ianquick/evil/evil/test_app/bats.png");
 
-    spriteBatch.load("../test_app/bats.json");
+    spriteBatch.load("/Users/ianquick/evil/evil/test_app/bats.json");
     spriteBatch.setTexture(texture);
 
     for( int i = 0 ; i < 5000; ++i ) {
@@ -52,6 +52,7 @@ bool TestApplication::init()
         p->addFrame( spriteBatch.getSheet().frames["bats_fly1.png"]);
         p->addFrame( spriteBatch.getSheet().frames["bats_fly2.png"]);
         p->addFrame( spriteBatch.getSheet().frames["bats_fly3.png"]);
+        p->setFrameIndex(static_cast<unsigned>(get_random(0, p->getNumFrames())));
         p->setDelay(0.2f);
         s->setAnimation(p);
         sprites.push_back(s);
@@ -84,6 +85,7 @@ void TestApplication::update(float dt)
     for(auto& s: sprites) {
         s->update(dt);
     }
+//    spriteBatch.update(dt);
 }
 
 int main(int argc, char **argv)
