@@ -52,6 +52,10 @@ struct BatchVertex
     float y;
     float u;
     float v;
+    float rotation;
+    float scale;
+    float tx;
+    float ty;
 };
 
 class SpriteBatch
@@ -74,9 +78,10 @@ public:
         transform = t;
     }
 
+    void update(const float dt);
 private:
-    void fillUniformFrames();
-    float time;
+    void fillVertexBuffer();
+
     Matrix4 transform;
     ShaderProgram program;
     GLuint vboID;
@@ -84,9 +89,6 @@ private:
     std::vector<BatchVertex> verts;
     SpriteSheet sheet;
     std::shared_ptr<Texture> texture;
-
-    std::vector<UniformFrame> texFrames;
-    std::map<std::string, uint16_t> texMap;
 };
 
 

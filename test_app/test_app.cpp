@@ -22,6 +22,7 @@ public:
     bool init();
     void render();
     void update(float dt);
+    void keyEvent(const SDL_KeyboardEvent& e );
 private:
     shared_ptr<Texture> texture;
     SpriteBatch spriteBatch;
@@ -35,6 +36,13 @@ float get_random(float min, float max) {
     return (max - min +1)*scaled + min;
 }
 
+
+void TestApplication::keyEvent(const SDL_KeyboardEvent& e )
+{
+    sprites[0]->setPosition(get_random(0,getWidth()), get_random(0,getHeight()));
+    log("position is now: %.2f, %.2f", sprites[0]->getPosition().x, sprites[0]->getPosition().y);
+}
+
 bool TestApplication::init()
 {
     texture = make_shared<Texture>();
@@ -43,17 +51,19 @@ bool TestApplication::init()
     spriteBatch.load("../test_app/bats.json");
     spriteBatch.setTexture(texture);
 
-    for( int i = 0 ; i < 5000; ++i ) {
+    for( int i = 0 ; i < 1; ++i ) {
         auto s = make_shared<Sprite>();
         s->setPosition(get_random(0, getWidth()), get_random(0,getHeight()));
-        //       s->setPosition(0, 0);
         auto p = make_unique<Animation>();
 
         p->addFrame( spriteBatch.getSheet().frames["bats_fly1.png"]);
         p->addFrame( spriteBatch.getSheet().frames["bats_fly2.png"]);
         p->addFrame( spriteBatch.getSheet().frames["bats_fly3.png"]);
+        s->setPosition(400, 300);
         p->setDelay(0.2f);
         s->setAnimation(p);
+        s->setRotation(get_random( 0.0f, 2*M_PI));
+        s->setScale( get_random( 0.2f, 3.0f));
         sprites.push_back(s);
         spriteBatch.addSprite(s);
     }
@@ -84,6 +94,7 @@ void TestApplication::update(float dt)
     for(auto& s: sprites) {
         s->update(dt);
     }
+    spriteBatch.update(dt);
 }
 
 int main(int argc, char **argv)

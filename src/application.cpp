@@ -4,7 +4,7 @@
 namespace evil {
 
 Application::Application(uint32_t w, uint32_t h) :
-		width(w), height(h), window(nullptr), fps(0.0f)
+    width(w), height(h), window(nullptr), fps(0.0f)
 {
 }
 
@@ -27,9 +27,6 @@ bool Application::initSDL()
         error("SDL init failed: %s", SDL_GetError());
         return false;
     }
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1);
-        //SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     window = SDL_CreateWindow( "Evil", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                                width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 
@@ -61,17 +58,6 @@ bool Application::initGL()
 {
     GLenum error = GL_NO_ERROR;
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, width, height, 1, -1, 1 );
-    CHECK_GL();
-
-    glDisable(GL_DEPTH_TEST);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    CHECK_GL();
-
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f);
     CHECK_GL();
 
@@ -82,7 +68,7 @@ bool Application::initGL()
         evil::error("error initializing glew: %d", glewGetErrorString(error));
         return false;
     }
-
+    log("Using OpenGL: %s", glGetString( GL_VERSION ) );
     log("using GLEW: %s", glewGetString(GLEW_VERSION));
 
     return true;
@@ -115,6 +101,11 @@ int Application::main()
         SDL_Event e;
         while( SDL_PollEvent(&e) ) {
             switch( e.type ) {
+            case SDL_KEYDOWN:
+                break;
+            case SDL_KEYUP:
+                keyEvent( e.key );
+                break;
             case SDL_QUIT:
                 running = false;
                 break;
@@ -130,7 +121,7 @@ int Application::main()
 
         if( (numFrames % 10 ) == 0 ) {
             fps = numFrames / (( SDL_GetTicks() - startTime) / 1000.0f);
-            log("fps: %.2f", fps);
+            //log("fps: %.2f", fps);
         }
     }
     SDL_StopTextInput();

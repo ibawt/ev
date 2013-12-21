@@ -18,6 +18,26 @@ static const int M31 = 7;// 13;
 static const int M32 = 11;// 14;
 static const int M33 = 15;// 15;
 
+void Matrix4::setIdentity()
+{
+    m[M00] = 1.0f;
+    m[M10] = 0;
+    m[M20] = 0;
+    m[M30] = 0;
+    m[M01] = 0;
+    m[M11] = 1.0f;
+    m[M21] = 0;
+    m[M31] = 0;
+    m[M02] = 0;
+    m[M12] = 0;
+    m[M22] = 1.0f;
+    m[M32] = 0;
+    m[M03] = 0;
+    m[M13] = 0;
+    m[M23] = 0;
+    m[M33] = 1.0f;
+}
+
 void Matrix4::setOrtho(float left, float right, float bottom,
                        float top, float near, float far)
 {

@@ -16,8 +16,7 @@ public:
     virtual void render() = 0;
     virtual void update(const float) = 0;
 
-    virtual void keyEvent(int keycode) { }
-    virtual void mouseEvent(int x, int y, int button) { }
+    virtual void keyEvent(const SDL_KeyboardEvent& e) { }
 
     uint32_t getWidth() const { return width; }
     uint32_t getHeight() const { return height; }
@@ -29,10 +28,10 @@ public:
     bool initSDL();
 
 private:
-		float         fps;
     uint32_t      width;
     uint32_t      height;
     SDL_Window   *window;
+    float         fps;
     SDL_GLContext context;
 };
 }

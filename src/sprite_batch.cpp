@@ -34,13 +34,18 @@ static const string animationVertexShader(
 "#version 120\n"
 "attribute vec4 a_position;\n"
 "attribute vec2 a_texCoord0;\n"
+"attribute vec2 transform;\n"
+"attribute vec2 translation;\n"
 "uniform mat4 u_projTrans;\n"
-"uniform float[6*128] u_texFrames;\n"
 "varying vec2 v_texCoords;\n"
 "void main()\n"
 "{\n"
+"mat4 t = mat4( cos( transform.x ),      -sin( transform.x ), 0.0, 0.0,\n"
+"                    sin( transform.x ),  cos( transform.x ), 0.0, 0.0,\n"
+"                    0.0,                 0.0,                1.0, 0.0,\n"
+"                    translation.x,       translation.y,      0.0, 1.0 );\n"
 "v_texCoords = a_texCoord0;\n"
-"gl_Position = u_projTrans * a_position;\n"
+"gl_Position =  u_projTrans * t * a_position;\n"
 "}\n"
  );
 
@@ -122,8 +127,21 @@ void SpriteBatch::generateBuffer()
 
     glGenBuffers( 1, &vboID);
     glBindBuffer(GL_ARRAY_BUFFER, vboID);
-
     glBufferData(GL_ARRAY_BUFFER, verts.size()*sizeof(BatchVertex), &verts[0], GL_STATIC_DRAW);
+}
+
+void SpriteBatch::fillVertexBuffer()
+{
+    glBindBuffer(GL_ARRAY_BUFFER, vboID);
+    BatchVertex* bv = (BatchVertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY );
+
+    if( bv ) {
+        for(auto &s :sprites ) {
+            s->fillBuffer(bv);
+            bv += 6; // 6 per
+        }
+        glUnmapBuffer(GL_ARRAY_BUFFER);
+    }
 }
 
 void SpriteBatch::setTexture( shared_ptr<Texture>& t )
@@ -199,27 +217,7 @@ bool SpriteBatch::load(const string& json)
         return false;
     }
 
-    fillUniformFrames();
-
     return true;
-}
-
-void SpriteBatch::fillUniformFrames()
-{
-    uint16_t index = 0;
-    for( const auto &fp : sheet.frames) {
-        UniformFrame frame;
-
-        frame.tx = fp.second->textureRect.x;
-        frame.ty = fp.second->textureRect.y;
-        frame.tw = fp.second->textureRect.w + frame.tx;
-        frame.th = fp.second->textureRect.h + frame.ty;
-        frame.width = fp.second->size.w;
-        frame.height = fp.second->size.h;
-
-        texFrames.push_back(frame);
-        texMap[fp.first] = index++;
-    }
 }
 
 shared_ptr<Sprite> SpriteBatch::get(const string& name)
@@ -232,6 +230,11 @@ shared_ptr<Sprite> SpriteBatch::get(const string& name)
     return s;
 }
 
+void SpriteBatch::update(const float dt)
+{
+    fillVertexBuffer();
+}
+
 void SpriteBatch::render()
 {
 #ifdef NO_SHADERS
@@ -242,7 +245,7 @@ void SpriteBatch::render()
     glEnableClientState (GL_TEXTURE_COORD_ARRAY);
     glVertexPointer(2, GL_FLOAT,  sizeof(BatchVertex), 0);
     glTexCoordPointer(2, GL_FLOAT, sizeof(BatchVertex), (void*)8 );
-    glDrawArrays(GL_QUADS, 0, sprites.size()*4);
+    glDrawArrays(GL_TRIANGLES, 0, sprites.size()*6);
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisable(GL_TEXTURE_2D);
@@ -255,15 +258,25 @@ void SpriteBatch::render()
     program.setUniformMatrix("u_projTrans", transform);
     glEnableVertexAttribArray(program.getAttribLocation("a_position"));
     glEnableVertexAttribArray(program.getAttribLocation("a_texCoord0"));
+    glEnableVertexAttribArray(program.getAttribLocation("transform"));
+    glEnableVertexAttribArray(program.getAttribLocation("translation"));
+
     glVertexAttribPointer(program.getAttribLocation("a_position"), 2, GL_FLOAT, GL_TRUE,
                           sizeof(BatchVertex), 0 );
     glVertexAttribPointer(program.getAttribLocation("a_texCoord0"),
                           2, GL_FLOAT, GL_TRUE, sizeof(BatchVertex), (void*)8);
+    glVertexAttribPointer(program.getAttribLocation("transform"), 2, GL_FLOAT, GL_TRUE,
+                          sizeof(BatchVertex), (void*)16);
 
-    glDrawArrays(GL_TRIANGLES, 0, sprites.size());
+    glVertexAttribPointer(program.getAttribLocation("translation"), 2, GL_FLOAT, GL_TRUE,
+                          sizeof(BatchVertex), (void*)24);
+
+    glDrawArrays(GL_TRIANGLES, 0, sprites.size()*6);
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
+    glDisableVertexAttribArray(3);
 #endif
 }
 
