@@ -12,6 +12,7 @@
 #include <memory>
 #include <string>
 #include <map>
+#include <array>
 
 namespace evil {
 
@@ -41,7 +42,7 @@ struct SpriteFrame
     bool rotated;
     Rect colorRect;
 
-    BatchVertex verts[6];
+    std::array<BatchVertex,6> verts;
 };
 struct SpriteSheet
 {
@@ -72,6 +73,7 @@ public:
 
     void update(const float dt);
 private:
+    void fillBuffer(std::shared_ptr<SpriteFrame>& s);
     void fillVertexBuffer();
 
     Matrix4 transform;

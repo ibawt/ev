@@ -133,6 +133,44 @@ void SpriteBatch::setTexture( shared_ptr<Texture>& t )
         frame.second->textureRect.y /= t->getHeight();
         frame.second->textureRect.w /= t->getWidth();
         frame.second->textureRect.h /= t->getHeight();
+        fillBuffer(frame.second);
+    }
+}
+void SpriteBatch::fillBuffer(shared_ptr<SpriteFrame>& frame)
+{
+    auto textureRect = frame->textureRect;
+
+    auto bv = &frame->verts[0];
+
+    bv->x = -frame->size.w/2;
+    bv->y = -frame->size.h/2;
+    bv->u = textureRect.x;
+    bv->v = textureRect.y;
+
+    bv[1].x = frame->size.w/2;
+    bv[1].y = -frame->size.h/2;
+    bv[1].u = textureRect.x + textureRect.w;
+    bv[1].v = textureRect.y;
+
+    bv[2].x = frame->size.w/2;
+    bv[2].y = frame->size.h/2;
+    bv[2].u = textureRect.x + textureRect.w;
+    bv[2].v = textureRect.y + textureRect.h;
+
+    bv[3] = bv[2];
+
+    bv[4].x = -frame->size.w/2;
+    bv[4].y = frame->size.h/2;
+    bv[4].u = textureRect.x;
+    bv[4].v = textureRect.y + textureRect.h;
+
+    bv[5] = bv[0];
+
+    for( int i = 0 ; i < 6 ; ++i ) {
+        bv[i].scale = 1.0f;
+        bv[i].rotation = 0.0f;
+        bv[i].tx = 0.0f;
+        bv[i].ty = 0.0f;
     }
 }
 

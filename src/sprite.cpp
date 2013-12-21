@@ -22,33 +22,13 @@ void Sprite::fillBuffer(BatchVertex* bv)
     assert(bv != nullptr);
 
     auto frame = getCurrentFrame();
-    auto textureRect = frame->textureRect;
-
-    bv->x = -frame->size.w/2;
-    bv->y = -frame->size.h/2;
-    bv->u = textureRect.x;
-    bv->v = textureRect.y;
-
-    bv[1].x = frame->size.w/2;
-    bv[1].y = -frame->size.h/2;
-    bv[1].u = textureRect.x + textureRect.w;
-    bv[1].v = textureRect.y;
-
-    bv[2].x = frame->size.w/2;
-    bv[2].y = frame->size.h/2;
-    bv[2].u = textureRect.x + textureRect.w;
-    bv[2].v = textureRect.y + textureRect.h;
-
-    bv[3] = bv[2];
-
-    bv[4].x = -frame->size.w/2;
-    bv[4].y = frame->size.h/2;
-    bv[4].u = textureRect.x;
-    bv[4].v = textureRect.y + textureRect.h;
-
-    bv[5] = bv[0];
 
     for( int i = 0 ; i < 6 ; ++i ) {
+        bv[i].x = frame->verts[i].x;
+        bv[i].y = frame->verts[i].y;
+        bv[i].u = frame->verts[i].u;
+        bv[i].v = frame->verts[i].v;
+
         bv[i].scale = scale;
         bv[i].rotation = rotation;
         bv[i].tx = position.x;

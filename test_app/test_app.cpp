@@ -52,7 +52,7 @@ bool TestApplication::init()
     spriteBatch.load("/Users/ianquick/evil/evil/test_app/bats.json");
     spriteBatch.setTexture(texture);
 
-    for( int i = 0 ; i < 3; ++i ) {
+    for( int i = 0 ; i < 300; ++i ) {
         auto s = make_shared<Sprite>();
         s->setPosition(get_random(0, getWidth()), get_random(0,getHeight()));
         auto p = make_unique<Animation>();
