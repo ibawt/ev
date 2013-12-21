@@ -17,34 +17,6 @@ namespace evil {
 
 class Sprite;
 
-struct SpriteFrame
-{
-    std::string key;
-    std::vector<std::string> aliases;
-    Rect sourceSize;
-    Rect size;
-    bool trimmed;
-    Rect textureRect;
-    Vector2 offset;
-    bool rotated;
-    Rect colorRect;
-};
-
-struct SpriteSheet
-{
-    std::map<std::string,std::shared_ptr<SpriteFrame>> frames;
-    std::map<std::string, std::string> metadata;
-};
-
-struct UniformFrame
-{
-    float tx;
-    float ty;
-    float tw;
-    float th;
-    float width;
-    float height;
-};
 
 struct BatchVertex
 {
@@ -57,6 +29,26 @@ struct BatchVertex
     float tx;
     float ty;
 };
+struct SpriteFrame
+{
+    std::string key;
+    std::vector<std::string> aliases;
+    Rect sourceSize;
+    Rect size;
+    bool trimmed;
+    Rect textureRect;
+    Vector2 offset;
+    bool rotated;
+    Rect colorRect;
+
+    BatchVertex verts[6];
+};
+struct SpriteSheet
+{
+    std::map<std::string,std::shared_ptr<SpriteFrame>> frames;
+    std::map<std::string, std::string> metadata;
+};
+
 
 class SpriteBatch
 {

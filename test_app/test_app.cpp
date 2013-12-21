@@ -47,12 +47,12 @@ void TestApplication::keyEvent(const SDL_KeyboardEvent& e )
 bool TestApplication::init()
 {
     texture = make_shared<Texture>();
-    texture->load("../test_app/bats.png");
+    texture->load("/Users/ianquick/evil/evil/test_app/bats.png");
 
-    spriteBatch.load("../test_app/bats.json");
+    spriteBatch.load("/Users/ianquick/evil/evil/test_app/bats.json");
     spriteBatch.setTexture(texture);
 
-    for( int i = 0 ; i < 1; ++i ) {
+    for( int i = 0 ; i < 3; ++i ) {
         auto s = make_shared<Sprite>();
         s->setPosition(get_random(0, getWidth()), get_random(0,getHeight()));
         auto p = make_unique<Animation>();
@@ -60,8 +60,8 @@ bool TestApplication::init()
         p->addFrame( spriteBatch.getSheet().frames["bats_fly1.png"]);
         p->addFrame( spriteBatch.getSheet().frames["bats_fly2.png"]);
         p->addFrame( spriteBatch.getSheet().frames["bats_fly3.png"]);
-        s->setPosition(400, 300);
-        p->setDelay(0.2f);
+        //s->setPosition(400, 300);
+        p->setDelay(0);
         s->setAnimation(p);
         s->setRotation(get_random( 0.0f, 2*M_PI));
         s->setScale( get_random( 0.2f, 3.0f));
