@@ -81,6 +81,5 @@ void Sprite::render()
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
-
 }
 }

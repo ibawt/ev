@@ -39,8 +39,9 @@ float get_random(float min, float max) {
 
 void TestApplication::keyEvent(const SDL_KeyboardEvent& e )
 {
-    sprites[0]->setPosition(get_random(0,getWidth()), get_random(0,getHeight()));
-    log("position is now: %.2f, %.2f", sprites[0]->getPosition().x, sprites[0]->getPosition().y);
+    sprites[0]->setScale( sprites[0]->getScale() + 0.1 );
+    // sprites[0]->setPosition(get_random(0,getWidth()), get_random(0,getHeight()));
+    //log("position is now: %.2f, %.2f", sprites[0]->getPosition().x, sprites[0]->getPosition().y);
 }
 
 bool TestApplication::init()

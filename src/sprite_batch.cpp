@@ -10,26 +10,6 @@ using namespace std;
 
 namespace evil {
 
-// static const string defaultVertexShader(
-// "#version 120\n"
-// "attribute vec4 a_position;\n"
-// "attribute vec2 a_texCoord0;\n"
-// "uniform mat4 u_projTrans;\n"
-// "varying vec2 v_texCoords;\n"
-// "void main()\n"
-// "{\n"
-// "v_texCoords = a_texCoord0;\n"
-// "gl_Position = u_projTrans * a_position;\n"
-// "}\n"
-//     );
-// static const string defaultVertexShader(
-// "void main()\n"
-// "{\n"
-// "gl_FrontColor = gl_Color;\n"
-// "gl_Position = ftransform();\n"
-// "}\n"
-//     );
-
 static const string animationVertexShader(
 "#version 120\n"
 "attribute vec4 a_position;\n"
@@ -45,7 +25,7 @@ static const string animationVertexShader(
 "                    0.0,                 0.0,                1.0, 0.0,\n"
 "                    translation.x,       translation.y,      0.0, 1.0 );\n"
 "v_texCoords = a_texCoord0;\n"
-"gl_Position =  u_projTrans * t * a_position;\n"
+"gl_Position =  u_projTrans * t * vec4(transform.y * a_position.x, transform.y *a_position.y,0.0,1.0) ;\n"
 "}\n"
  );
 
