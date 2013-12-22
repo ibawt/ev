@@ -7,6 +7,7 @@
 #include "shader.h"
 #include "evil.h"
 #include "matrix4.h"
+#include "vertex_buffer.h"
 
 #include <vector>
 #include <memory>
@@ -74,6 +75,8 @@ public:
 private:
     void fillBuffer(std::shared_ptr<SpriteFrame>& s);
     void fillVertexBuffer();
+
+    VertexBuffer<BatchVertex> vertexBuffer;
 
     Matrix4 transform;
     ShaderProgram program;
