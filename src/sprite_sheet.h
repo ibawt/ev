@@ -49,6 +49,7 @@ public:
     std::shared_ptr<SpriteFrame> getFrame(const std::string& name)  {
         return frames[name];
     }
+    size_t getNumFrames() const { return frames.size(); }
 private:
     void fillBuffer(std::shared_ptr<SpriteFrame> frame);
     void normalizeTextureRect(Rect&r);

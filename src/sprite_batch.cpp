@@ -65,14 +65,6 @@ void SpriteBatch::fillVertexBuffer()
 void SpriteBatch::setTexture( shared_ptr<Texture>& t )
 {
     texture = t;
-
-    // for( auto& frame : sheet.frames ) {
-    //     frame.second->textureRect.x /= t->getWidth();
-    //     frame.second->textureRect.y /= t->getHeight();
-    //     frame.second->textureRect.w /= t->getWidth();
-    //     frame.second->textureRect.h /= t->getHeight();
-    //     fillBuffer(frame.second);
-    // }
 }
 
 bool SpriteBatch::load(const string& json)

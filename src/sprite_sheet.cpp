@@ -20,7 +20,6 @@ static void dump(json_t* t)
     }
 }
 
-
 void SpriteSheet::fillBuffer(shared_ptr<SpriteFrame> frame)
 {
     auto textureRect = frame->textureRect;
@@ -81,7 +80,6 @@ bool SpriteSheet::parseRect(json_t *obj, const string& key, Rect& r)
     return false;
 }
 
-
 bool SpriteSheet::parseSize(json_t *obj, const string& key, Rect& r)
 {
     if( obj ) {
@@ -128,8 +126,6 @@ bool SpriteSheet::load(const string& name)
 
     auto dl = MakeScopeExit([&root]() { json_decref(root); root = nullptr; });
 
-    dump(root);
-
     json_t* json_frames = json_object_get(root, "frames");
 
     if( !json_frames ) {
@@ -174,6 +170,5 @@ void SpriteSheet::normalizeTextureRect(Rect&r)
     r.w /= textureSize.w;
     r.h /= textureSize.h;
 }
-
 
 }
