@@ -107,7 +107,7 @@ void SpriteBatch::generateBuffer()
 
     glGenBuffers( 1, &vboID);
     glBindBuffer(GL_ARRAY_BUFFER, vboID);
-    glBufferData(GL_ARRAY_BUFFER, verts.size()*sizeof(BatchVertex), &verts[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, verts.size()*sizeof(BatchVertex), &verts[0], GL_DYNAMIC_DRAW);
 }
 
 void SpriteBatch::fillVertexBuffer()
@@ -280,14 +280,14 @@ void SpriteBatch::render()
     glEnableVertexAttribArray(program.getAttribLocation("translation"));
 
     glVertexAttribPointer(program.getAttribLocation("a_position"), 2, GL_FLOAT, GL_TRUE,
-                          sizeof(BatchVertex), 0 );
+                          sizeof(BatchVertex), (void*)offsetof(BatchVertex,x) );
     glVertexAttribPointer(program.getAttribLocation("a_texCoord0"),
-                          2, GL_FLOAT, GL_TRUE, sizeof(BatchVertex), (void*)8);
+                          2, GL_FLOAT, GL_TRUE, sizeof(BatchVertex), (void*)offsetof(BatchVertex,u));
     glVertexAttribPointer(program.getAttribLocation("transform"), 2, GL_FLOAT, GL_TRUE,
-                          sizeof(BatchVertex), (void*)16);
+                          sizeof(BatchVertex), (void*)offsetof(BatchVertex,rotation));
 
     glVertexAttribPointer(program.getAttribLocation("translation"), 2, GL_FLOAT, GL_TRUE,
-                          sizeof(BatchVertex), (void*)24);
+                          sizeof(BatchVertex), (void*)offsetof(BatchVertex, tx));
 
     glDrawArrays(GL_TRIANGLES, 0, sprites.size()*6);
 

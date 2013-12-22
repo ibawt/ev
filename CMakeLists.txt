@@ -18,6 +18,7 @@ SET(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
 add_subdirectory( gtest )
 add_subdirectory( vendor/jansson)
+add_subdirectory( vendor/Box2D )
 enable_testing()
 
 find_package(OpenGL)
@@ -64,6 +65,7 @@ target_link_libraries( evil
   ${SDL2_LIBRARY}
   ${SDL2_IMAGE_LIBRARY}
   ${OPENGL_LIBRARY}
+  Box2D
   jansson
   ${SDL_MAIN}
 )

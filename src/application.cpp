@@ -121,7 +121,7 @@ int Application::main()
 
         if( (numFrames % 10 ) == 0 ) {
             fps = numFrames / (( SDL_GetTicks() - startTime) / 1000.0f);
-            //log("fps: %.2f", fps);
+            log("fps: %.2f", fps);
         }
     }
     SDL_StopTextInput();
