@@ -12,7 +12,7 @@ namespace evil {
 
 static const string animationVertexShader(
 "#version 120\n"
-"attribute vec4 a_position;\n"
+"attribute vec2 a_position;\n"
 "attribute vec2 a_texCoord0;\n"
 "attribute vec2 transform;\n"
 "attribute vec2 translation;\n"

@@ -8,8 +8,6 @@ void Sprite::update(const float dt)
 {
     if( animation )
         animation->update(dt);
-
-    rotation += 0.01f;
 }
 
 const shared_ptr<SpriteFrame>& Sprite::getCurrentFrame() const

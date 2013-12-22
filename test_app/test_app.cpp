@@ -36,7 +36,6 @@ float get_random(float min, float max) {
     return (max - min +1)*scaled + min;
 }
 
-
 void TestApplication::keyEvent(const SDL_KeyboardEvent& e )
 {
     sprites[0]->setScale( sprites[0]->getScale() + 0.1 );
@@ -58,7 +57,6 @@ bool TestApplication::init()
         p->addFrame( spriteBatch.getSheet().frames["bats_fly1.png"]);
         p->addFrame( spriteBatch.getSheet().frames["bats_fly2.png"]);
         p->addFrame( spriteBatch.getSheet().frames["bats_fly3.png"]);
-        //s->setPosition(400, 300);
         p->setDelay(0);
         s->setAnimation(p);
         s->setRotation(get_random( 0.0f, 2*M_PI));

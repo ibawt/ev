@@ -50,7 +50,6 @@ struct SpriteSheet
     std::map<std::string, std::string> metadata;
 };
 
-
 class SpriteBatch
 {
 public:
