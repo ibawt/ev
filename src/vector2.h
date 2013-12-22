@@ -1,6 +1,8 @@
 #ifndef EV_VECTOR2_H_
 #define EV_VECTOR2_H_
 
+#include <math.h>
+
 namespace evil {
 
 struct Vector2

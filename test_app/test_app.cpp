@@ -1,13 +1,14 @@
+#include <time.h>
+#include <stdlib.h>
+#include <memory>
+#include <vector>
+
 #include "evil.h"
 #include "application.h"
 #include "texture.h"
 #include "sprite_batch.h"
 #include "sprite.h"
 #include "utils.h"
-#include <time.h>
-#include <stdlib.h>
-#include <memory>
-#include <vector>
 
 using namespace evil;
 using namespace std;
@@ -44,9 +45,12 @@ void TestApplication::keyEvent(const SDL_KeyboardEvent& e )
 bool TestApplication::init()
 {
     texture = make_shared<Texture>();
-    texture->load("/Users/ianquick/evil/evil/test_app/bats.png");
+    if( !texture->load("/Users/ianquick/evil/evil/test_app/bats.png") )
+        return false;
 
-    spriteBatch.load("/Users/ianquick/evil/evil/test_app/bats.json");
+    if( !spriteBatch.load("/Users/ianquick/evil/evil/test_app/bats.json") )
+        return false;
+
     spriteBatch.setTexture(texture);
 
     for( int i = 0 ; i < 300; ++i ) {
@@ -54,9 +58,9 @@ bool TestApplication::init()
         s->setPosition(get_random(0, getWidth()), get_random(0,getHeight()));
         auto p = make_unique<Animation>();
 
-        p->addFrame( spriteBatch.getSheet().frames["bats_fly1.png"]);
-        p->addFrame( spriteBatch.getSheet().frames["bats_fly2.png"]);
-        p->addFrame( spriteBatch.getSheet().frames["bats_fly3.png"]);
+        p->addFrame( spriteBatch.getSheet().getFrame("bats_fly1.png"));
+        p->addFrame( spriteBatch.getSheet().getFrame("bats_fly2.png"));
+        p->addFrame( spriteBatch.getSheet().getFrame("bats_fly3.png"));
         p->setDelay(0);
         s->setAnimation(p);
         s->setRotation(get_random( 0.0f, 2*M_PI));

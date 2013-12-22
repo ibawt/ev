@@ -2,6 +2,7 @@
 #define EV_VERTEX_BUFFER_H_
 
 #include <vector>
+#include <cassert>
 
 namespace evil {
 

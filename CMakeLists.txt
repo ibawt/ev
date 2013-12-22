@@ -12,6 +12,7 @@ set(
   src/animation.cpp
   src/shader.cpp
   src/matrix4.cpp
+  src/sprite_sheet.cpp
   vendor/glew/src/glew.c
 )
 SET(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")

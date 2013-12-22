@@ -8,6 +8,7 @@
 #include "evil.h"
 #include "matrix4.h"
 #include "vertex_buffer.h"
+#include "sprite_sheet.h"
 
 #include <vector>
 #include <memory>
@@ -18,38 +19,6 @@
 namespace evil {
 
 class Sprite;
-
-
-struct BatchVertex
-{
-    float x;
-    float y;
-    float u;
-    float v;
-    float rotation;
-    float scale;
-    float tx;
-    float ty;
-};
-struct SpriteFrame
-{
-    std::string key;
-    std::vector<std::string> aliases;
-    Rect sourceSize;
-    Rect size;
-    bool trimmed;
-    Rect textureRect;
-    Vector2 offset;
-    bool rotated;
-    Rect colorRect;
-
-    std::array<BatchVertex,6> verts;
-};
-struct SpriteSheet
-{
-    std::map<std::string,std::shared_ptr<SpriteFrame>> frames;
-    std::map<std::string, std::string> metadata;
-};
 
 class SpriteBatch
 {
@@ -80,10 +49,10 @@ private:
 
     Matrix4 transform;
     ShaderProgram program;
-    GLuint vboID;
+
     std::vector<std::shared_ptr<Sprite>> sprites;
-    std::vector<BatchVertex> verts;
     SpriteSheet sheet;
+
     std::shared_ptr<Texture> texture;
 };
 

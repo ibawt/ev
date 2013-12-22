@@ -1,3 +1,4 @@
+#include "animation.h"
 #include "evil.h"
 #include "sprite_batch.h"
 #include "sprite.h"
@@ -43,84 +44,21 @@ SpriteBatch::SpriteBatch()
 {
 }
 
-static bool parseRect(json_t *obj, const char *key, Rect& r)
-{
-    if( obj ) {
-        json_t *value = json_object_get(obj,key);
-        if( value && json_is_string(value)) {
-            const char *data = json_string_value(value);
-            int x,y,w,h;
-
-            if( sscanf(data, "{{%d, %d}, {%d, %d}}", &x, &y, &w, &h ) != 4 )
-                return false;
-
-            r.x = x;
-            r.y = y;
-            r.w = w;
-            r.h = h;
-
-            return true;
-        }
-    }
-    return false;
-}
-
-
-static bool parseSize(json_t *obj, const char *key, Rect& r)
-{
-    if( obj ) {
-        json_t *value = json_object_get(obj, key );
-        if( value && json_is_string(value) ) {
-            const char *data = json_string_value(value);
-            int w,h;
-            if (sscanf(data, "{%d, %d}", &w, &h) < 2 ) {
-                return false;
-            }
-            r.w = w;
-            r.h = h;
-
-            return true;
-        }
-    }
-    return false;
-}
-
-static bool parseVector(json_t *obj, const char *key, Vector2& v ) {
-    Rect r;
-    if( parseSize(obj, key, r) ) {
-        v.x = r.w;
-        v.y = r.h;
-
-        return true;
-    }
-    return false;
-}
-
 void SpriteBatch::generateBuffer()
 {
-    verts.clear();
-    vboID = 0;
-
-    for(auto& s : sprites ) {
-        s->fill(verts);
-    }
-
-    glGenBuffers( 1, &vboID);
-    glBindBuffer(GL_ARRAY_BUFFER, vboID);
-    glBufferData(GL_ARRAY_BUFFER, verts.size()*sizeof(BatchVertex), &verts[0], GL_DYNAMIC_DRAW);
+    vertexBuffer.resize( sprites.size() * Sprite::NUM_VERTS );
+    fillVertexBuffer();
 }
 
 void SpriteBatch::fillVertexBuffer()
 {
-    glBindBuffer(GL_ARRAY_BUFFER, vboID);
-    BatchVertex* bv = (BatchVertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY );
-
+    BatchVertex* bv = vertexBuffer.map();
     if( bv ) {
-        for(auto &s :sprites ) {
-            s->fillBuffer(bv);
-            bv += 6; // 6 per
+        for( const auto& sprite : sprites ) {
+            sprite->fillBuffer(bv);
+            bv += Sprite::NUM_VERTS;
         }
-        glUnmapBuffer(GL_ARRAY_BUFFER);
+        vertexBuffer.unmap();
     }
 }
 
@@ -128,105 +66,19 @@ void SpriteBatch::setTexture( shared_ptr<Texture>& t )
 {
     texture = t;
 
-    for( auto& frame : sheet.frames ) {
-        frame.second->textureRect.x /= t->getWidth();
-        frame.second->textureRect.y /= t->getHeight();
-        frame.second->textureRect.w /= t->getWidth();
-        frame.second->textureRect.h /= t->getHeight();
-        fillBuffer(frame.second);
-    }
-}
-void SpriteBatch::fillBuffer(shared_ptr<SpriteFrame>& frame)
-{
-    auto textureRect = frame->textureRect;
-
-    auto bv = &frame->verts[0];
-
-    bv->x = -frame->size.w/2;
-    bv->y = -frame->size.h/2;
-    bv->u = textureRect.x;
-    bv->v = textureRect.y;
-
-    bv[1].x = frame->size.w/2;
-    bv[1].y = -frame->size.h/2;
-    bv[1].u = textureRect.x + textureRect.w;
-    bv[1].v = textureRect.y;
-
-    bv[2].x = frame->size.w/2;
-    bv[2].y = frame->size.h/2;
-    bv[2].u = textureRect.x + textureRect.w;
-    bv[2].v = textureRect.y + textureRect.h;
-
-    bv[3] = bv[2];
-
-    bv[4].x = -frame->size.w/2;
-    bv[4].y = frame->size.h/2;
-    bv[4].u = textureRect.x;
-    bv[4].v = textureRect.y + textureRect.h;
-
-    bv[5] = bv[0];
-
-    for( int i = 0 ; i < 6 ; ++i ) {
-        bv[i].scale = 1.0f;
-        bv[i].rotation = 0.0f;
-        bv[i].tx = 0.0f;
-        bv[i].ty = 0.0f;
-    }
+    // for( auto& frame : sheet.frames ) {
+    //     frame.second->textureRect.x /= t->getWidth();
+    //     frame.second->textureRect.y /= t->getHeight();
+    //     frame.second->textureRect.w /= t->getWidth();
+    //     frame.second->textureRect.h /= t->getHeight();
+    //     fillBuffer(frame.second);
+    // }
 }
 
 bool SpriteBatch::load(const string& json)
 {
-    sheet.frames.clear();
-
-    json_t *root;
-    json_error_t err;
-
-    root = json_load_file( json.c_str(), 0, &err );
-
-    if( !root ) {
-        error("File didn't load");
+    if( !sheet.load(json) )
         return false;
-    }
-
-    auto dl = MakeScopeExit([&root]() { json_decref(root); root = nullptr; });
-
-#if 0
-    char *output = json_dumps(root, JSON_INDENT(1) );
-    if( !output ) {
-        json_decref(root);
-        return false;
-    }
-
-    printf("%s\n", output);
-    free( output );
-#endif
-
-    json_t* frames = json_object_get(root, "frames");
-
-    if( !frames ) {
-        json_decref(root);
-        return false;
-    }
-
-    const char *key;
-    json_t *value;
-
-    json_object_foreach( frames, key, value ) {
-        auto frame = make_shared<SpriteFrame>();
-
-        frame->key = string(key);
-        frame->trimmed = json_is_true(json_object_get(value, "spriteTrimmed"));
-        frame->rotated = json_is_true(json_object_get(value, "textureRotated"));
-
-        if( !(parseSize(value, "spriteSourceSize", frame->sourceSize ) &&
-              parseSize(value, "spriteSize", frame->size ) &&
-              parseRect(value, "textureRect", frame->textureRect) &&
-              parseVector(value, "spriteOffset", frame->offset) &&
-              parseRect(value, "spriteColorRect", frame->colorRect)) ) {
-            return false;
-        }
-        sheet.frames[key] = frame;
-    }
 
     program.setVertexShader(animationVertexShader);
     program.setFragmentShader(defaultFragmentShader);
@@ -242,7 +94,7 @@ shared_ptr<Sprite> SpriteBatch::get(const string& name)
 {
     auto s = make_shared<Sprite>();
 
-    auto& frame = sheet.frames[name];
+    auto frame = sheet.getFrame(name);
 
     s->setFrame(frame);
     return s;
@@ -269,7 +121,7 @@ void SpriteBatch::render()
     glDisable(GL_TEXTURE_2D);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 #else
-    glBindBuffer(GL_ARRAY_BUFFER, vboID);
+    vertexBuffer.bind();
     glEnable(GL_TEXTURE_2D);
     texture->bind();
     program.use();

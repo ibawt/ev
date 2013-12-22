@@ -29,7 +29,7 @@ void error(const char *fmt, ... )
 }
 void log(const char *fmt, ... )
 {
-    char buffer[512];
+    char buffer[512*10];
     va_list args;
     va_start(args, fmt);
     vsnprintf(buffer, sizeof(buffer), fmt, args);

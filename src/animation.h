@@ -5,30 +5,29 @@
 #include <vector>
 #include <assert.h>
 
-#include "evil.h"
-#include "sprite_batch.h"
-
 namespace evil {
+
+struct SpriteFrame;
 
 class Animation
 {
 public:
-	typedef enum  {
-		LOOP,
-		ONE_SHOT,
-		REVERSE
-	} Mode;
+  typedef enum  {
+    LOOP,
+    ONE_SHOT,
+    REVERSE
+  } Mode;
     Animation() : mode( LOOP), time(0.0f), delay(0.0f), index(0) { }
-		
-		unsigned getNumFrames() const {
-				return frames.size();
-		}
+
+    unsigned getNumFrames() const {
+        return frames.size();
+    }
 
     bool empty() const {
         return frames.empty();
     }
 
-    void addFrame(std::shared_ptr<SpriteFrame>& frame) {
+    void addFrame(std::shared_ptr<SpriteFrame> frame) {
         frames.push_back(frame);
     }
 
@@ -59,10 +58,10 @@ public:
         return index;
     }
 private:
-		Mode mode;
-		float time;
-		float delay;
-		unsigned index;
+    Mode mode;
+    float time;
+    float delay;
+    unsigned index;
     std::vector<std::shared_ptr<SpriteFrame>> frames;
 };
 

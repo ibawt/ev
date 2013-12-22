@@ -15,13 +15,6 @@
 #include "GL/glu.h"
 #endif
 
-#include "animation.h"
-#include "sprite.h"
-#include "shader.h"
-#include "sprite_batch.h"
-#include "texture.h"
-#include "utils.h"
-
 namespace evil {
 
 void log(const char *fmt, ...);

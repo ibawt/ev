@@ -1,4 +1,7 @@
 #include "evil.h"
+
+#include "shader.h"
+
 using namespace std;
 
 namespace evil {

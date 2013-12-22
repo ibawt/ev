@@ -1,4 +1,8 @@
+#include "evil.h"
+
 #include "sprite.h"
+#include "animation.h"
+#include "sprite_sheet.h"
 
 using namespace std;
 
@@ -19,13 +23,13 @@ void Sprite::fillBuffer(BatchVertex* bv)
 {
     assert(bv != nullptr);
 
-    auto frame = getCurrentFrame();
+    const auto& verts = getCurrentFrame()->verts;
 
-    for( int i = 0 ; i < 6 ; ++i ) {
-        bv[i].x = frame->verts[i].x;
-        bv[i].y = frame->verts[i].y;
-        bv[i].u = frame->verts[i].u;
-        bv[i].v = frame->verts[i].v;
+    for( int i = 0 ; i < NUM_VERTS ; ++i ) {
+        bv[i].x = verts[i].x;
+        bv[i].y = verts[i].y;
+        bv[i].u = verts[i].u;
+        bv[i].v = verts[i].v;
 
         bv[i].scale = scale;
         bv[i].rotation = rotation;
@@ -34,20 +38,9 @@ void Sprite::fillBuffer(BatchVertex* bv)
     }
 }
 
-void Sprite::fill(vector<BatchVertex>& verts)
-{
-    BatchVertex v[6];
-
-    fillBuffer(v);
-
-    for( int i = 0 ; i < 6 ; ++i ) {
-        verts.push_back(v[i]);
-    }
-}
-
 void Sprite::render()
 {
-    BatchVertex v[6];
+    BatchVertex v[NUM_VERTS];
 
     fillBuffer(v);
 

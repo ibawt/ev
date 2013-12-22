@@ -1,21 +1,22 @@
 #ifndef EV_SPRITE_H_
 #define EV_SPRITE_H_
 
-#include "evil.h"
-#include "animation.h"
-#include "sprite_batch.h"
+#include "vector2.h"
 
 #include <memory>
 
 namespace evil {
 
 class Animation;
+struct SpriteFrame;
+struct BatchVertex;
 
 class Sprite
 {
 public:
-    Sprite() : position(0.0f,0.0f),
-               rotation(0.0f),
+    static const uint32_t NUM_VERTS = 6;
+
+    Sprite() : rotation(0.0f),
                scale(1.0f)
         { }
 
@@ -43,7 +44,6 @@ public:
     void setAnimation(std::unique_ptr<Animation>& a) {
       animation = move(a);
     }
-    void fill(std::vector<BatchVertex>& verts);
     void setFrame(std::shared_ptr<SpriteFrame>& f) { frame = f; }
 private:
     std::shared_ptr<SpriteFrame> frame;
@@ -51,7 +51,6 @@ private:
     Vector2 position;
     float   rotation;
     float   scale;
-    Matrix4 transform;
 };
 }
 
