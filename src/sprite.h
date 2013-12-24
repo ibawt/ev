@@ -1,57 +1,19 @@
 #ifndef EV_SPRITE_H_
 #define EV_SPRITE_H_
 
-#include "vector2.h"
+#define EV_SPRITE_NUM_VERTS 6
 
-#include <memory>
+#include "evil.h"
 
-namespace evil {
-
-class Animation;
-struct SpriteFrame;
-struct BatchVertex;
-
-class Sprite
-{
-public:
-    static const uint32_t NUM_VERTS = 6;
-
-    Sprite() : rotation(0.0f),
-               scale(1.0f)
-        { }
-
-    void render();
-
-    void setPosition(float x, float y) {
-        position.x = x;
-        position.y = y;
-    }
-
-    float getRotation() const { return rotation; }
-    void setRotation(float r) { rotation = r; }
-
-    float getScale() const { return scale; }
-    void setScale(float f) { scale = f; }
-    const Vector2& getPosition() const {
-        return position;
-    }
-    void update(const float dt);
-
-    const std::shared_ptr<SpriteFrame>& getCurrentFrame() const;
-
-    void fillBuffer(BatchVertex *bv);
-
-    void setAnimation(std::unique_ptr<Animation>& a) {
-      animation = move(a);
-    }
-    void setFrame(std::shared_ptr<SpriteFrame>& f) { frame = f; }
-private:
-    std::shared_ptr<SpriteFrame> frame;
-    std::unique_ptr<Animation> animation;
-    Vector2 position;
-    float   rotation;
-    float   scale;
-};
-}
+ev_sprite*    ev_sprite_create(void);
+ev_vec2*      ev_sprite_get_position(ev_sprite*);
+void          ev_sprite_set_position(ev_sprite*, float x, float y);
+float         ev_sprite_get_rotation(ev_sprite*);
+void          ev_sprite_set_rotation(ev_sprite*, float);
+void          ev_sprite_set_animation(ev_sprite*, ev_anim*);
+ev_anim*      ev_sprite_get_animation(ev_sprite*);
+void          ev_sprite_update(ev_sprite*, float);
+void          ev_sprite_render(ev_sprite*);
+void          ev_sprite_fill(ev_bvertex*);
 
 #endif

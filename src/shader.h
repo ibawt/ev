@@ -2,46 +2,17 @@
 #define EV_SHADER_H_
 
 #include "evil.h"
-#include "matrix4.h"
 
-#include <string>
+ev_shader* ev_shader_create(void);
+ev_err_t   ev_shader_compile(GLenum type);
+void       ev_shader_destroy(ev_shader*);
 
-namespace evil {
+ev_program* ev_program_create(void);
+ev_err_t    ev_program_use(ev_program*);
+ev_err_t    ev_program_compile(ev_program*);
+void        ev_program_set_shader(ev_program*, ev_shader*, GLenum type);
+GLint       ev_program_get_attrib_loc(ev_program*, const char *);
+GLint       ev_program_get_uniform_loc(ev_program*, const char *);
+void        ev_program_destroy(ev_program*);
 
-class Shader
-{
-public:
-		Shader() : shaderObject(0) { }
-		Shader(std::string s) : source(s), shaderObject(0) { }
-		~Shader();
-
-		const GLuint getID() const { return shaderObject; }
-		void setSource(std::string s) { source = s; }
-		bool compile(GLenum type);
-private:
-		std::string source;
-		GLuint shaderObject;
-
-};
-
-class ShaderProgram
-{
-public:
-		ShaderProgram() : programID(0) { }
-		~ShaderProgram();
-		void use() const;
-
-		void setUniformMatrix(const std::string& s, const Matrix4& matrix) const;
-		void setVertexShader(std::string s);
-		void setFragmentShader(std::string s);
-		const GLint getAttribLocation(const std::string& name) const;
-		const GLint getUniformLocation(const std::string &name) const;
-		bool compile();
-		bool checkProgram();
-private:
-		GLuint programID;
-		Shader vertexShader;
-		Shader fragmentShader;
-};
-}
 #endif

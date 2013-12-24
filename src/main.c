@@ -1,23 +1,10 @@
 #include <stdio.h>
 #include "evil.h"
 
-namespace evil {
-
 static const char* lastError = "";
 
-const char *GetError() {
-    return lastError;
-}
 
-void SetError(const char *error) {
-    lastError = error;
-}
-
-void SetError( const unsigned char* error) {
-    lastError = (const char*)error;
-}
-
-void error(const char *fmt, ... )
+void ev_error(const char *fmt, ... )
 {
     char buffer[512];
     va_list args;
@@ -27,7 +14,7 @@ void error(const char *fmt, ... )
 
     fprintf(stderr, "%s\n", buffer);
 }
-void log(const char *fmt, ... )
+void ev_log(const char *fmt, ... )
 {
     char buffer[512*10];
     va_list args;
@@ -36,6 +23,4 @@ void log(const char *fmt, ... )
     va_end(args);
 
     fprintf(stdout, "%s\n", buffer);
-}
-
 }

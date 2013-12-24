@@ -1,70 +1,22 @@
 #ifndef EV_ANIMATION_H_
 #define EV_ANIMATION_H_
 
-#include <memory>
-#include <vector>
-#include <assert.h>
+typedef enum {
+    EV_LOOP = 0,
+    EV_ONE_SHOT = 1,
+    EV_REVERSE = 2,
+    EV_PING_PONG = 3
+} ev_anim_mode;
 
-namespace evil {
+typedef struct _ev_anim ev_anim;
+typedef struct _ev_sframe ev_sframe;
 
-struct SpriteFrame;
-
-class Animation
-{
-public:
-  typedef enum  {
-    LOOP,
-    ONE_SHOT,
-    REVERSE
-  } Mode;
-    Animation() : mode( LOOP), time(0.0f), delay(0.0f), index(0) { }
-
-    unsigned getNumFrames() const {
-        return frames.size();
-    }
-
-    bool empty() const {
-        return frames.empty();
-    }
-
-    void addFrame(std::shared_ptr<SpriteFrame> frame) {
-        frames.push_back(frame);
-    }
-
-    Mode getMode() const {  return mode; }
-    void setMode(Mode m) {
-        mode = m;
-    }
-
-    void setDelay(float d) { delay = d; }
-    float getDelay() const { return delay; }
-
-    const std::shared_ptr<SpriteFrame>& getFrame() const {
-        assert( !empty() );
-        return frames[index];
-    }
-    void update(const float dt);
-
-    void setFrameIndex(unsigned i) {
-        if( !empty() ) {
-            if( i >= getNumFrames() ) {
-                i = getNumFrames() - 1;
-            }
-            index = i;
-        }
-    }
-
-    unsigned getFrameIndex() const {
-        return index;
-    }
-private:
-    Mode mode;
-    float time;
-    float delay;
-    unsigned index;
-    std::vector<std::shared_ptr<SpriteFrame>> frames;
-};
-
-}
+ev_anim*     ev_anim_create(void);
+void         ev_anim_destroy(ev_anim *);
+void         ev_anim_add_sframe(ev_anim*, ev_sframe*);
+ev_sframe   *ev_anim_get_current_sframe(ev_anim*);
+void         ev_anim_set_mode(ev_anim *, ev_anim_mode);
+ev_anim_mode ev_anim_get_mode(ev_anim *);
+void         ev_anim_update(ev_anim*, float);
 
 #endif

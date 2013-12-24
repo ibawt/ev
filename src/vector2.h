@@ -1,31 +1,12 @@
 #ifndef EV_VECTOR2_H_
 #define EV_VECTOR2_H_
 
-#include <math.h>
+#include "evil.h"
 
-namespace evil {
-
-struct Vector2
-{
-    Vector2() : x(0.0f), y(0.0f) { }
-    Vector2( float xx, float yy) : x(xx), y(yy) { }
-
-    float getLength() const {
-        return sqrtf( x * x + y * y );
-    }
-
-    void normalize() {
-      float length = getLength();
-      if( length ) {
-        x /= length;
-        y /= length;
-      }
-    }
-
-    float x;
-    float y;
-};
-
-}
+ev_vec2 ev_vec2_add(ev_vec2 lh, ev_vec2 rh);
+int     ev_vec2_equal(ev_vec2 lh, ev_vec2 rh);
+ev_vec2 ev_vec2_mul(ev_vec2 lh, ev_vec2 rh);
+float   ev_vec2_length(ev_vec2 v);
+float   ev_vec2_lengthsq(ev_vec2 v);
 
 #endif

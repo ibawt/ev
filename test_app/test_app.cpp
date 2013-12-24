@@ -53,7 +53,7 @@ bool TestApplication::init()
 
     spriteBatch.setTexture(texture);
 
-    for( int i = 0 ; i < 300; ++i ) {
+    for( int i = 0 ; i < 1; ++i ) {
         auto s = make_shared<Sprite>();
         s->setPosition(get_random(0, getWidth()), get_random(0,getHeight()));
         auto p = make_unique<Animation>();
@@ -61,9 +61,9 @@ bool TestApplication::init()
         p->addFrame( spriteBatch.getSheet().getFrame("bats_fly1.png"));
         p->addFrame( spriteBatch.getSheet().getFrame("bats_fly2.png"));
         p->addFrame( spriteBatch.getSheet().getFrame("bats_fly3.png"));
-        p->setDelay(0);
+        p->setDelay(0.1f);
         s->setAnimation(p);
-        s->setRotation(get_random( 0.0f, 2*M_PI));
+        //s->setRotation(get_random( 0.0f, 2*M_PI));
         s->setScale( get_random( 0.2f, 3.0f));
         sprites.push_back(s);
         spriteBatch.addSprite(s);

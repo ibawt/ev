@@ -5,34 +5,24 @@
 
 #include "evil.h"
 
-namespace evil {
+typedef struct _ev_app ev_app;
 
-class Application
-{
-public:
-    Application(uint32_t w, uint32_t h);
-    virtual ~Application() { }
-    virtual bool init() = 0;
-    virtual void render() = 0;
-    virtual void update(const float) = 0;
+typedef void (*ev_app_render)(ev_app*);
+typedef void (*ev_app_update)(ev_app*, float);
+typedef void (*ev_app_key_event)(ev_app*, ev_key_event *);
+typedef void (*ev_app_mouse_event)(ev_app*, ev_mouse_event*);
 
-    virtual void keyEvent(const SDL_KeyboardEvent& e) { }
+ev_app*  ev_app_create(uint32_t width, uint32_t height);
+void     ev_app_destroy(ev_app*);
+uint32_t ev_app_get_height(ev_app*);
+uint32_t ev_app_get_width(ev_app*);
+float    ev_app_get_fps(ev_app*);
+ev_err_t ev_app_init(ev_app* );
+void     ev_app_quit(ev_app*);
+void     ev_app_set_render(ev_app*, ev_app_render);
+void     ev_app_set_update(ev_app*, ev_app_update);
+void     ev_app_set_key_event(ev_app*, ev_app_key_event);
+void     ev_app_set_mouse_event(ev_app*, ev_app_mouse_event);
+ev_err_t ev_app_start(ev_app*);
 
-    uint32_t getWidth() const { return width; }
-    uint32_t getHeight() const { return height; }
-
-    float getFPS() const { return fps; }
-    int  main();
-    void quit();
-    bool initGL();
-    bool initSDL();
-
-private:
-    uint32_t      width;
-    uint32_t      height;
-    SDL_Window   *window;
-    float         fps;
-    SDL_GLContext context;
-};
-}
 #endif
