@@ -15,6 +15,8 @@ ev_matrix4  transform = {{0}};
 
 int init(void)
 {
+    int i;
+
     texture = ev_texture_create();
     if( ev_texture_load(texture, "/Users/ianquick/evil/evil/test_app/bats.png") ) {
         ev_error("texture failed to load");
@@ -29,7 +31,7 @@ int init(void)
     }
     ev_sbatch_set_texture( sprite_batch, texture );
 
-    for( int i = 0 ; i < NUM_SPRITES ; ++i ) {
+    for( i = 0 ; i < NUM_SPRITES ; ++i ) {
         ev_sprite *s = ev_sprite_create();
         ev_anim   *a = ev_anim_create();
         ev_anim_add_sframe(a, ev_sbatch_get_sframe(sprite_batch, "bats_fly1.png"));
