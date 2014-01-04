@@ -25,6 +25,43 @@ struct _ev_ssheet
     ev_smap *metadata;
 };
 
+static void fill_batch_verts(ev_sframe* frame)
+{
+    int i;
+    ev_bvertex* bv = frame->batch_verts;
+
+    bv[0].x = -frame->size.w/2;
+    bv[0].y = -frame->size.h/2;
+    bv[0].u = frame->texture_rect.origin.x;
+    bv[0].v = frame->texture_rect.origin.y;
+
+    bv[1].x = frame->size.w/2;
+    bv[1].y = -frame->size.h/2;
+    bv[1].u = frame->texture_rect.origin.x + frame->texture_rect.size.w;
+    bv[1].v = frame->texture_rect.origin.y;
+
+    bv[2].x = frame->size.w/2;
+    bv[2].y = frame->size.h/2;
+    bv[2].u = frame->texture_rect.origin.x + frame->texture_rect.size.w;
+    bv[2].v = frame->texture_rect.origin.y + frame->texture_rect.size.h;
+
+    bv[3] = bv[2];
+
+    bv[4].x = -frame->size.w/2;
+    bv[4].y = frame->size.h/2;
+    bv[4].u = frame->texture_rect.origin.x;
+    bv[4].v = frame->texture_rect.origin.y + frame->texture_rect.size.h;
+
+    bv[5] = bv[0];
+
+    for( i = 0 ; i < 6 ; ++i ) {
+        bv[i].scale = 1.0f;
+        bv[i].rotation = 0.0f;
+        bv[i].tx = 0.0f;
+        bv[i].ty = 0.0f;
+    }
+}
+
 static ev_err_t parse_size(json_t *o, const char *key, ev_size *size)
 {
     int w,h;
@@ -100,8 +137,6 @@ static ev_err_t parse_vec2(json_t *o, const char *key, ev_vec2* vec)
 
 static void normalize_texture_rect(ev_sframe* frame, ev_size* size)
 {
-    ev_smap_iter i;
-
     assert( frame != NULL);
     assert( size != NULL );
     assert( size->w != 0 );
@@ -198,7 +233,7 @@ static ev_smap* parse_frames(json_t *json,  ev_size *tex_size)
         if( tex_size ) {
             normalize_texture_rect(frame, tex_size);
         }
-
+        fill_batch_verts(frame);
         ev_smap_put( frames, k, frame);
     }
 
@@ -215,6 +250,21 @@ ev_ssheet* ev_ssheet_create(void)
     ev_ssheet *s = ev_malloc(sizeof(ev_ssheet));
     memset( s, 0, sizeof(ev_ssheet));
     return s;
+}
+
+void ev_ssheet_destroy(ev_ssheet *s)
+{
+    if( s ) {
+        if( s->frames ) {
+            ev_smap_destroy(s->frames);
+            s->frames = NULL;
+        }
+        if( s->metadata ) {
+            ev_smap_destroy(s->metadata);
+            s->metadata = NULL;
+        }
+        ev_free(s);
+    }
 }
 
 ev_err_t ev_ssheet_load_file(ev_ssheet *sheet, const char *path)

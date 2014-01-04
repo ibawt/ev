@@ -1,6 +1,8 @@
 #ifndef EV_SPRITE_BATCH_H_
 #define EV_SPRITE_BATCH_H_
 
+#include <stdlib.h>
+
 #include "evil.h"
 #include "matrix4.h"
 
@@ -13,6 +15,6 @@ void       ev_sbatch_set_texture(ev_sbatch*, ev_texture*);
 void       ev_sbatch_add_sprite(ev_sbatch*, ev_sprite*);
 void       ev_sbatch_set_program(ev_sbatch*, ev_program* );
 void       ev_sbatch_set_matrix4(ev_sbatch*, ev_matrix4 *);
-void       ev_sbatch_set_vbuff(ev_sbatch*, ev_vbuff*);
+ev_err_t   ev_sbatch_set_vbuff_capacity(ev_sbatch*, size_t);
 void       ev_sbatch_update(ev_sbatch *, float);
 #endif

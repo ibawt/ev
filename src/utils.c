@@ -71,13 +71,14 @@ void *ev_smap_get(ev_smap* map, const char *key)
 ev_err_t ev_smap_put(ev_smap* map, const char *key, void *val)
 {
     if( map && key ) {
-        node *node = ev_malloc(sizeof(node));
-        if( !node )
+        node *n = ev_malloc(sizeof(node));
+        if( !n )
             return EV_FAIL;
 
-        node->key = strdup(key);
-        node->value = val;
-        HASH_ADD_KEYPTR( hh, map->head, node->key, strlen(key), node);
+        memset(n, 0, sizeof(node));
+        n->key = strdup(key);
+        n->value = val;
+        HASH_ADD_KEYPTR( hh, map->head, n->key, strlen(n->key), n);
         return EV_OK;
     }
     return EV_FAIL;

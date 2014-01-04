@@ -37,6 +37,7 @@ ev_err_t ev_shader_compile(ev_shader* shader, GLenum type, const char *source)
     if( !shader || !source )
         return EV_FAIL;
 
+    shader->id = glCreateShader(type);
     glShaderSource( shader->id, 1, &source, 0);
     glCompileShader(shader->id);
 
@@ -109,16 +110,20 @@ ev_err_t ev_program_compile(ev_program* p)
 {
     if( p && p->vertex && p->fragment ) {
         if( !p->vertex->id || !p->fragment->id ) {
+            ev_error("shader ids are not set");
             return EV_FAIL;
         }
 
         if( p->id ) {
+            ev_error("attempting to reassign program id");
             return EV_FAIL;
         }
 
         p->id = glCreateProgram();
-        if( !p->id )
+        if( !p->id ) {
+            ev_error("glCreateProgram failed");
             return EV_FAIL;
+        }
 
         glAttachShader(p->id, p->vertex->id);
         glAttachShader(p->id, p->fragment->id);
@@ -127,4 +132,21 @@ ev_err_t ev_program_compile(ev_program* p)
         return EV_OK;
     }
     return EV_FAIL;
+}
+
+void ev_program_use(ev_program *p)
+{
+    if( p ) {
+        glUseProgram(p->id);
+    }
+}
+
+GLint ev_program_get_attrib_loc(ev_program* p, const char *name)
+{
+    return p ? glGetAttribLocation(p->id, name) : 0;
+}
+
+GLint ev_program_get_uniform_loc(ev_program *p, const char *name)
+{
+    return p ? glGetUniformLocation(p->id, name) : 0;
 }

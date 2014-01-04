@@ -69,7 +69,5 @@ void ev_matrix4_set_ortho(ev_matrix4 *matrix, float left, float right, float bot
         m[M13] = ty;
         m[M23] = tz;
         m[M33] = 1.0f;
-
-        m = matrix->m;
     }
 }

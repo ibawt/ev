@@ -6,28 +6,30 @@
 #include "sprite.h"
 #include "animation.h"
 
+#define NUM_SPRITES 1
+
 ev_app     *app = NULL;
 ev_texture *texture = NULL;
 ev_sbatch  *sprite_batch = NULL;
-ev_matrix4  transform = {0};
+ev_matrix4  transform = {{0}};
 
 int init(void)
 {
     texture = ev_texture_create();
-    if( ev_texture_load(texture, "../test_app/bats.png") ) {
+    if( ev_texture_load(texture, "/Users/ianquick/evil/evil/test_app/bats.png") ) {
         ev_error("texture failed to load");
         return 1;
     }
 
     sprite_batch = ev_sbatch_create();
 
-    if( ev_sbatch_load(sprite_batch, "../test_app/bats.json") ) {
+    if( ev_sbatch_load(sprite_batch, "/Users/ianquick/evil/evil/test_app/bats.json") ) {
         ev_error("sprite batch failed to load");
         return 1;
     }
     ev_sbatch_set_texture( sprite_batch, texture );
 
-    for( int i = 0 ; i < 1 ; ++i ) {
+    for( int i = 0 ; i < NUM_SPRITES ; ++i ) {
         ev_sprite *s = ev_sprite_create();
         ev_anim   *a = ev_anim_create();
         ev_anim_add_sframe(a, ev_sbatch_get_sframe(sprite_batch, "bats_fly1.png"));
@@ -38,6 +40,7 @@ int init(void)
         ev_sprite_set_position(s, 400, 300);
         ev_sbatch_add_sprite(sprite_batch, s);
     }
+    ev_sbatch_set_vbuff_capacity(sprite_batch, NUM_SPRITES);
 
     ev_matrix4_set_ortho( &transform, 0, ev_app_get_width(app), ev_app_get_height(app), 1, -1, 1);
     ev_sbatch_set_matrix4(sprite_batch, &transform);

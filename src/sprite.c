@@ -1,5 +1,6 @@
 #include "sprite.h"
 #include "animation.h"
+#include "sprite_sheet.h"
 
 struct _ev_sprite
 {
@@ -78,4 +79,19 @@ void ev_sprite_render(ev_sprite* s)
 
 void ev_sprite_fill(ev_sprite* s, ev_bvertex* b)
 {
+    int i;
+    ev_bvertex *src;
+
+    if( s && b ) {
+        src = ev_sframe_get_bvertex(ev_anim_get_current_sframe(s->animation));
+        if( src ) {
+            for( i = 0 ; i < EV_SPRITE_NUM_VERTS ; ++i,b++,src++ ) {
+                *b = *src;
+                b->scale = s->scale;
+                b->rotation = s->rotation;
+                b->tx = s->position.x;
+                b->ty = s->position.y;
+            }
+        }
+    }
 }
