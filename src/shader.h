@@ -4,7 +4,7 @@
 #include "evil.h"
 
 ev_shader* ev_shader_create(void);
-ev_err_t   ev_shader_compile(GLenum type);
+ev_err_t   ev_shader_compile(ev_shader *, GLenum type, const char *);
 void       ev_shader_destroy(ev_shader*);
 
 ev_program* ev_program_create(void);

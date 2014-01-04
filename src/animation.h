@@ -1,15 +1,14 @@
 #ifndef EV_ANIMATION_H_
 #define EV_ANIMATION_H_
 
+#include "evil.h"
+
 typedef enum {
     EV_LOOP = 0,
     EV_ONE_SHOT = 1,
     EV_REVERSE = 2,
     EV_PING_PONG = 3
 } ev_anim_mode;
-
-typedef struct _ev_anim ev_anim;
-typedef struct _ev_sframe ev_sframe;
 
 ev_anim*     ev_anim_create(void);
 void         ev_anim_destroy(ev_anim *);

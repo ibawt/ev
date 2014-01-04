@@ -210,49 +210,55 @@ static ev_smap* parse_frames(json_t *json,  ev_size *tex_size)
     return NULL;
 }
 
-ev_ssheet* ev_ssheet_create_file(const char *path)
+ev_ssheet* ev_ssheet_create(void)
 {
-    ev_ssheet   *sheet = NULL;
+    ev_ssheet *s = ev_malloc(sizeof(ev_ssheet));
+    memset( s, 0, sizeof(ev_ssheet));
+    return s;
+}
+
+ev_err_t ev_ssheet_load_file(ev_ssheet *sheet, const char *path)
+{
     json_t      *root = NULL;
     json_error_t json_err;
 
-    if( !path)
-        return NULL;
+    if( !path || !sheet)
+        return EV_FAIL;
 
     root = json_load_file(path, 0, &json_err);
     if(!root) {
-        return NULL;
-    }
-
-    sheet = ev_malloc(sizeof(ev_ssheet));
-    if( !sheet ) {
-        json_decref( root );
-        return NULL;
+        return EV_FAIL;
     }
 
     sheet->metadata = parse_metadata(json_object_get(root, "metadata"));
     if( !sheet->metadata ) {
-        ev_free(sheet);
-        sheet = NULL;
-        goto CLEAN_UP;
+        json_decref(root);
+        return EV_FAIL;
     }
 
     sheet->frames = parse_frames(json_object_get(root, "frames"), ev_smap_get(sheet->metadata, "size") );
     if( !sheet->frames ) {
+        json_decref(root);
         ev_smap_destroy(sheet->metadata);
-        ev_free(sheet);
-        sheet = NULL;
-        goto CLEAN_UP;
+        sheet->metadata = NULL;
+        return EV_FAIL;
     }
 
- CLEAN_UP:
     if( root ) {
         json_decref(root);
     }
-    return sheet;
+    return EV_OK;
 }
 
 ev_bvertex* ev_sframe_get_bvertex(ev_sframe* sframe)
 {
     return sframe ? &sframe->batch_verts[0] : NULL;
+}
+
+ev_sframe* ev_ssheet_get_sframe(ev_ssheet* sheet, const char *name)
+{
+    if( sheet && name ) {
+        return ev_smap_get(sheet->frames, name);
+    }
+    return NULL;
 }

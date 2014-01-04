@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 Project ( evil )
-
 SET( evil_SOURCE_DIR src)
 set(
   SOURCES
@@ -13,6 +12,8 @@ set(
   src/shader.c
   src/matrix4.c
   src/sprite_sheet.c
+  src/vertex_buffer.c
+  src/utils.c
   vendor/glew/src/glew.c
 )
 SET(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")

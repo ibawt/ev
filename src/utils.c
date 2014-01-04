@@ -1,10 +1,20 @@
+#include <assert.h>
+
 #include "utils.h"
 #include "uthash.h"
 #include "evil.h"
 
+/* undefine the defaults */
+#undef uthash_malloc
+#undef uthash_free
+
+/* re-define, specifying alternate functions */
+#define uthash_malloc(sz) ev_malloc(sz)
+#define uthash_free(ptr,sz) ev_free(ptr)
+
 typedef struct {
-    const char    *key;
-    void          *opaque;
+    char          *key;
+    void          *value;
     UT_hash_handle hh;
 } node;
 
@@ -13,7 +23,6 @@ struct _ev_smap
     node* head;
     ev_smap_delete deleter;
 };
-
 
 void* ev_malloc(size_t size)
 {
@@ -51,12 +60,12 @@ void *ev_smap_get(ev_smap* map, const char *key)
     if( !map || !key )
         return NULL;
 
-    HASH_FIND_STR( map->map, key, &node);
+    HASH_FIND_STR( map->head, key, node);
 
     if( !node )
         return NULL;
 
-    return node->opaque;
+    return node->value;
 }
 
 ev_err_t ev_smap_put(ev_smap* map, const char *key, void *val)

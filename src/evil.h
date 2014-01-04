@@ -24,8 +24,18 @@ typedef enum {
   EV_NOMEM
 } ev_err_t;
 
-void ev_log(const char *fmt, ...);
+typedef enum {
+    EV_LOG   = 0,
+    EV_WARN  = 1,
+    EV_ERROR = 2,
+    EV_DEBUG = 3
+} ev_log_level;
+
+#define ev_log(fmt, ...) ev_logger(EV_LOG, "[LOG]%s:%d " fmt "\n", __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
+
 void ev_error(const char *fmt, ...);
+
+void ev_logger(ev_log_level, const char *fmt, ...);
 
 typedef struct {
   float w;
@@ -65,9 +75,10 @@ typedef struct _ev_sbatch ev_sbatch;
 typedef struct _ev_texture ev_texture;
 typedef struct _ev_anim ev_anim;
 typedef struct _ev_program ev_program;
-typedef struct _ev_matrix4 ev_matrix4;
 typedef struct _ev_sprite  ev_sprite;
 typedef struct _ev_vbuff   ev_vbuff;
 typedef struct _ev_shader ev_shader;
+typedef struct _ev_sframe ev_sframe;
+typedef struct _ev_ssheet ev_ssheet;
 
 #endif

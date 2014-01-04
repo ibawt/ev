@@ -1,6 +1,10 @@
 #ifndef EV_UTILS_H_
 #define EV_UTILS_H_
 
+#include <stdlib.h>
+#include "evil.h"
+
+
 typedef struct {
     void   *elems;
     size_t  cnt;
@@ -22,7 +26,7 @@ ev_smap *ev_smap_create(void);
 void     ev_smap_destroy(ev_smap*);
 void     ev_smap_set_delete(ev_smap*, ev_smap_delete);
 void*    ev_smap_get(ev_smap *, const char *);
-void     ev_smap_put(ev_smap *, const char *key, void *opaque);
+ev_err_t ev_smap_put(ev_smap *, const char *key, void *opaque);
 
 #define ev_smap_iter_valid( _s ) ( (_s)._node != NULL)
 

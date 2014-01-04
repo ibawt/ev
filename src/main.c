@@ -1,26 +1,19 @@
 #include <stdio.h>
 #include "evil.h"
 
-static const char* lastError = "";
-
-
 void ev_error(const char *fmt, ... )
 {
-    char buffer[512];
     va_list args;
     va_start(args, fmt);
-    vsnprintf(buffer, sizeof(buffer), fmt, args);
+    vfprintf(stderr, fmt, args);
     va_end(args);
-
-    fprintf(stderr, "%s\n", buffer);
+    fputs("\n", stderr);
 }
-void ev_log(const char *fmt, ... )
+
+void ev_logger(ev_log_level level, const char *fmt, ... )
 {
-    char buffer[512*10];
     va_list args;
     va_start(args, fmt);
-    vsnprintf(buffer, sizeof(buffer), fmt, args);
+    vfprintf(stdout, fmt, args);
     va_end(args);
-
-    fprintf(stdout, "%s\n", buffer);
 }

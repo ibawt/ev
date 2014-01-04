@@ -77,6 +77,18 @@ static int initSDL(ev_app *app)
     return EV_OK;
 }
 
+ev_err_t ev_app_init(ev_app *app)
+{
+    if( app ) {
+        if( initSDL(app)  )
+            return EV_FAIL;
+        if( initGL(app) )
+            return EV_FAIL;
+        return EV_OK;
+    }
+    return EV_FAIL;
+}
+
 uint32_t ev_app_get_height(ev_app *app)
 {
     return app ? app->height : 0;
