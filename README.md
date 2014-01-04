@@ -1,4 +1,5 @@
-#EV
+EV
+[![Build Status](https://travis-ci.org/ibawt/ev.png?branch=master)](https://travis-ci.org/ibawt/ev)
 ====
 Yet Another 2D C library
 
