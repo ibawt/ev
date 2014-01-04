@@ -184,7 +184,7 @@ ev_err_t ev_app_start(ev_app *app)
         while( SDL_PollEvent(&e)) {
             switch(e.type) {
             case SDL_QUIT:
-                running = false;
+                running = 0;
                 break;
             }
         }
