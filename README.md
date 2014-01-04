@@ -1,6 +1,6 @@
 EV
-[![Build Status](https://travis-ci.org/ibawt/ev.png?branch=master)](https://travis-ci.org/ibawt/ev)
 ====
+[![Build Status](https://travis-ci.org/ibawt/ev.png?branch=master)](https://travis-ci.org/ibawt/ev)
 Yet Another 2D C library
 
 I didn't see many simple 2D C gaming libraries and I didn't want to use c++.
@@ -11,7 +11,7 @@ I didn't see many simple 2D C gaming libraries and I didn't want to use c++.
 
 ## External Depenencies
 - CMake
-- a c/c++ compiler
+- a c/c++ compiler (C++ only for Box2D)
 - SDL2.0 and SDLImage 2.0
 
 ## Included libraries
