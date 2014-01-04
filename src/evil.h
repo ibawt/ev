@@ -15,6 +15,13 @@
 #include "GL/glu.h"
 #endif
 
+#if defined(_MSC_VER)
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#define strdup _strdup
+#endif
+
+
 void *ev_malloc(size_t);
 void  ev_free(void *);
 
@@ -31,7 +38,7 @@ typedef enum {
     EV_DEBUG = 3
 } ev_log_level;
 
-#define ev_log(fmt, ...) ev_logger(EV_LOG, "[LOG]%s:%d " fmt "\n", __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define ev_log(fmt, ...) ev_logger(EV_LOG, "[LOG]%s:%d " fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 
 void ev_error(const char *fmt, ...);
 

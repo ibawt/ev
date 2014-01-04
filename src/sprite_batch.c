@@ -9,6 +9,7 @@
 #include "sprite.h"
 #include "sprite_sheet.h"
 
+
 static const char *animationVertexShader =
     "#version 120\n"
     "attribute vec2 a_position;\n"

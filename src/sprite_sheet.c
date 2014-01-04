@@ -6,6 +6,10 @@
 #include "sprite.h"
 #include "jansson.h"
 
+#if defined(_MSC_VER)
+#define sscanf sscanf_s
+#endif
+
 struct _ev_sframe
 {
     const char *key;

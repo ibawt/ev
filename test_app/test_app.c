@@ -18,14 +18,14 @@ int init(void)
     int i;
 
     texture = ev_texture_create();
-    if( ev_texture_load(texture, "/Users/ianquick/evil/evil/test_app/bats.png") ) {
+    if( ev_texture_load(texture, "../test_app/bats.png") ) {
         ev_error("texture failed to load");
         return 1;
     }
 
     sprite_batch = ev_sbatch_create();
 
-    if( ev_sbatch_load(sprite_batch, "/Users/ianquick/evil/evil/test_app/bats.json") ) {
+    if( ev_sbatch_load(sprite_batch, "../test_app/bats.json") ) {
         ev_error("sprite batch failed to load");
         return 1;
     }

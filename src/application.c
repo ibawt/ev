@@ -134,10 +134,11 @@ void ev_app_set_mouse_event(ev_app *app, ev_app_mouse_event fn)
 
 ev_app* ev_app_create(uint32_t width, uint32_t height)
 {
+    ev_app *app;
     if( width == 0 || height == 0 )
         return NULL;
 
-    ev_app *app = ev_malloc( sizeof(ev_app));
+    app = ev_malloc( sizeof(ev_app));
     if( !app )
         return NULL;
 
