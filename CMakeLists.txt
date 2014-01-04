@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
-Project ( evil )
-SET( evil_SOURCE_DIR src)
+Project ( ev )
+SET( ev_SOURCE_DIR src)
 set(
   SOURCES
   src/application.c
@@ -45,10 +45,10 @@ add_definitions(
   -DGLEW_STATIC
  )
 
-add_library( evil STATIC
+add_library( ev STATIC
   ${SOURCES} )
 
-target_link_libraries( evil
+target_link_libraries( ev
   ${SDL2_LIBRARY}
   ${SDL2_IMAGE_LIBRARY}
   ${OPENGL_LIBRARY}
@@ -61,4 +61,4 @@ add_executable( test_app
   test_app/test_app.c
 )
 
-target_link_libraries( test_app evil)
+target_link_libraries( test_app ev)
