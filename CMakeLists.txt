@@ -14,9 +14,9 @@ set(
   src/sprite_sheet.c
   src/vertex_buffer.c
   src/utils.c
+  src/tile_map.c
   vendor/glew/src/glew.c
 )
-SET(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
 add_subdirectory( vendor/jansson)
 add_subdirectory( vendor/Box2D )

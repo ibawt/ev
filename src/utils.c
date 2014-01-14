@@ -4,6 +4,8 @@
 #include "uthash.h"
 #include "evil.h"
 
+#define MAX_STR_LEN 1024*16
+
 /* undefine the defaults */
 #undef uthash_malloc
 #undef uthash_free
@@ -133,4 +135,16 @@ void ev_smap_destroy(ev_smap* map)
         ev_free(node->key);
         ev_free(node);
     }
+}
+
+char *ev_strdup(const char *src)
+{
+    if( src ) {
+        size_t len = strnlen(src, MAX_STR_LEN);
+        char *dst = ev_malloc( len + 1 );
+        memcpy(dst, src, len);
+        dst[len] = '\0';
+        return dst;
+    }
+    return NULL;
 }
