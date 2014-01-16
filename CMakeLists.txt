@@ -20,6 +20,7 @@ set(
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
 add_subdirectory( vendor/jansson)
 add_subdirectory( vendor/Box2D )
+add_subdirectory( vendor/lua )
 
 find_package(OpenGL)
 find_package(SDL2)
@@ -54,6 +55,7 @@ target_link_libraries( ev
   ${OPENGL_LIBRARY}
   Box2D
   jansson
+  liblua
   ${SDL_MAIN}
 )
 
