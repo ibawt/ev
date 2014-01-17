@@ -25,6 +25,11 @@ struct _ev_smap
     node* head;
     ev_smap_delete deleter;
 };
+void *ev_realloc(void *p, size_t size)
+{
+    return realloc(p,size);
+}
+
 
 void* ev_malloc(size_t size)
 {

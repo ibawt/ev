@@ -23,6 +23,7 @@ typedef SSIZE_T ssize_t;
 
 
 void *ev_malloc(size_t);
+void *ev_realloc(void *, size_t);
 void  ev_free(void *);
 char *ev_strdup(const char*);
 

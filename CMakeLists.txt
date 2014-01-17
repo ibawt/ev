@@ -42,6 +42,7 @@ include_directories(${gtest_SOURCE_DIR}/include
   vendor/glew/include
   vendor/uthash
   vendor/lua/src
+  ${CMAKE_CURRENT_BINARY_DIR}/vendor/lua
   src)
 add_definitions(
   -DGLEW_STATIC
