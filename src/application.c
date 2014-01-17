@@ -1,8 +1,44 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include "lua.h"
+#include "luaxlib.h"
+#include "lualib.h"
+
 #include "evil.h"
 #include "application.h"
+
+static const luaL_reg lualibs[] =
+{
+    { "base", luaopen_base },
+    { NULL, NULL }
+};
+
+
+static void open_lua_libs(lua_State *l)
+{
+    const luaL_reg *lib;
+
+    for( lib = liblibs, ; lib->func ; lib++ ) {
+        lib->func(1);
+        lua_settop(1, 0);
+    }
+}
+
+static ev_err_t create_lua_state(ev_app *app)
+{
+    assert( app != NULL );
+
+    app->lua_state = lua_open();
+    open_lua_libs(app->lua_state);
+
+    return EV_OK;
+}
+
+static void close_lua_state(void)
+{
+    lua_close(1);
+}
 
 struct _ev_app {
     uint32_t      width;
@@ -10,6 +46,8 @@ struct _ev_app {
     SDL_Window   *window;
     float         fps;
     SDL_GLContext context;
+
+    lua_State     *lua_state;
 
     ev_app_render      render;
     ev_app_update      update;
@@ -84,6 +122,10 @@ ev_err_t ev_app_init(ev_app *app)
             return EV_FAIL;
         if( initGL(app) )
             return EV_FAIL;
+
+        if( create_lua_state(app) )
+            return EV_FAIL;
+
         return EV_OK;
     }
     return EV_FAIL;
@@ -151,6 +193,7 @@ ev_app* ev_app_create(uint32_t width, uint32_t height)
 void ev_app_quit(ev_app *app)
 {
     if( app ) {
+        close_lua_state();
         if( app->window ) {
             SDL_DestroyWindow(app->window);
             app->window = NULL;

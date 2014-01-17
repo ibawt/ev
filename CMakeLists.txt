@@ -41,6 +41,7 @@ include_directories(${gtest_SOURCE_DIR}/include
   ${jansson_BINARY_DIR}/include
   vendor/glew/include
   vendor/uthash
+  vendor/lua/src
   src)
 add_definitions(
   -DGLEW_STATIC
