@@ -25,6 +25,24 @@ struct _ev_smap
     node* head;
     ev_smap_delete deleter;
 };
+
+void ev_error(const char *fmt, ... )
+{
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(stderr, fmt, args);
+    va_end(args);
+    fputs("\n", stderr);
+}
+
+void ev_logger(ev_log_level level, const char *fmt, ... )
+{
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(stdout, fmt, args);
+    va_end(args);
+}
+
 void *ev_realloc(void *p, size_t size)
 {
     return realloc(p,size);

@@ -4,7 +4,6 @@ SET( ev_SOURCE_DIR src)
 set(
   SOURCES
   src/application.c
-  src/main.c
   src/sprite.c
   src/sprite_batch.c
   src/texture.c
@@ -15,6 +14,7 @@ set(
   src/vertex_buffer.c
   src/utils.c
   src/tile_map.c
+  src/lua.c
   vendor/glew/src/glew.c
 )
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
@@ -65,4 +65,9 @@ add_executable( test_app
   test_app/test_app.c
 )
 
+add_executable( ev_lua
+  src/main.c
+  )
+
+target_link_libraries( ev_lua ev)
 target_link_libraries( test_app ev)

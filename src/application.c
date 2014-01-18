@@ -13,49 +13,11 @@ struct _ev_app {
     SDL_Window   *window;
     float         fps;
     SDL_GLContext context;
-
-    lua_State     *lua_state;
-
     ev_app_render      render;
     ev_app_update      update;
     ev_app_key_event   key_event;
     ev_app_mouse_event mouse_event;
 };
-
-static void* lua_alloc( void *ud, void *ptr, size_t osize, size_t nsize)
-{
-    if( nsize ) {
-        return ev_realloc(ptr, nsize);
-    } else if( ptr ){
-        ev_free( ptr );
-        return NULL;
-    }
-    return NULL;
-}
-static void open_lua_libs(lua_State *l)
-{
-    luaopen_io(l);
-    luaopen_base(l);
-    luaopen_table(l);
-    luaopen_string(l);
-    luaopen_math(l);
-}
-
-static ev_err_t create_lua_state(ev_app *app)
-{
-    assert( app != NULL );
-
-    app->lua_state = lua_newstate(lua_alloc, app);
-    open_lua_libs(app->lua_state);
-
-    return EV_OK;
-}
-
-static void close_lua_state(ev_app *app)
-{
-    lua_close(app->lua_state);
-    app->lua_state = NULL;
-}
 
 static int initGL(ev_app *app)
 {
@@ -124,10 +86,6 @@ ev_err_t ev_app_init(ev_app *app)
             return EV_FAIL;
         if( initGL(app) )
             return EV_FAIL;
-
-        if( create_lua_state(app) )
-            return EV_FAIL;
-
         return EV_OK;
     }
     return EV_FAIL;
@@ -195,7 +153,6 @@ ev_app* ev_app_create(uint32_t width, uint32_t height)
 void ev_app_quit(ev_app *app)
 {
     if( app ) {
-        close_lua_state(app);
         if( app->window ) {
             SDL_DestroyWindow(app->window);
             app->window = NULL;

@@ -1,19 +1,17 @@
 #include <stdio.h>
 #include "evil.h"
+#include "ev_lua.h"
 
-void ev_error(const char *fmt, ... )
+int main(int argc, char **argv)
 {
-    va_list args;
-    va_start(args, fmt);
-    vfprintf(stderr, fmt, args);
-    va_end(args);
-    fputs("\n", stderr);
-}
+    ev_lua_init();
 
-void ev_logger(ev_log_level level, const char *fmt, ... )
-{
-    va_list args;
-    va_start(args, fmt);
-    vfprintf(stdout, fmt, args);
-    va_end(args);
+    if( argc < 2 ) {
+        fprintf(stderr, "Please supply a main lua file\n");
+    } else {
+        if( luaL_dofile(ev_lua_get_state(), argv[1] ) ) {
+            ev_error( "Error in lua: %s", lua_tostring(ev_lua_get_state(),-1));
+        }
+    }
+    ev_lua_destroy();
 }
