@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "lua.h"
-#include "lualib.h"
+#include "ev_lua.h"
 
 #include "evil.h"
 #include "application.h"
@@ -208,5 +207,103 @@ ev_err_t ev_app_start(ev_app *app)
             ev_log("fps: %.2f", app->fps);
         }
     }
+    return EV_OK;
+}
+
+static ev_app* get_app(lua_State *l)
+{
+    ev_app *app;
+    assert( l != NULL );
+
+    luaL_checktype(l, 1, LUA_TUSERDATA);
+
+    app = lua_touserdata(l, 1);
+
+    return app;
+}
+
+static int app_create(lua_State *l)
+{
+    ev_app *app;
+
+    assert( l != NULL );
+
+    app = lua_newuserdata( l, sizeof(ev_app));
+
+    memset(app, 0, sizeof(ev_app));
+
+    luaL_getmetatable(l, "MetaApp");
+    lua_setmetatable(l, -2);
+
+    return 1;
+}
+
+static int app_destroy(lua_State *l)
+{
+    ev_app *app = get_app(l);
+
+    ev_app_quit(app);
+
+    return 0;
+}
+
+static int app_set_dimensions(lua_State *l)
+{
+    ev_app *app = get_app(l);
+    lua_Number width;
+    lua_Number height;
+
+    width = lua_tonumber(l, 2);
+    height = lua_tonumber(l, 3);
+
+    app->width = width;
+    app->height = height;
+
+    return 0;
+}
+
+static int app_init(lua_State *l)
+{
+    ev_app *app = get_app(l);
+
+    ev_app_init(app);
+
+    return 0;
+}
+
+static int app_show(lua_State *l)
+{
+    ev_app *app = get_app(l);
+
+    ev_app_start(app);
+
+    return 0;
+}
+
+static const luaL_Reg appStatics[] = {
+    { "create", app_create },
+    { NULL, NULL }
+};
+
+static const luaL_Reg appMethods[] = {
+    { "__gc", app_destroy },
+    { "set_dimensions", app_set_dimensions },
+    { "init", app_init },
+    { "show", app_show },
+    { 0, 0 }
+};
+
+ev_err_t ev_application_lua_init(lua_State *l)
+{
+    assert( l != NULL );
+
+    luaL_newmetatable(l, "MetaApp");
+    lua_pushstring(l, "__index");
+    lua_pushvalue(l, -2);
+    lua_settable(l, -3);
+
+    luaL_openlib(l, 0, appMethods, 0);
+    luaL_openlib(l, "app", appStatics, 0);
+
     return EV_OK;
 }

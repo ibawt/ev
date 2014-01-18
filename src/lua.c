@@ -5,6 +5,9 @@
 
 static lua_State *lua_state = NULL;
 
+
+ev_err_t ev_application_lua_init(lua_State *l);
+
 static void* lua_alloc( void *ud, void *ptr, size_t osize, size_t nsize)
 {
     if( nsize ) {
@@ -30,8 +33,6 @@ static const luaL_Reg globals[] = {
     { NULL, NULL }
 };
 
-
-
 static void open_lua_libs(void)
 {
     luaopen_io(lua_state);
@@ -49,6 +50,8 @@ void ev_lua_init(void)
 
     luaL_openlib(lua_state, "ev", globals, 0);
     lua_pop(lua_state, 1);
+
+    ev_application_lua_init(lua_state);
 }
 
 void ev_lua_destroy(void)
