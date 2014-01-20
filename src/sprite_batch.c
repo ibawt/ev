@@ -252,3 +252,42 @@ ev_sframe* ev_sbatch_get_sframe(ev_sbatch *batch, const char *name)
     }
     return NULL;
 }
+#if 0
+static int l_sbatch_create(lua_State *l)
+{
+    ev_sbatch *s;
+
+    assert( l != NULL );
+
+    s = lua_newuserdata(l, sizeof(ev_sbatch));
+    memset(s, 0, sizeof(ev_sbatch));
+
+    luaL_getmetatable(l, "ev_sbatch_Meta");
+    lua_setmetatable(l, -2);
+    return 1;
+}
+
+static const luaL_Reg sbatch_lua_funcs[] = {
+    { "create", l_sbatch_create },
+    { "__gc", l_sbatch_destroy },
+    { "load", l_sbatch_load },
+    { "set_texture", l_sbatch_set_texture},
+    { "add_sprite", l_sbatch_add_sprite }
+};
+
+ev_err_t ev_sbatch_lua_init(lua_State *l)
+{
+    assert( l != NULL );
+
+    luaL_newmetatable(l, "ev_sbatch_Meta");
+    luaL_setfuncs(l, sbatch_lua_funcs, 0);
+    lua_pushvalue(l, -1);
+    lua_setfield(l, -1, "__index");
+
+    lua_getglobal(l, "ev");
+    lua_pushvalue(l, -2);
+    lua_setfield(l, -2, "sbatch");
+
+    return EV_OK;
+}
+#endif

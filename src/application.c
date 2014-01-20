@@ -12,6 +12,7 @@ struct _ev_app {
     SDL_Window   *window;
     float         fps;
     SDL_GLContext context;
+    int           lua_ref;
     ev_app_render      render;
     ev_app_update      update;
     ev_app_key_event   key_event;
@@ -163,6 +164,7 @@ void ev_app_quit(ev_app *app)
 
 void ev_app_destroy(ev_app *app)
 {
+    ev_log("app_destroy!!");
     if( app ) {
         ev_app_quit( app );
         ev_free( app );
@@ -210,14 +212,21 @@ ev_err_t ev_app_start(ev_app *app)
     return EV_OK;
 }
 
+#define EV_APP_KEY "__ev_app"
+#define EV_APP_META "__ev_app_meta"
+
 static ev_app* get_app(lua_State *l)
 {
     ev_app *app;
     assert( l != NULL );
 
-    luaL_checktype(l, 1, LUA_TUSERDATA);
+    luaL_checktype(l, 1, LUA_TTABLE);
+    lua_getfield( l, 1, EV_APP_KEY);
 
-    app = lua_touserdata(l, 1);
+    app = lua_touserdata(l,-1);
+
+    luaL_argcheck(l, app != NULL, 1, "ev_app expected");
+    assert( app != NULL );
 
     return app;
 }
@@ -228,12 +237,16 @@ static int app_create(lua_State *l)
 
     assert( l != NULL );
 
+    lua_newtable(l);
+
+    luaL_getmetatable(l, EV_APP_META);
+    lua_setmetatable(l, -2);
+
     app = lua_newuserdata( l, sizeof(ev_app));
 
     memset(app, 0, sizeof(ev_app));
 
-    luaL_getmetatable(l, "ev_app_Meta");
-    lua_setmetatable(l, -2);
+    lua_setfield( l,-2, EV_APP_KEY);
 
     return 1;
 }
@@ -300,7 +313,7 @@ ev_err_t ev_application_lua_init(lua_State *l)
 {
     assert( l != NULL );
 
-    luaL_newmetatable(l, "ev_app_Meta");
+    luaL_newmetatable(l, EV_APP_META);
     luaL_setfuncs( l, appMethods,0);
     lua_pushvalue(l, -1);
     lua_setfield(l, -1, "__index");

@@ -1,5 +1,5 @@
+-- can we use the ev namespace?
 local app = ev.app.create()
-
 local sbatch = {}
 
 app:set_dimensions(800,600)
@@ -18,10 +18,9 @@ for i=1,10,1 do
    anim:add_frame( sbatch:get_frame("bats_fly1.png"))
    anim:add_frame( sbatch:get_frame("bats_fly2.png"))
    anim:add_frame( sbatch:get_frame("bats_fly3.png"))
-   sprite.animation = anim
-   sprite.rotation = 0.0
-   sprite.x = 400
-   sprite.y = 300
+   sprite:set_animation( anim )
+   sprite:set_rotation( 0.0 )
+   sprite:set_position(400,300)
    sbatch:add_sprite(sprite)
 end
 
