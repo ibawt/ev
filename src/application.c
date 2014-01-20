@@ -232,7 +232,7 @@ static int app_create(lua_State *l)
 
     memset(app, 0, sizeof(ev_app));
 
-    luaL_getmetatable(l, "MetaApp");
+    luaL_getmetatable(l, "ev_app_Meta");
     lua_setmetatable(l, -2);
 
     return 1;
@@ -249,15 +249,22 @@ static int app_destroy(lua_State *l)
 
 static int app_set_dimensions(lua_State *l)
 {
+    int n = lua_gettop(l);
     ev_app *app = get_app(l);
     lua_Number width;
     lua_Number height;
 
+    if( n < 3 ) {
+        lua_pushstring(l, "Incorrect number of arguments");
+        lua_error(l);
+        return 0;
+    }
+
     width = lua_tonumber(l, 2);
     height = lua_tonumber(l, 3);
 
-    app->width = width;
-    app->height = height;
+    app->width = (int)width;
+    app->height = (int)height;
 
     return 0;
 }
@@ -280,12 +287,8 @@ static int app_show(lua_State *l)
     return 0;
 }
 
-static const luaL_Reg appStatics[] = {
-    { "create", app_create },
-    { NULL, NULL }
-};
-
 static const luaL_Reg appMethods[] = {
+    { "create", app_create},
     { "__gc", app_destroy },
     { "set_dimensions", app_set_dimensions },
     { "init", app_init },
@@ -297,13 +300,14 @@ ev_err_t ev_application_lua_init(lua_State *l)
 {
     assert( l != NULL );
 
-    luaL_newmetatable(l, "MetaApp");
-    lua_pushstring(l, "__index");
-    lua_pushvalue(l, -2);
-    lua_settable(l, -3);
+    luaL_newmetatable(l, "ev_app_Meta");
+    luaL_setfuncs( l, appMethods,0);
+    lua_pushvalue(l, -1);
+    lua_setfield(l, -1, "__index");
 
-    luaL_openlib(l, 0, appMethods, 0);
-    luaL_openlib(l, "app", appStatics, 0);
+    lua_getglobal(l, "ev");
+    lua_pushvalue(l, -2);
+    lua_setfield(l, -2, "app");
 
     return EV_OK;
 }
