@@ -6,6 +6,8 @@
 #include "evil.h"
 #include "application.h"
 
+static void l_app_render(ev_app *app);
+
 struct _ev_app {
     uint32_t      width;
     uint32_t      height;
@@ -208,12 +210,26 @@ ev_err_t ev_app_start(ev_app *app)
             app->fps = numFrames / (( SDL_GetTicks() - startTime) / 1000.0f);
             ev_log("fps: %.2f", app->fps);
         }
+
+        l_app_render(app);
     }
     return EV_OK;
 }
 
 #define EV_APP_KEY "__ev_app"
 #define EV_APP_META "__ev_app_meta"
+
+static void l_app_render(ev_app *app)
+{
+    lua_State *l = ev_lua_get_state();
+    lua_gettable(l, LUA_REGISTRYINDEX);
+    lua_rawgeti(l, -2, app->lua_ref);
+    lua_rawgeti(l, 1, 1);
+    lua_getfield(l, 1, "render");
+    lua_call(l, 0, 0);
+
+    lua_pop(l, 2);
+}
 
 static ev_app* get_app(lua_State *l)
 {
@@ -248,6 +264,8 @@ static int app_create(lua_State *l)
 
     lua_setfield( l,-2, EV_APP_KEY);
 
+    app->lua_ref = ev_lua_create_ref( l, 1 );
+
     return 1;
 }
 
@@ -255,6 +273,7 @@ static int app_destroy(lua_State *l)
 {
     ev_app *app = get_app(l);
 
+    ev_log("app GC!");
     ev_app_quit(app);
 
     return 0;

@@ -5,8 +5,29 @@
 
 static lua_State *lua_state = NULL;
 
-
 ev_err_t ev_application_lua_init(lua_State *l);
+
+
+
+int ev_lua_create_ref(lua_State *L, int weak_ref)
+{
+    lua_newtable(L); /* new_table={} */
+
+    if (weak_ref) {
+        lua_newtable(L); /* metatable={} */
+
+        lua_pushliteral(L, "__mode");
+        lua_pushliteral(L, "v");
+        lua_rawset(L, -3); /* metatable._mode='v' */
+
+        lua_setmetatable(L, -2); /* setmetatable(new_table,metatable) */
+    }
+
+    lua_pushvalue(L,-2); /* push the previous top of stack */
+    lua_rawseti(L,-2,1); /* new_table[1]=original value on top of the stack */
+
+    return luaL_ref(L, LUA_REGISTRYINDEX); /* this pops the new_table */
+}
 
 static void* lua_alloc( void *ud, void *ptr, size_t osize, size_t nsize)
 {
@@ -35,11 +56,7 @@ static const luaL_Reg globals[] = {
 
 static void open_lua_libs(void)
 {
-    luaopen_io(lua_state);
-    luaopen_base(lua_state);
-    luaopen_table(lua_state);
-    luaopen_string(lua_state);
-    luaopen_math(lua_state);
+    luaL_openlibs(lua_state);
 }
 
 void ev_lua_init(void)
@@ -53,6 +70,13 @@ void ev_lua_init(void)
     lua_pushvalue( lua_state, -1);
     lua_setfield( lua_state, -1, "__index");
     lua_setglobal(lua_state, "ev");
+
+    lua_getglobal(lua_state, "ev");
+    lua_newtable(lua_state);
+    lua_pushstring(lua_state, "v");
+    lua_setfield(lua_state, -2, "__mode");
+    lua_setfield(lua_state, -2, "ev_reftable");
+
     ev_application_lua_init(lua_state);
 }
 
