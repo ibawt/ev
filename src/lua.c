@@ -9,6 +9,8 @@ ev_err_t ev_application_lua_init(lua_State *l);
 
 int ev_lua_create_ref(lua_State *L, int weak_ref)
 {
+    assert( L != NULL );
+
     lua_newtable(L); /* new_table={} */
 
     if (weak_ref) {
@@ -64,7 +66,7 @@ void ev_lua_init(void)
     lua_state = lua_newstate(lua_alloc, NULL);
     open_lua_libs();
 
-    luaL_newmetatable(lua_state, "ev_Meta");
+    luaL_newmetatable(lua_state, "ev_meta");
     luaL_setfuncs( lua_state, globals, 0 );
     lua_pushvalue( lua_state, -1);
     lua_setfield( lua_state, -1, "__index");

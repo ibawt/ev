@@ -9,6 +9,7 @@
 #include "sprite.h"
 #include "sprite_sheet.h"
 
+#include "ev_lua.h"
 
 static const char *animationVertexShader =
     "#version 120\n"
@@ -44,6 +45,7 @@ struct _ev_sbatch {
     ev_matrix4  matrix;
     ev_vbuff   *vbuff;
     ev_ssheet  *sheet;
+    int         lua_ref;
 };
 
 static ev_err_t set_default_shader_program(ev_sbatch *b)
@@ -252,34 +254,101 @@ ev_sframe* ev_sbatch_get_sframe(ev_sbatch *batch, const char *name)
     }
     return NULL;
 }
-#if 0
+
+#define EV_SBATCH_KEY "__ev_sbatch"
+#define EV_SBATCH_META "__ev_sbatch_meta"
+
+
+static ev_sbatch* check_sbatch(lua_State *l)
+{
+    ev_sbatch *s;
+
+    assert( l != NULL );
+
+    luaL_checktype(l, 1, LUA_TTABLE);
+    lua_getfield(l, 1, EV_SBATCH_KEY);
+
+    s = lua_touserdata(l, -1);
+
+    luaL_argcheck(l, s != NULL, 1, "ev_sbatch expected");
+    assert( s != NULL );
+
+    return s;
+}
+
 static int l_sbatch_create(lua_State *l)
 {
     ev_sbatch *s;
 
     assert( l != NULL );
 
+    lua_newtable(l);
+
+    luaL_getmetatable(l, EV_SBATCH_META);
+    lua_setmetatable(l, -2);
+
     s = lua_newuserdata(l, sizeof(ev_sbatch));
     memset(s, 0, sizeof(ev_sbatch));
+    utarray_new(s->sprites, &icd);
 
-    luaL_getmetatable(l, "ev_sbatch_Meta");
-    lua_setmetatable(l, -2);
+    lua_setfield(l, -2, EV_SBATCH_KEY);
+    s->lua_ref = ev_lua_create_ref( l, 1);
+
     return 1;
+}
+
+static int l_sbatch_destroy(lua_State *l)
+{
+    ev_sbatch *s;
+
+    assert( l != NULL );
+
+    s = check_sbatch(l);
+
+    if( s->program ) {
+        ev_program_destroy(s->program);
+        s->program = NULL;
+    }
+
+    if( s->sprites ) {
+        utarray_free(s->sprites);
+        s->sprites = NULL;
+    }
+    if( s->vbuff ) {
+        ev_vbuff_destroy(s->vbuff);
+        s->vbuff = NULL;
+    }
+
+    return 0;
+}
+
+static int l_sbatch_load(lua_State *l)
+{
+    ev_sbatch *s;
+
+    s = check_sbatch(l);
+
+    if( ev_sbatch_load(s, lua_tostring(l, 2)) ) {
+        lua_pushstring(l, "error in loading sbatch");
+        lua_error(l);
+    }
+
+    return 0;
 }
 
 static const luaL_Reg sbatch_lua_funcs[] = {
     { "create", l_sbatch_create },
     { "__gc", l_sbatch_destroy },
     { "load", l_sbatch_load },
-    { "set_texture", l_sbatch_set_texture},
-    { "add_sprite", l_sbatch_add_sprite }
+//    { "set_texture", l_sbatch_set_texture},
+//    { "add_sprite", l_sbatch_add_sprite }
 };
 
 ev_err_t ev_sbatch_lua_init(lua_State *l)
 {
     assert( l != NULL );
 
-    luaL_newmetatable(l, "ev_sbatch_Meta");
+    luaL_newmetatable(l, EV_SBATCH_META);
     luaL_setfuncs(l, sbatch_lua_funcs, 0);
     lua_pushvalue(l, -1);
     lua_setfield(l, -1, "__index");
@@ -290,4 +359,3 @@ ev_err_t ev_sbatch_lua_init(lua_State *l)
 
     return EV_OK;
 }
-#endif

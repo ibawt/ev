@@ -13,6 +13,7 @@ struct _ev_anim
     ev_sframe  **frames;
     uint32_t     frame_cnt;
     size_t       frame_size;
+    int          lua_ref;
 };
 
 static void grow_array(ev_anim *a)

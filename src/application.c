@@ -271,9 +271,12 @@ static int app_create(lua_State *l)
 
 static int app_destroy(lua_State *l)
 {
-    ev_app *app = get_app(l);
+    ev_app *app;
 
-    ev_log("app GC!");
+    assert( l != NULL );
+
+    app = get_app(l);
+
     ev_app_quit(app);
 
     return 0;
@@ -281,10 +284,15 @@ static int app_destroy(lua_State *l)
 
 static int app_set_dimensions(lua_State *l)
 {
-    int n = lua_gettop(l);
-    ev_app *app = get_app(l);
+    int n;
+    ev_app *app;
     lua_Number width;
     lua_Number height;
+
+    assert( l != NULL );
+
+    n = lua_gettop(l);
+    app = get_app(l);
 
     if( n < 3 ) {
         lua_pushstring(l, "Incorrect number of arguments");
@@ -301,9 +309,14 @@ static int app_set_dimensions(lua_State *l)
     return 0;
 }
 
+
 static int app_init(lua_State *l)
 {
-    ev_app *app = get_app(l);
+    ev_app *app;
+
+    assert( l != NULL );
+
+    app = get_app(l);
 
     ev_app_init(app);
 
@@ -312,9 +325,26 @@ static int app_init(lua_State *l)
 
 static int app_show(lua_State *l)
 {
-    ev_app *app = get_app(l);
+    ev_app *app;
+
+    assert( l != NULL );
+
+    app = get_app(l);
 
     ev_app_start(app);
+
+    return 0;
+}
+
+static int app_quit(lua_State *l)
+{
+    ev_app *app;
+
+    assert( l != NULL );
+
+    app = get_app(l);
+
+    ev_app_quit(app);
 
     return 0;
 }
@@ -325,6 +355,7 @@ static const luaL_Reg appMethods[] = {
     { "set_dimensions", app_set_dimensions },
     { "init", app_init },
     { "show", app_show },
+    { "quit", app_quit },
     { 0, 0 }
 };
 
