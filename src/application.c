@@ -2,7 +2,7 @@
 #include <assert.h>
 
 #include "ev_lua.h"
-
+#include "stage.h"
 #include "evil.h"
 #include "application.h"
 
@@ -19,6 +19,8 @@ struct _ev_app {
 		ev_app_update      update;
 		ev_app_key_event   key_event;
 		ev_app_mouse_event mouse_event;
+
+		ev_stage *stage;
 };
 
 static int initGL(ev_app *app)
@@ -200,6 +202,12 @@ ev_err_t ev_app_start(ev_app *app)
 				if( app->render ) {
 						app->render(app);
 				}
+
+				if( app->stage ) {
+						ev_stage_update(app->stage, dt);
+						ev_stage_render(app->stage);
+				}
+
 				SDL_GL_SwapWindow(app->window);
 
 				dt = ( SDL_GetTicks() - t1 ) / 1000.0f;
@@ -210,8 +218,6 @@ ev_err_t ev_app_start(ev_app *app)
 						app->fps = numFrames / (( SDL_GetTicks() - startTime) / 1000.0f);
 						ev_log("fps: %.2f", app->fps);
 				}
-
-				l_app_render(app);
 		}
 		return EV_OK;
 }
@@ -360,6 +366,20 @@ static int app_quit(lua_State *l)
 		return 0;
 }
 
+static int app_set_stage(lua_State *l)
+{
+		ev_app   *app;
+		ev_stage *stage;
+
+		app = get_app(l);
+
+		stage = ev_stage_from_lua(l, 2);
+
+		app->stage = stage;
+
+		return 0;
+}
+
 static const luaL_Reg appMethods[] = {
 		{ "create", app_create},
 		{ "__gc", app_destroy },
@@ -367,6 +387,7 @@ static const luaL_Reg appMethods[] = {
 		{ "init", app_init },
 		{ "show", app_show },
 		{ "quit", app_quit },
+		{ "set_stage", app_set_stage },
 		{ 0, 0 }
 };
 

@@ -121,6 +121,8 @@ ev_sbatch* ev_sbatch_create(void)
 
 		utarray_new(s->sprites, &icd);
 
+		ev_sbatch_set_vbuff_capacity(s, 128);
+
 		return s;
 }
 
@@ -230,7 +232,6 @@ void ev_sbatch_render(ev_sbatch *batch)
 		glDisableVertexAttribArray(transform);
 		glDisableVertexAttribArray(tex);
 		glDisableVertexAttribArray(pos);
-
 }
 
 void ev_sbatch_set_matrix4(ev_sbatch *batch, ev_matrix4 *matrix)
@@ -258,14 +259,16 @@ ev_sframe* ev_sbatch_get_sframe(ev_sbatch *batch, const char *name)
 #define EV_SBATCH_KEY "__ev_sbatch"
 #define EV_SBATCH_META "__ev_sbatch_meta"
 
-static ev_sbatch* check_sbatch(lua_State *l)
+#define check_sbatch(s) ev_sbatch_from_lua(s, 1)
+
+ev_sbatch* ev_sbatch_from_lua(lua_State *l, int arg)
 {
 		ev_sbatch *s;
 
 		assert( l != NULL );
 
-		luaL_checktype(l, 1, LUA_TTABLE);
-		lua_getfield(l, 1, EV_SBATCH_KEY);
+		luaL_checktype(l, arg, LUA_TTABLE);
+		lua_getfield(l, arg, EV_SBATCH_KEY);
 
 		s = lua_touserdata(l, -1);
 
@@ -390,6 +393,21 @@ static int l_sbatch_add_sprite(lua_State *l)
 		return 0;
 }
 
+static int l_sbatch_set_ortho(lua_State *l)
+{
+		ev_sbatch *batch;
+		float w,h;
+
+		batch = check_sbatch(l);
+
+		w = (float)lua_tonumber(l, 2);
+		h = (float)lua_tonumber(l, 3);
+
+		ev_matrix4_set_ortho(&batch->matrix, 0, w, h, 1, -1, 1);
+
+		return 0;
+}
+
 static const luaL_Reg sbatch_lua_funcs[] = {
 		{ "create", l_sbatch_create },
 		{ "__gc", l_sbatch_destroy },
@@ -397,6 +415,7 @@ static const luaL_Reg sbatch_lua_funcs[] = {
 		{ "get_frame", l_sbatch_get_sframe},
 		{ "set_texture", l_sbatch_set_texture},
 		{ "add_sprite", l_sbatch_add_sprite },
+		{ "set_ortho", l_sbatch_set_ortho },
 		{ 0, 0 }
 };
 

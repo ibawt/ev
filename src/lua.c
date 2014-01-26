@@ -82,6 +82,7 @@ void ev_lua_init(void)
 		ev_sprite_lua_init(lua_state);
 		ev_anim_lua_init(lua_state);
 		ev_texture_lua_init(lua_state);
+		ev_stage_lua_init(lua_state);
 }
 
 void ev_lua_destroy(void)

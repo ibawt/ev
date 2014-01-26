@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 
+#include "ev_lua.h"
 #include "evil.h"
 #include "matrix4.h"
 
@@ -17,4 +18,7 @@ void       ev_sbatch_set_program(ev_sbatch*, ev_program* );
 void       ev_sbatch_set_matrix4(ev_sbatch*, ev_matrix4 *);
 ev_err_t   ev_sbatch_set_vbuff_capacity(ev_sbatch*, size_t);
 void       ev_sbatch_update(ev_sbatch *, float);
+
+ev_sbatch* ev_sbatch_from_lua(lua_State *l, int arg);
+
 #endif

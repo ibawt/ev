@@ -15,8 +15,14 @@ set(
 	src/utils.c
 	src/tile_map.c
 	src/lua.c
+	src/stage.c
 	vendor/glew/src/glew.c
 )
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_GENERATOR STREQUAL "Ninja")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fcolor-diagnostics")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
+endif()
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
 add_subdirectory( vendor/jansson)
 add_subdirectory( vendor/Box2D )
