@@ -258,7 +258,6 @@ ev_sframe* ev_sbatch_get_sframe(ev_sbatch *batch, const char *name)
 #define EV_SBATCH_KEY "__ev_sbatch"
 #define EV_SBATCH_META "__ev_sbatch_meta"
 
-
 static ev_sbatch* check_sbatch(lua_State *l)
 {
 		ev_sbatch *s;
@@ -348,17 +347,41 @@ int l_sbatch_set_texture(lua_State *l)
 		ev_log("sbatch set texture");
 
 		s = check_sbatch(l);
-		t = ev_texture_from_lua(l,2);
+		t = ev_texture_from_lua(l, 2);
 
 		s->texture = t;
 
 		return 0;
 }
 
+static int l_sbatch_get_sframe(lua_State *l)
+{
+		ev_sbatch *s;
+		ev_sframe *frame;
+		const char *key;
+
+		s = check_sbatch(l);
+
+		key = lua_tostring(l, 2);
+
+		ev_log("sbatch_get_sframe: %s", key);
+
+		frame = ev_sbatch_get_sframe(s, key);
+		if( !frame ) {
+				lua_pushfstring(l, "can't find frame for key: %s", key);
+				lua_error(l);
+				return 0;
+		}	else {
+				lua_pushlightuserdata(l, frame);
+				return 1;
+		}
+}
+
 static const luaL_Reg sbatch_lua_funcs[] = {
 		{ "create", l_sbatch_create },
 		{ "__gc", l_sbatch_destroy },
 		{ "load", l_sbatch_load },
+		{ "get_frame", l_sbatch_get_sframe},
 		{ "set_texture", l_sbatch_set_texture},
 //    { "add_sprite", l_sbatch_add_sprite }
 		{ 0, 0 }

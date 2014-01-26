@@ -10,13 +10,20 @@ I didn't see many simple 2D C gaming libraries and I didn't want to use c++.
 - raw old school C
 
 ## External Depenencies
-- CMake
+- CMake >= 2.8
 - a c/c++ compiler (C++ only for Box2D)
 - SDL2.0 and SDLImage 2.0
 
 ## Included libraries
+- lua 5.2
 - jannson json library
 - Box2D
 - uthash
 - gtest
 - gmock
+
+## HOWTO compile
+# OSX
+- grab SDL2.0 and SDLImage 2.0 and stuff them into /Library/Frameworks
+- install cmake from somewhere
+- make a build/ directory and run "cmake <path_to_build>"
