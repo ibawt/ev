@@ -377,13 +377,26 @@ static int l_sbatch_get_sframe(lua_State *l)
 		}
 }
 
+static int l_sbatch_add_sprite(lua_State *l)
+{
+		ev_sbatch *batch;
+		ev_sprite *s;
+
+		batch = check_sbatch(l);
+		s = ev_sprite_from_lua(l, 2);
+
+		ev_sbatch_add_sprite(batch, s);
+
+		return 0;
+}
+
 static const luaL_Reg sbatch_lua_funcs[] = {
 		{ "create", l_sbatch_create },
 		{ "__gc", l_sbatch_destroy },
 		{ "load", l_sbatch_load },
 		{ "get_frame", l_sbatch_get_sframe},
 		{ "set_texture", l_sbatch_set_texture},
-//    { "add_sprite", l_sbatch_add_sprite }
+		{ "add_sprite", l_sbatch_add_sprite },
 		{ 0, 0 }
 };
 

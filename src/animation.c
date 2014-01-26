@@ -132,12 +132,14 @@ ev_anim_mode ev_anim_get_mode(ev_anim *a)
 #define EV_ANIM_KEY "__ev_anim"
 #define EV_ANIM_META "__ev_anim_meta"
 
-static ev_anim* check_anim(lua_State *l)
+#define check_anim( x ) ev_anim_from_lua( x, 1 )
+
+ev_anim* ev_anim_from_lua(lua_State *l, int arg)
 {
 		ev_anim *a;
 
-		luaL_checktype(l, 1, LUA_TTABLE);
-		lua_getfield(l, 1, EV_ANIM_KEY );
+		luaL_checktype(l, arg, LUA_TTABLE);
+		lua_getfield(l, arg, EV_ANIM_KEY );
 		a = lua_touserdata(l, -1 );
 
 		luaL_argcheck( l, a != NULL, 1, "ev_anim expected");
