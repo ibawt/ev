@@ -103,25 +103,36 @@ ev_err_t ev_sbatch_set_vbuff_capacity(ev_sbatch *batch, size_t size)
 				return EV_FAIL;
 
 		batch->vbuff = ev_vbuff_create();
-		if(!batch->vbuff)
-				return EV_FAIL;
 
-		if( ev_vbuff_set_capacity(batch->vbuff, sizeof(ev_bvertex)*EV_SPRITE_NUM_VERTS*size) )
+		if(!batch->vbuff) {
+				ev_error("failed to create vertex buffer");
 				return EV_FAIL;
+		}
+
+		if( ev_vbuff_set_capacity(batch->vbuff, sizeof(ev_bvertex)*EV_SPRITE_NUM_VERTS*size) ) {
+				ev_error("failed to set vbuff capacity");
+				return EV_FAIL;
+		}
 
 		return EV_OK;
 }
 
+static void sbatch_init(ev_sbatch *s)
+{
+		memset(s, 0, sizeof(ev_sbatch));
+
+		utarray_new(s->sprites, &icd);
+
+		if( ev_sbatch_set_vbuff_capacity(s, 128) ) {
+				ev_error("can't create sbatch");
+		}
+}
 
 ev_sbatch* ev_sbatch_create(void)
 {
 		ev_sbatch* s = ev_malloc(sizeof(ev_sbatch));
 
-		memset(s, 0, sizeof(ev_sbatch));
-
-		utarray_new(s->sprites, &icd);
-
-		ev_sbatch_set_vbuff_capacity(s, 128);
+		sbatch_init(s);
 
 		return s;
 }
@@ -291,8 +302,7 @@ static int l_sbatch_create(lua_State *l)
 		lua_setmetatable(l, -2);
 
 		s = lua_newuserdata(l, sizeof(ev_sbatch));
-		memset(s, 0, sizeof(ev_sbatch));
-		utarray_new(s->sprites, &icd);
+		sbatch_init(s);
 
 		lua_setfield(l, -2, EV_SBATCH_KEY);
 		s->lua_ref = ev_lua_create_ref( l, 1);

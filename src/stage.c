@@ -46,6 +46,8 @@ void ev_stage_render(ev_stage *s)
 {
 		int i;
 
+		ev_log("stage render");
+
 		glClear(GL_COLOR_BUFFER_BIT);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -77,6 +79,7 @@ void ev_stage_update(ev_stage *stage, float dt)
 {
 		int i;
 
+		ev_log("stage update");
 		for( i = 0 ; i < stage->node_cnt ; ++i ) {
 				stage->nodes[i].update_fn(stage->nodes[i].opaque, dt);
 		}
