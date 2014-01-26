@@ -27,7 +27,7 @@ for i=1,1,1 do
 	 sprite:set_position(400,300)
 	 sbatch:add_sprite(sprite)
 end
-
+sbatch:set_ortho(800,600)
 stage:add_sbatch(sbatch)
 app:set_stage(stage)
 

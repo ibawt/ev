@@ -328,6 +328,7 @@ static int l_sbatch_destroy(lua_State *l)
 				utarray_free(s->sprites);
 				s->sprites = NULL;
 		}
+
 		if( s->vbuff ) {
 				ev_vbuff_destroy(s->vbuff);
 				s->vbuff = NULL;

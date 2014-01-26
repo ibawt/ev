@@ -130,6 +130,8 @@ int l_sprite_create(lua_State *l)
 
 		s = lua_newuserdata(l, sizeof(ev_sprite));
 		memset(s, 0, sizeof(ev_sprite));
+		s->scale = 1.0f;
+
 		lua_setfield(l, -2, EV_SPRITE_KEY);
 		s->lua_ref = ev_lua_create_ref(l, 1);
 
