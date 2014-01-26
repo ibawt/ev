@@ -1,5 +1,5 @@
 #include <assert.h>
-
+#include "ev_lua.h"
 #include "animation.h"
 
 #define FRAME_GROW_FAC 16
@@ -31,11 +31,9 @@ static void grow_array(ev_anim *a)
     ev_free(p);
 }
 
-ev_anim* ev_anim_create(void)
+static void init_ev_anim(ev_anim* a)
 {
-    ev_anim * a = ev_malloc(sizeof(ev_anim));
-    if( !a )
-        return NULL;
+    assert( a != NULL );
 
     a->time = 0.0f;
     a->mode = EV_LOOP;
@@ -45,6 +43,15 @@ ev_anim* ev_anim_create(void)
     a->delay = 0.3f;
     a->frame_size = FRAME_GROW_FAC;
     a->index = 0;
+}
+
+ev_anim* ev_anim_create(void)
+{
+    ev_anim * a = ev_malloc(sizeof(ev_anim));
+    if( !a )
+        return NULL;
+
+    init_ev_anim(a);
 
     return a;
 }
@@ -120,4 +127,65 @@ ev_anim_mode ev_anim_get_mode(ev_anim *a)
         return a->mode;
     }
     return EV_LOOP;
+}
+
+#define EV_ANIM_KEY "__ev_anim"
+#define EV_ANIM_META "__ev_anim_meta"
+
+static ev_anim* check_anim(lua_State *l)
+{
+    ev_anim *a;
+
+    luaL_checktype(l, 1, LUA_TTABLE);
+    lua_getfield(l, 1, EV_ANIM_KEY );
+    a = lua_touserdata(l, -1 );
+
+    luaL_argcheck( l, a != NULL, 1, "ev_anim expected");
+
+    return a;
+}
+
+static int l_anim_create(lua_State *l)
+{
+    ev_anim *a;
+
+    ev_log("anim_create");
+    lua_newtable(l);
+    luaL_getmetatable( l, EV_ANIM_META);
+    lua_setmetatable(l, -2);
+
+    a = lua_newuserdata(l, sizeof(ev_anim));
+    init_ev_anim(a);
+
+    lua_setfield(l, -2, EV_ANIM_KEY );
+    a->lua_ref = ev_lua_create_ref(l, 1);
+
+    return 1;
+}
+
+static int l_anim_destroy(lua_State *l)
+{
+    ev_anim *a;
+
+    ev_log("anim_destroy");
+
+    a = check_anim(l);
+
+    if( a->frames ) {
+        ev_free(a->frames);
+    }
+
+    return 0;
+}
+
+ev_err_t ev_anim_lua_init(lua_State *l)
+{
+    luaL_Reg anim_lua_funcs[] = {
+        { "create",  l_anim_create },
+        { "__gc",    l_anim_destroy},
+        { 0, 0 }
+    };
+
+    ev_lua_init_module(l, anim_lua_funcs, EV_ANIM_META, "anim");
+    return EV_OK;
 }

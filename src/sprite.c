@@ -1,6 +1,10 @@
+#include <stdio.h>
+
+#include "ev_lua.h"
 #include "sprite.h"
 #include "animation.h"
 #include "sprite_sheet.h"
+
 
 struct _ev_sprite
 {
@@ -8,6 +12,7 @@ struct _ev_sprite
     float    rotation;
     float    scale;
     ev_anim *animation;
+    int      lua_ref;
 };
 
 ev_sprite* ev_sprite_create(void)
@@ -94,4 +99,61 @@ void ev_sprite_fill(ev_sprite* s, ev_bvertex* b)
             }
         }
     }
+}
+
+#define EV_SPRITE_META "__ev_sprite_meta"
+#define EV_SPRITE_KEY "__ev_sprite"
+
+static ev_sprite* check_sprite(lua_State *l)
+{
+    ev_sprite *s;
+
+    luaL_checktype(l, 1, LUA_TTABLE);
+    lua_getfield(l, 1, EV_SPRITE_KEY);
+
+    s = lua_touserdata(l, -1);
+    luaL_argcheck(l, s != NULL, 1, "ev_sprite expected");
+
+    return s;
+}
+
+int l_sprite_create(lua_State *l)
+{
+    ev_sprite *s;
+
+    ev_log("sprite create");
+
+    lua_newtable(l);
+    luaL_getmetatable(l, EV_SPRITE_META);
+    lua_setmetatable(l, -2);
+
+    s = lua_newuserdata(l, sizeof(ev_sprite));
+    memset(s, 0, sizeof(ev_sprite));
+    lua_setfield(l, -2, EV_SPRITE_KEY);
+    s->lua_ref = ev_lua_create_ref(l, 1);
+
+    return 1;
+}
+
+int l_sprite_destroy(lua_State *l)
+{
+    ev_sprite *s;
+
+    ev_log("sprite destroy");
+
+    s = check_sprite(l);
+
+    return 0;
+}
+ev_err_t ev_sprite_lua_init(lua_State *l)
+{
+    luaL_Reg luaFuncs[] = {
+        { "create", l_sprite_create },
+        { "__gc",   l_sprite_destroy },
+        { 0, 0 }
+    };
+
+    ev_lua_init_module(l, luaFuncs, EV_SPRITE_META, "sprite");
+
+    return EV_OK;
 }
