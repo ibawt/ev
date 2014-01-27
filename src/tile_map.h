@@ -4,9 +4,9 @@
 #include "evil.h"
 
 typedef enum {
-		MAP_ORTHO     = 0,
-		MAP_ISOMETRIC = 1,
-		MAP_STAGGERED = 2
+    MAP_ORTHO     = 0,
+    MAP_ISOMETRIC = 1,
+    MAP_STAGGERED = 2
 } ev_map_type_t;
 
 ev_tilemap* ev_tilemap_create(void);

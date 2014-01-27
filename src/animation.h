@@ -5,10 +5,10 @@
 #include "ev_lua.h"
 
 typedef enum {
-		EV_LOOP = 0,
-		EV_ONE_SHOT = 1,
-		EV_REVERSE = 2,
-		EV_PING_PONG = 3
+    EV_LOOP = 0,
+    EV_ONE_SHOT = 1,
+    EV_REVERSE = 2,
+    EV_PING_PONG = 3
 } ev_anim_mode;
 
 ev_anim*     ev_anim_create(void);
