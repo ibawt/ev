@@ -153,6 +153,7 @@ static int l_sprite_set_animation(lua_State *l)
 {
     ev_sprite *s;
     ev_anim   *a;
+
     ev_log("sprite set animation");
 
     s = check_sprite(l);
@@ -160,6 +161,10 @@ static int l_sprite_set_animation(lua_State *l)
     a = ev_anim_from_lua(l, 2);
 
     ev_sprite_set_animation( s, a);
+
+    lua_pop(l, 2);
+
+    lua_setfield(l, -2, "animation");
 
     return 0;
 }

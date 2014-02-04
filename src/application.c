@@ -8,6 +8,8 @@
 
 static void l_app_render(ev_app *app);
 
+static ev_app *lua_app = NULL;
+
 struct _ev_app {
     uint32_t      width;
     uint32_t      height;
@@ -185,6 +187,7 @@ ev_err_t ev_app_start(ev_app *app)
     SDL_StartTextInput();
 
     startTime = SDL_GetTicks();
+
     while( running ) {
         uint32_t t1 = SDL_GetTicks();
         SDL_Event e;
@@ -210,13 +213,15 @@ ev_err_t ev_app_start(ev_app *app)
 
         SDL_GL_SwapWindow(app->window);
 
+        lua_gc(ev_lua_get_state(), LUA_GCSTEP, 1 );
+
         dt = ( SDL_GetTicks() - t1 ) / 1000.0f;
 
         numFrames++;
 
         if( (numFrames % 10 ) == 0 ) {
             app->fps = numFrames / (( SDL_GetTicks() - startTime) / 1000.0f);
-            ev_log("fps: %.2f", app->fps);
+            //          ev_log("fps: %.2f", app->fps);
         }
     }
     return EV_OK;

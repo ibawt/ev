@@ -3,6 +3,7 @@
 #include "ev_lua.h"
 #include "evil.h"
 
+
 static lua_State *lua_state = NULL;
 
 ev_err_t ev_application_lua_init(lua_State *l);
@@ -10,6 +11,7 @@ ev_err_t ev_sbatch_lua_init(lua_State *l);
 ev_err_t ev_sprite_lua_init(lua_State *l);
 ev_err_t ev_anim_lua_init(lua_State *l);
 ev_err_t ev_texture_lua_init(lua_State *l);
+ev_err_t ev_stage_lua_init(lua_State *l);
 
 int ev_lua_create_ref(lua_State *L, int weak_ref)
 {
@@ -109,4 +111,83 @@ void ev_lua_init_module(lua_State *l, luaL_Reg *funcs, const char *meta, const c
     lua_getglobal(l, "ev");
     lua_pushvalue(l, -2);
     lua_setfield(l, -2, name);
+}
+
+void ev_lua_dump_stack(lua_State *L)
+{
+    int i;
+    int top = lua_gettop(L);
+    for (i = 1; i <= top; i++) {  /* repeat for each level */
+        printf("[%d]", i);
+        int t = lua_type(L, i);
+        switch (t) {
+
+        case LUA_TSTRING:  /* strings */
+            printf("`%s'", lua_tostring(L, i));
+            break;
+
+        case LUA_TBOOLEAN:  /* booleans */
+            printf( "%s", (lua_toboolean(L, i) ? "true" : "false"));
+            break;
+
+        case LUA_TNUMBER:  /* numbers */
+            ev_log("%g", lua_tonumber(L, i));
+            break;
+
+        default:  /* other values */
+            printf("%s", lua_typename(L, t));
+            break;
+
+        }
+        printf("  ");  /* put a separator */
+      }
+    printf("\n");  /* end the listing */
+}
+
+/* stolen from ltablib.c in the lua src */
+int ev_lua_table_insert(lua_State *L)
+{
+    int index = -2;
+
+    int e = ev_lua_getn(L, index) + 1;  /* first empty element */
+
+    int pos;  /* where to insert new element */
+
+    switch (lua_gettop(L)) {
+    case 2: {  /* called with only 2 arguments */
+        pos = e;  /* insert new element at the end */
+        break;
+    }
+    case 3: {
+        int i;
+        pos = luaL_checkint(L, 2);  /* 2nd argument is the position */
+        luaL_argcheck(L, 1 <= pos && pos <= e, 2, "position out of bounds");
+        for (i = e; i > pos; i--) {  /* move up elements */
+            lua_rawgeti(L, 1, i-1);
+            lua_rawseti(L, 1, i);  /* t[i] = t[i-1] */
+        }
+        break;
+    }
+    default: {
+        return luaL_error(L, "wrong number of arguments to " LUA_QL("insert"));
+    }
+    }
+    lua_rawseti(L, index, pos);  /* t[pos] = v */
+    return 0;
+
+}
+int ev_lua_table_remove(lua_State *L)
+{
+    int size = ev_lua_getn(L, 1);
+    int pos = luaL_optint(L, 2, size);
+    if (pos != size)  /* validate 'pos' if given */
+        luaL_argcheck(L, 1 <= pos && pos <= size + 1, 1, "position out of bounds");
+    lua_rawgeti(L, 1, pos);  /* result = t[pos] */
+    for ( ; pos < size; pos++) {
+        lua_rawgeti(L, 1, pos+1);
+        lua_rawseti(L, 1, pos);  /* t[pos] = t[pos+1] */
+    }
+    lua_pushnil(L);
+    lua_rawseti(L, 1, pos);  /* t[pos] = nil */
+    return 1;
 }

@@ -365,6 +365,8 @@ int l_sbatch_set_texture(lua_State *l)
 
     s->texture = t;
 
+    //lua_setfield(l, 1, "texture");
+
     return 0;
 }
 
@@ -397,9 +399,22 @@ static int l_sbatch_add_sprite(lua_State *l)
     ev_sprite *s;
 
     batch = check_sbatch(l);
+
     s = ev_sprite_from_lua(l, 2);
 
     ev_sbatch_add_sprite(batch, s);
+
+    lua_pop(l,2);
+
+    luaL_getsubtable(l, 1, "sprites");
+
+    lua_pushvalue(l, 2);
+
+    lua_remove(l,1);
+
+    lua_remove(l,1);
+
+    ev_lua_table_insert(l);
 
     return 0;
 }
