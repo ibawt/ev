@@ -123,7 +123,7 @@ static void sbatch_init(ev_sbatch *s)
 
     utarray_new(s->sprites, &icd);
 
-    if( ev_sbatch_set_vbuff_capacity(s, 128) ) {
+    if( ev_sbatch_set_vbuff_capacity(s, 10000) ) {
         ev_error("can't create sbatch");
     }
 }

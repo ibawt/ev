@@ -17,7 +17,7 @@ texture:load("bats.png")
 
 sbatch:set_texture(texture)
 sbatch.texture = texture
-for i=1,1,1 do
+for i=1,10000,1 do
    local sprite = ev.sprite.create()
    local anim = ev.anim.create()
    anim:add_frame( sbatch:get_frame("bats_fly1.png"))
@@ -25,7 +25,7 @@ for i=1,1,1 do
    anim:add_frame( sbatch:get_frame("bats_fly3.png"))
    sprite:set_animation( anim )
    sprite:set_rotation( 0.0 )
-   sprite:set_position(400,300)
+   sprite:set_position(math.random(800),math.random(300))
    sbatch:add_sprite(sprite)
 end
 
