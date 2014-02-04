@@ -199,6 +199,7 @@ ev_err_t ev_app_start(ev_app *app)
                 break;
             }
         }
+
         if( app->update ) {
             app->update(app, dt);
         }

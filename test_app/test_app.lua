@@ -30,7 +30,6 @@ for i=1,1,1 do
 end
 
 if sbatch.sprites ~= nil then
-   print('foo')
    for k,v in pairs(sbatch.sprites) do
       print(k,v)
    end
