@@ -34,6 +34,14 @@ ev_vbuff* ev_vbuff_create(void)
     return p;
 }
 
+size_t ev_vbuff_get_capacity(ev_vbuff *v)
+{
+    if( v ) {
+        return v->size;
+    }
+    return 0;
+}
+
 ev_err_t ev_vbuff_set_capacity(ev_vbuff *v, size_t num_bytes)
 {
     if( v && num_bytes ) {

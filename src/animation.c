@@ -153,6 +153,7 @@ static int l_anim_add_frame(lua_State *l)
     ev_sframe *s;
 
     a = check_anim(l);
+
     if( !lua_islightuserdata(l,2)) {
         lua_pushstring(l, "it's not a sframe!");
         lua_error(l);

@@ -12,5 +12,5 @@ void*     ev_vbuff_get_buffer(ev_vbuff*);
 void      ev_vbuff_bind(ev_vbuff*);
 void*     ev_vbuff_map(ev_vbuff*);
 void      ev_vbuff_unmap(ev_vbuff*);
-
+size_t    ev_vbuff_get_capacity(ev_vbuff*);
 #endif

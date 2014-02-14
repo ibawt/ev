@@ -11,6 +11,11 @@
 
 #include "ev_lua.h"
 
+#define SPRITE_BATCH_MAX 1024*10
+#define GROW_FAC 128
+
+#define VBUFF_SIZE(n) ((n)*sizeof(ev_bvertex)*EV_SPRITE_NUM_VERTS)
+
 static const char *animationVertexShader =
     "#version 120\n"
     "attribute vec2 a_position;\n"
@@ -109,7 +114,7 @@ ev_err_t ev_sbatch_set_vbuff_capacity(ev_sbatch *batch, size_t size)
         return EV_FAIL;
     }
 
-    if( ev_vbuff_set_capacity(batch->vbuff, sizeof(ev_bvertex)*EV_SPRITE_NUM_VERTS*size) ) {
+    if( ev_vbuff_set_capacity(batch->vbuff, VBUFF_SIZE(size))) {
         ev_error("failed to set vbuff capacity");
         return EV_FAIL;
     }
@@ -123,7 +128,7 @@ static void sbatch_init(ev_sbatch *s)
 
     utarray_new(s->sprites, &icd);
 
-    if( ev_sbatch_set_vbuff_capacity(s, 10000) ) {
+    if( ev_sbatch_set_vbuff_capacity(s, GROW_FAC) ) {
         ev_error("can't create sbatch");
     }
 }
@@ -137,11 +142,28 @@ ev_sbatch* ev_sbatch_create(void)
     return s;
 }
 
-void ev_sbatch_add_sprite(ev_sbatch *batch, ev_sprite *s)
+ev_err_t ev_sbatch_add_sprite(ev_sbatch *batch, ev_sprite *s)
 {
+    assert( batch != NULL );
+    assert( s != NULL );
+    assert( batch->vbuff != NULL );
+
     if( batch && s ) {
+        size_t capacity = ev_vbuff_get_capacity(batch->vbuff);
+
+        if( VBUFF_SIZE(utarray_len(batch->sprites)) >= capacity ) {
+            capacity += VBUFF_SIZE(GROW_FAC);
+
+            if( capacity >= VBUFF_SIZE(SPRITE_BATCH_MAX) ) {
+                ev_error("out of capacity for this sprite batch!");
+                return EV_FAIL;
+            }
+            ev_vbuff_set_capacity(batch->vbuff, capacity);
+        }
+
         utarray_push_back( batch->sprites, &s);
     }
+    return EV_OK;
 }
 
 void ev_sbatch_destroy(ev_sbatch* s)
