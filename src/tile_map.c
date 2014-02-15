@@ -1,8 +1,11 @@
 #include <assert.h>
 
+#include "ev_lua.h"
 #include "tile_map.h"
 #include "jansson.h"
 #include "utarray.h"
+
+
 
 static ev_err_t get_json_int(json_t *dict, const char *key, uint32_t *i)
 {
@@ -349,5 +352,31 @@ ev_err_t ev_tilemap_load(ev_tilemap *t, const char *file)
     if( root ) {
         json_decref(root);
     }
+    return EV_OK;
+}
+
+#define EV_TMAP_META "__ev_tilemap_meta"
+#define EV_TMAP_KEY "__ev_tilemap"
+
+static int l_tmap_create(lua_State *l)
+{
+    ev_tilemap *tmap;
+
+    lua_newtable(l);
+    luaL_getmetatable(l, EV_TMAP_META);
+    lua_setmetatable(l,-2);
+
+    tmap = lua_newuserdata(l, sizeof(ev_tilemap));
+
+}
+
+
+ev_err_t ev_tmap_lua_init(lua_State *l)
+{
+    luaL_Reg funcs[] = {
+        { "create", l_tmap_create },
+    };
+
+    ev_lua_init_module(l, funcs, EV_TMAP_META, "tilemap" );
     return EV_OK;
 }
