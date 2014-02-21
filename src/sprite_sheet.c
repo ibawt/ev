@@ -281,17 +281,20 @@ ev_err_t ev_ssheet_load_file(ev_ssheet *sheet, const char *path)
 
     root = json_load_file(path, 0, &json_err);
     if(!root) {
+        ev_log("failed loading file");
         return EV_FAIL;
     }
 
     sheet->metadata = parse_metadata(json_object_get(root, "metadata"));
     if( !sheet->metadata ) {
+        ev_log("metadata parsing failed");
         json_decref(root);
         return EV_FAIL;
     }
 
     sheet->frames = parse_frames(json_object_get(root, "frames"), ev_smap_get(sheet->metadata, "size") );
     if( !sheet->frames ) {
+        ev_log("frame parsging failed");
         json_decref(root);
         ev_smap_destroy(sheet->metadata);
         sheet->metadata = NULL;

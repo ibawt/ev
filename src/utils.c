@@ -178,3 +178,11 @@ char *ev_strdup(const char *src)
     }
     return NULL;
 }
+
+void ev_log_bvertex(ev_bvertex *b)
+{
+    assert( b != NULL );
+
+    ev_log("[x: %.2f, y: %.2f, u: %.2f, v: %.2f]", b->x, b->y, b->u, b->v );
+    ev_log("[scale: %.2f, rotation: %.2f, tx: %.2f, ty: %.2f]", b->scale, b->rotation, b->tx, b->ty );
+}

@@ -33,5 +33,6 @@ ev_err_t ev_smap_put(ev_smap *, const char *key, void *opaque);
 void ev_smap_first(ev_smap *smap, ev_smap_iter *iter);
 const char* ev_smap_iter_key(ev_smap_iter *k);
 int         ev_smap_iter_next(ev_smap_iter *i);
+void ev_log_bvertex(ev_bvertex *b);
 
 #endif

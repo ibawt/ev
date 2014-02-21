@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "utils.h"
 #include "ev_lua.h"
 #include "sprite.h"
 #include "animation.h"
@@ -89,6 +90,7 @@ void ev_sprite_fill(ev_sprite* s, ev_bvertex* b)
     if( s && b ) {
         src = ev_sframe_get_bvertex(ev_anim_get_current_sframe(s->animation));
         if( src ) {
+
             for( i = 0 ; i < EV_SPRITE_NUM_VERTS ; ++i,b++,src++ ) {
                 *b = *src;
                 b->scale = s->scale;
@@ -169,6 +171,7 @@ static int l_sprite_set_animation(lua_State *l)
     return 0;
 }
 
+
 static int l_sprite_set_rotation(lua_State *l)
 {
     ev_sprite *s;
@@ -200,6 +203,22 @@ static int l_sprite_set_position(lua_State *l)
 
     return 0;
 }
+
+static int l_sprite_set_scale(lua_State *l)
+{
+    ev_sprite *s;
+    float scale;
+
+    s = check_sprite(l);
+
+    scale = (float)lua_tonumber(l,2);
+
+    ev_log("sprite set_scale [%.2f]", scale);
+
+    s->scale = scale;
+
+    return 0;
+}
 ev_err_t ev_sprite_lua_init(lua_State *l)
 {
     luaL_Reg luaFuncs[] = {
@@ -208,6 +227,7 @@ ev_err_t ev_sprite_lua_init(lua_State *l)
         { "set_animation", l_sprite_set_animation },
         { "set_rotation", l_sprite_set_rotation },
         { "set_position", l_sprite_set_position },
+        { "set_scale", l_sprite_set_scale },
         { 0, 0 }
     };
 

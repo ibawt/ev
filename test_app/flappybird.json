@@ -1,0 +1,39 @@
+{
+    "frames": {
+        "background1": {
+            "aliases": [],
+            "spriteColorRect": "{{0, 0}, {144, 256}}",
+            "spriteOffset": "{0, -0}",
+            "spriteSize": "{144, 256}",
+            "spriteSourceSize": "{144, 256}",
+            "spriteTrimmed": true,
+            "textureRect": "{{0, 0}, {144, 256}}",
+            "textureRotated": false
+        },
+        "background2": {
+            "aliases": [],
+            "spriteColorRect": "{{0, 0}, {144, 256}}",
+            "spriteOffset": "{0, 0}",
+            "spriteSize": "{144, 256}",
+            "spriteSourceSize": "{144, 256}",
+            "spriteTrimmed": true,
+            "textureRect": "{{146, 0}, {144, 256}}",
+            "textureRotated": false
+        }
+    },
+    "metadata": {
+        "format": 3,
+        "name": "flappybirds",
+        "premultipliedAlpha": false,
+        "size": "{512, 512}",
+        "target": {
+            "coordinatesFileExtension": ".json",
+            "coordinatesFileName": "flappybirds",
+            "name": "default",
+            "premultipliedAlpha": false,
+            "textureFileExtension": ".png",
+            "textureFileName": "flappybirds"
+        },
+        "version": "1.5.2"
+    }
+}
