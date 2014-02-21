@@ -19,6 +19,7 @@
 #include <BaseTsd.h>
 typedef SSIZE_T ssize_t;
 #define strdup _strdup
+#define snprintf _snprintf
 #endif
 
 

@@ -51,6 +51,7 @@ include_directories(${gtest_SOURCE_DIR}/include
   ${CMAKE_CURRENT_BINARY_DIR}/vendor/lua
   src)
 add_definitions(
+  -D_CRT_SECURE_NO_WARNINGS
   -DGLEW_STATIC
   -g
  )

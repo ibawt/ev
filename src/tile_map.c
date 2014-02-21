@@ -23,7 +23,7 @@ static ev_err_t get_json_int(json_t *dict, const char *key, uint32_t *i)
     }
 
     if( json_is_integer(value) ) {
-        *i = json_integer_value( value);
+        *i = (uint32_t)json_integer_value( value);
         return EV_OK;
     }
     return EV_FAIL;
@@ -244,7 +244,7 @@ static ev_err_t parse_tileset( ev_tileset *t, json_t *object)
             tt = json_object_get( json_object_get(value, buff), "terrain");
 
             for( j = 0 ; j < 4 ; ++j ) {
-                t->tiles[i].terrain[j] = json_integer_value( json_array_get( tt, j ) );
+                t->tiles[i].terrain[j] = (uint32_t)json_integer_value( json_array_get( tt, j ) );
             }
         }
     }
@@ -268,13 +268,13 @@ static ev_err_t parse_layer( ev_layer *l, json_t *object)
 
     for( i = 0 ; i < len ; ++i ) {
         int tile_index;
-        tile_index = json_integer_value( json_array_get( value, i));
+        tile_index = (uint32_t)json_integer_value( json_array_get( value, i));
         l->data[i] = tile_index;
     }
     l->data_len = len;
 
-    l->height = json_integer_value(json_object_get(value, "height"));
-    l->width  = json_integer_value(json_object_get(value, "width"));
+    l->height = (uint32_t)json_integer_value(json_object_get(value, "height"));
+    l->width  = (uint32_t)json_integer_value(json_object_get(value, "width"));
     l->opacity = (float)json_real_value(json_object_get(value, "opacity"));
     l->type = ev_strdup( json_string_value( json_object_get(value, "type")));
 
@@ -367,7 +367,7 @@ static int l_tmap_create(lua_State *l)
     lua_setmetatable(l,-2);
 
     tmap = lua_newuserdata(l, sizeof(ev_tilemap));
-
+    return 1;
 }
 
 

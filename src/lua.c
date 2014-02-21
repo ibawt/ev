@@ -1,7 +1,9 @@
+#include "evil.h"
+
 #include <assert.h>
+#include <stdlib.h>
 
 #include "ev_lua.h"
-#include "evil.h"
 
 
 static lua_State *lua_state = NULL;
@@ -61,6 +63,26 @@ static const luaL_Reg globals[] = {
     { NULL, NULL }
 };
 
+ev_err_t ev_lua_load_libraries(lua_State *l)
+{
+    const char *dir;
+    char path[MAX_PATH];
+
+    dir = getenv("EV_LUA_LIBS");
+    if (!dir) {
+        dir = "../lib";
+    }
+
+    snprintf(path, sizeof(path), "%s/ev.lua", dir);
+
+    if (luaL_dofile(l, path)) {
+        ev_error("Error in lua: %s", lua_tostring(ev_lua_get_state(), -1));
+        return EV_FAIL;
+    }
+    return EV_OK;
+}
+
+
 static void open_lua_libs(void)
 {
     luaL_openlibs(lua_state);
@@ -85,6 +107,8 @@ void ev_lua_init(void)
     ev_anim_lua_init(lua_state);
     ev_texture_lua_init(lua_state);
     ev_stage_lua_init(lua_state);
+
+    ev_lua_load_libraries(lua_state);
 }
 
 void ev_lua_destroy(void)
@@ -191,3 +215,5 @@ int ev_lua_table_remove(lua_State *L)
     lua_rawseti(L, 1, pos);  /* t[pos] = nil */
     return 1;
 }
+
+
