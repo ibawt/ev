@@ -5,7 +5,6 @@
 
 #include "ev_lua.h"
 
-
 static lua_State *lua_state = NULL;
 
 ev_err_t ev_application_lua_init(lua_State *l);
@@ -66,7 +65,7 @@ static const luaL_Reg globals[] = {
 ev_err_t ev_lua_load_libraries(lua_State *l)
 {
     const char *dir;
-    char path[MAX_PATH];
+    char path[512];
 
     dir = getenv("EV_LUA_LIBS");
     if (!dir) {
@@ -215,5 +214,3 @@ int ev_lua_table_remove(lua_State *L)
     lua_rawseti(L, 1, pos);  /* t[pos] = nil */
     return 1;
 }
-
-
