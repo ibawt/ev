@@ -19,6 +19,16 @@
             "spriteTrimmed": true,
             "textureRect": "{{146, 0}, {144, 256}}",
             "textureRotated": false
+        },
+        "green_pipe_down": {
+            "aliases": [],
+            "spriteColorRect": "{{56, 320}, {83, 486}}",
+            "spriteOffset": "{0, 0}",
+            "spriteSize": "{27, 166}",
+            "spriteSourceSize": "{27, 166}",
+            "spriteTrimmed": true,
+            "textureRect": "{{56, 320}, {27, 166}}",
+            "textureRotated": false
         }
     },
     "metadata": {
