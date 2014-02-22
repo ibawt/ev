@@ -141,30 +141,30 @@ void ev_lua_dump_stack(lua_State *L)
     int i;
     int top = lua_gettop(L);
     for (i = 1; i <= top; i++) {  /* repeat for each level */
-        printf("[%d]", i);
+        fprintf(stderr,"[%d]", i);
         int t = lua_type(L, i);
         switch (t) {
 
         case LUA_TSTRING:  /* strings */
-            printf("`%s'", lua_tostring(L, i));
+            fprintf(stderr,"`%s'", lua_tostring(L, i));
             break;
 
         case LUA_TBOOLEAN:  /* booleans */
-            printf( "%s", (lua_toboolean(L, i) ? "true" : "false"));
+            fprintf(stderr, "%s", (lua_toboolean(L, i) ? "true" : "false"));
             break;
 
         case LUA_TNUMBER:  /* numbers */
-            ev_log("%g", lua_tonumber(L, i));
+            fprintf(stderr, "%g", lua_tonumber(L, i));
             break;
 
         default:  /* other values */
-            printf("%s", lua_typename(L, t));
+            fprintf(stderr,"%s", lua_typename(L, t));
             break;
 
         }
-        printf("  ");  /* put a separator */
+        fprintf(stderr, "  ");  /* put a separator */
       }
-    printf("\n");  /* end the listing */
+    fprintf(stderr, "\n");  /* end the listing */
 }
 
 /* stolen from ltablib.c in the lua src */

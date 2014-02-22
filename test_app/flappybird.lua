@@ -22,6 +22,12 @@ for i=1,12,1 do
    up_pipes[i]:set_visiblity(false)
 end
 
+local down_pipes = {}
+for i=1,12,1 do
+   down_pipes[i] = sbatch:create_sprite('green_pipe_down')
+   down_pipes[i]:set_visiblity(false)
+end
+
 
 app.update = function(dt)
    print("update: " .. dt)
