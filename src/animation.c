@@ -172,7 +172,6 @@ static int l_anim_create(lua_State *l)
 {
     ev_anim *a;
 
-    ev_log("anim_create");
     lua_newtable(l);
     luaL_getmetatable( l, EV_ANIM_META);
     lua_setmetatable(l, -2);
@@ -189,8 +188,6 @@ static int l_anim_create(lua_State *l)
 static int l_anim_destroy(lua_State *l)
 {
     ev_anim *a;
-
-    ev_log("anim_destroy");
 
     a = check_anim(l);
 

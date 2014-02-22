@@ -319,3 +319,10 @@ ev_sframe* ev_ssheet_get_sframe(ev_ssheet* sheet, const char *name)
     }
     return NULL;
 }
+
+ev_size ev_sframe_get_size(ev_sframe *s)
+{
+    assert( s != NULL );
+
+    return s->size;
+}

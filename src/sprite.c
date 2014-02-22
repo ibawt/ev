@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 
 #include "utils.h"
@@ -11,19 +12,29 @@ struct _ev_sprite
     ev_vec2  position;
     float    rotation;
     float    scale;
+    int      visible;
     ev_anim *animation;
     int      lua_ref;
 };
+
+static void ev_sprite_init(ev_sprite *s)
+{
+    assert( s != NULL);
+
+    memset(s, 0, sizeof(ev_sprite));
+    s->visible = 1;
+    s->scale = 1.0f;
+}
 
 ev_sprite* ev_sprite_create(void)
 {
     ev_sprite *s = ev_malloc(sizeof(ev_sprite));
     if( s ) {
-        memset(s, 0, sizeof(ev_sprite));
-        s->scale = 1.0f;
+        ev_sprite_init(s);
     }
     return s;
 }
+
 
 void ev_sprite_destroy(ev_sprite* s)
 {
@@ -82,12 +93,19 @@ void ev_sprite_render(ev_sprite* s)
 {
 }
 
-void ev_sprite_fill(ev_sprite* s, ev_bvertex* b)
+int ev_sprite_get_visiblity(ev_sprite *s)
+{
+    assert( s != NULL );
+
+    return s->visible;
+}
+
+int ev_sprite_fill(ev_sprite* s, ev_bvertex* b)
 {
     int i;
     ev_bvertex *src;
 
-    if( s && b ) {
+    if( s && b && s->visible) {
         src = ev_sframe_get_bvertex(ev_anim_get_current_sframe(s->animation));
         if( src ) {
 
@@ -99,7 +117,9 @@ void ev_sprite_fill(ev_sprite* s, ev_bvertex* b)
                 b->ty = s->position.y;
             }
         }
+        return 1;
     }
+    return 0;
 }
 
 #define EV_SPRITE_META "__ev_sprite_meta"
@@ -124,15 +144,12 @@ int l_sprite_create(lua_State *l)
 {
     ev_sprite *s;
 
-    ev_log("sprite create");
-
     lua_newtable(l);
     luaL_getmetatable(l, EV_SPRITE_META);
     lua_setmetatable(l, -2);
 
     s = lua_newuserdata(l, sizeof(ev_sprite));
-    memset(s, 0, sizeof(ev_sprite));
-    s->scale = 1.0f;
+    ev_sprite_init(s);
 
     lua_setfield(l, -2, EV_SPRITE_KEY);
     s->lua_ref = ev_lua_create_ref(l, 1);
@@ -142,12 +159,6 @@ int l_sprite_create(lua_State *l)
 
 int l_sprite_destroy(lua_State *l)
 {
-    ev_sprite *s;
-
-    ev_log("sprite destroy");
-
-    s = check_sprite(l);
-
     return 0;
 }
 
@@ -155,8 +166,6 @@ static int l_sprite_set_animation(lua_State *l)
 {
     ev_sprite *s;
     ev_anim   *a;
-
-    ev_log("sprite set animation");
 
     s = check_sprite(l);
 
@@ -179,7 +188,6 @@ static int l_sprite_set_rotation(lua_State *l)
 
     s = check_sprite(l);
     rot = (float)lua_tonumber(l, 2);
-    ev_log("set_rotation: %.2f", rot );
 
     s->rotation = rot;
 
@@ -196,8 +204,6 @@ static int l_sprite_set_position(lua_State *l)
     x = (float)lua_tonumber(l, 2);
     y = (float)lua_tonumber(l, 3);
 
-    ev_log("sprite set_position [%.2f,%.2f]", x, y);
-
     s->position.x = x;
     s->position.y = y;
 
@@ -213,12 +219,52 @@ static int l_sprite_set_scale(lua_State *l)
 
     scale = (float)lua_tonumber(l,2);
 
-    ev_log("sprite set_scale [%.2f]", scale);
-
     s->scale = scale;
 
     return 0;
 }
+
+static int l_sprite_get_size(lua_State *l)
+{
+    ev_sprite *s;
+    ev_sframe *frame;
+    ev_size    size;
+
+    s = check_sprite(l);
+
+    frame = ev_anim_get_current_sframe(s->animation);
+    size = ev_sframe_get_size(frame);
+
+    lua_pop(l,1);
+
+    lua_pushnumber(l, size.w);
+    lua_pushnumber(l, size.h);
+
+    return 2;
+}
+
+static int l_sprite_set_visibilty(lua_State *l)
+{
+    ev_sprite *s;
+
+    s = check_sprite(l);
+
+    s->visible = (int)lua_toboolean(l, 2);
+
+    return 0;
+}
+
+static int l_sprite_get_visibilty(lua_State *l)
+{
+    ev_sprite *s;
+
+    s = check_sprite(l);
+
+    lua_pushboolean(l, s->visible);
+
+    return 1;
+}
+
 ev_err_t ev_sprite_lua_init(lua_State *l)
 {
     luaL_Reg luaFuncs[] = {
@@ -228,6 +274,9 @@ ev_err_t ev_sprite_lua_init(lua_State *l)
         { "set_rotation", l_sprite_set_rotation },
         { "set_position", l_sprite_set_position },
         { "set_scale", l_sprite_set_scale },
+        { "get_size", l_sprite_get_size },
+        { "set_visiblity", l_sprite_set_visibilty },
+        { "get_visibilty", l_sprite_get_visibilty },
         { 0, 0 }
     };
 

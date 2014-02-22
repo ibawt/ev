@@ -222,7 +222,6 @@ ev_err_t ev_app_start(ev_app *app)
 
         if( (numFrames % 10 ) == 0 ) {
             app->fps = numFrames / (( SDL_GetTicks() - startTime) / 1000.0f);
-            ev_log("fps: %.2f", app->fps);
         }
     }
     return EV_OK;

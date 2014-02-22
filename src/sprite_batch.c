@@ -47,6 +47,7 @@ struct _ev_sbatch {
     ev_texture* texture;
     ev_program* program;
     UT_array   *sprites;
+    size_t      num_filled_sprites;
     ev_matrix4  matrix;
     ev_vbuff   *vbuff;
     ev_ssheet  *sheet;
@@ -216,14 +217,17 @@ ev_err_t ev_sbatch_load(ev_sbatch *batch, const char *file)
 void ev_sbatch_update(ev_sbatch* batch, float dt)
 {
     if( batch ) {
+        batch->num_filled_sprites = 0;
         ev_bvertex *b = ev_vbuff_map(batch->vbuff);
         ev_sprite **s = NULL;
 
         while( ( s = (ev_sprite**)utarray_next( batch->sprites, s ) ) ) {
             ev_sprite_update(*s, dt);
 
-            ev_sprite_fill( *s, b );
-            b += EV_SPRITE_NUM_VERTS;
+            if( ev_sprite_fill( *s, b ) ) {
+                batch->num_filled_sprites += 1;
+                b += EV_SPRITE_NUM_VERTS;
+            }
         }
         ev_vbuff_unmap(batch->vbuff);
     }
@@ -259,7 +263,7 @@ void ev_sbatch_render(ev_sbatch *batch)
     glVertexAttribPointer(transform, 2, GL_FLOAT, GL_TRUE, sizeof(ev_bvertex), (void*)offsetof(ev_bvertex,rotation));
     glVertexAttribPointer(translation, 2, GL_FLOAT, GL_TRUE, sizeof(ev_bvertex), (void*)offsetof(ev_bvertex, tx));
 
-    glDrawArrays(GL_TRIANGLES, 0, utarray_len(batch->sprites)*EV_SPRITE_NUM_VERTS);
+    glDrawArrays(GL_TRIANGLES, 0, batch->num_filled_sprites*EV_SPRITE_NUM_VERTS);
 
     glDisableVertexAttribArray(translation);
     glDisableVertexAttribArray(transform);
@@ -315,7 +319,6 @@ static int l_sbatch_create(lua_State *l)
 {
     ev_sbatch *s;
 
-    ev_log("sbatch_create");
     assert( l != NULL );
 
     lua_newtable(l);
@@ -336,7 +339,6 @@ static int l_sbatch_destroy(lua_State *l)
 {
     ev_sbatch *s;
 
-    ev_log("sbatch_destroy");
     assert( l != NULL );
 
     s = check_sbatch(l);
@@ -363,8 +365,6 @@ static int l_sbatch_load(lua_State *l)
 {
     ev_sbatch *s;
 
-    ev_log("sbatch_load");
-
     s = check_sbatch(l);
 
     if( ev_sbatch_load(s, lua_tostring(l, 2)) ) {
@@ -379,8 +379,6 @@ int l_sbatch_set_texture(lua_State *l)
 {
     ev_sbatch  *s;
     ev_texture *t;
-
-    ev_log("sbatch set texture");
 
     s = check_sbatch(l);
     t = ev_texture_from_lua(l, 2);
@@ -401,8 +399,6 @@ static int l_sbatch_get_sframe(lua_State *l)
     s = check_sbatch(l);
 
     key = lua_tostring(l, 2);
-
-    ev_log("sbatch_get_sframe: %s", key);
 
     frame = ev_sbatch_get_sframe(s, key);
     if( !frame ) {

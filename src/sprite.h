@@ -15,7 +15,7 @@ void          ev_sprite_set_animation(ev_sprite*, ev_anim*);
 ev_anim*      ev_sprite_get_animation(ev_sprite*);
 void          ev_sprite_update(ev_sprite*, float);
 void          ev_sprite_render(ev_sprite*);
-void          ev_sprite_fill(ev_sprite*, ev_bvertex*);
+int           ev_sprite_fill(ev_sprite*, ev_bvertex*);
 
 ev_sprite* ev_sprite_from_lua(lua_State *l, int arg);
 

@@ -16,6 +16,17 @@ local sprite = sbatch:create_sprite('background1')
 sprite:set_scale(4)
 sprite:set_position(400,300)
 
+local up_pipes = {}
+for i=1,12,1 do
+   up_pipes[i] = sbatch:create_sprite('green_pipe_up')
+   up_pipes[i]:set_visiblity(false)
+end
+
+
+app.update = function(dt)
+   print("update: " .. dt)
+end
+
 stage:add_sbatch(sbatch)
 
 sbatch:set_ortho(800,600)

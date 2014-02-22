@@ -11,5 +11,6 @@ ev_ssheet* ev_ssheet_create(void);
 ev_err_t   ev_ssheet_load_file(ev_ssheet *, const char *);
 void       ev_ssheet_destroy(ev_ssheet *);
 ev_sframe* ev_ssheet_get_sframe(ev_ssheet *, const char *);
+ev_size ev_sframe_get_size(ev_sframe *s);
 
 #endif
