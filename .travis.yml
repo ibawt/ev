@@ -16,5 +16,5 @@ before_script:
   - cd build
   - cmake ..
 script:
-  make
-  ctest
+  - make
+  - ctest
