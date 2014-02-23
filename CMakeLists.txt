@@ -79,3 +79,6 @@ add_executable( ev_lua
 
 target_link_libraries( ev_lua ev)
 target_link_libraries( test_app ev)
+
+enable_testing()
+add_subdirectory(test)
