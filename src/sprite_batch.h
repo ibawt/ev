@@ -7,6 +7,10 @@
 #include "evil.h"
 #include "matrix4.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 ev_sbatch* ev_sbatch_create(void);
 void       ev_sbatch_destroy(ev_sbatch*);
 void       ev_sbatch_render(ev_sbatch*);
@@ -20,5 +24,9 @@ ev_err_t   ev_sbatch_set_vbuff_capacity(ev_sbatch*, size_t);
 void       ev_sbatch_update(ev_sbatch *, float);
 
 ev_sbatch* ev_sbatch_from_lua(lua_State *l, int arg);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

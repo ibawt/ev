@@ -242,6 +242,16 @@ static void l_app_render(ev_app *app)
     lua_pop(l, 2);
 }
 
+static void l_app_update(ev_app *app, float dt)
+{
+    lua_State *l = ev_lua_get_state();
+    lua_gettable(l, LUA_REGISTRYINDEX);
+    lua_rawgeti(l, -2, app->lua_ref);
+    lua_rawgeti(l, 1, 1);
+
+    lua_getfield(l, 1, "update");
+}
+
 static ev_app* get_app(lua_State *l)
 {
     ev_app *app;

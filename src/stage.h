@@ -4,6 +4,10 @@
 #include "ev_lua.h"
 #include "evil.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef void (*ev_stage_render_fn)(void *d);
 typedef void (*ev_stage_update_fn)(void *, float);
 
@@ -17,5 +21,8 @@ void ev_stage_render(ev_stage *s);
 ev_err_t ev_stage_lua_init(lua_State *l);
 ev_stage* ev_stage_from_lua(lua_State *l, int arg);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif

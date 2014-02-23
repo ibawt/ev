@@ -3,6 +3,10 @@
 
 #include "evil.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef enum {
     MAP_ORTHO     = 0,
     MAP_ISOMETRIC = 1,
@@ -15,5 +19,9 @@ ev_vec2*    ev_tilemap_get_position(ev_tilemap*);
 void        ev_tilemap_set_position(ev_tilemap *, float x, float y);
 void        ev_tilemap_render(ev_tilemap*);
 void        ev_tilemap_update(ev_tilemap*, float);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

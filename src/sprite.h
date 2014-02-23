@@ -6,6 +6,10 @@
 #include "ev_lua.h"
 #include "evil.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 ev_sprite*    ev_sprite_create(void);
 ev_vec2*      ev_sprite_get_position(ev_sprite*);
 void          ev_sprite_set_position(ev_sprite*, float x, float y);
@@ -18,5 +22,11 @@ void          ev_sprite_render(ev_sprite*);
 int           ev_sprite_fill(ev_sprite*, ev_bvertex*);
 
 ev_sprite* ev_sprite_from_lua(lua_State *l, int arg);
+
+#ifdef __cplusplus
+}
+#endif
+
+
 
 #endif

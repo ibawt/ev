@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include "evil.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct {
     void   *elems;
@@ -34,5 +37,9 @@ void ev_smap_first(ev_smap *smap, ev_smap_iter *iter);
 const char* ev_smap_iter_key(ev_smap_iter *k);
 int         ev_smap_iter_next(ev_smap_iter *i);
 void ev_log_bvertex(ev_bvertex *b);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

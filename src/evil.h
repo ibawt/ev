@@ -22,6 +22,9 @@ typedef SSIZE_T ssize_t;
 #define snprintf _snprintf
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void *ev_malloc(size_t);
 void *ev_realloc(void *, size_t);
@@ -92,4 +95,9 @@ typedef struct _ev_sframe ev_sframe;
 typedef struct _ev_ssheet ev_ssheet;
 typedef struct _ev_tilemap ev_tilemap;
 typedef struct _ev_stage ev_stage;
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

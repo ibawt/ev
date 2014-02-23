@@ -4,6 +4,10 @@
 #include "evil.h"
 #include "ev_lua.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef enum {
     EV_LOOP = 0,
     EV_ONE_SHOT = 1,
@@ -20,4 +24,9 @@ ev_anim_mode ev_anim_get_mode(ev_anim *);
 void         ev_anim_update(ev_anim*, float);
 
 ev_anim* ev_anim_from_lua(lua_State *l, int arg);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
