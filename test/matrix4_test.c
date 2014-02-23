@@ -4,11 +4,9 @@
 #include <cmocka.h>
 #include "matrix4.c"
 
-#define abs( x ) (( x < 0 ? -x : x))
+#include "evil.h"
 
-#define EPSILON 0.1f
-
-#define assert_float_equals(x,y) assert_true( abs(x - y ) < EPSILON)
+#define assert_float_equals(x,y) assert_true( ev_cmpf(x,y))
 
 static void identity_test(void **state)
 {

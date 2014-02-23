@@ -26,6 +26,8 @@ typedef SSIZE_T ssize_t;
 extern "C" {
 #endif
 
+#define ev_cmpf(x,y) ( fabs((x) - (y)) < 0.1f)
+
 void *ev_malloc(size_t);
 void *ev_realloc(void *, size_t);
 void  ev_free(void *);
