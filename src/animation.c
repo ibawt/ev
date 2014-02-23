@@ -25,7 +25,6 @@ static void grow_array(ev_anim *a)
     p = a->frames;
     a->frames = ev_malloc(sizeof(ev_sframe*)*(a->frame_size + FRAME_GROW_FAC));
     a->frame_size += FRAME_GROW_FAC;
-    memset(a->frames, 0, sizeof(ev_sframe*)*a->frame_size);
     memcpy(a->frames, p, sizeof(ev_sframe*)*a->frame_cnt);
 
     ev_free(p);
