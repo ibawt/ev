@@ -6,9 +6,20 @@
 #include "evil.h"
 #include "application.h"
 
+#ifdef TRACE_APP
+#define LOG(...) ev_log(##__VA_ARGS__)
+#else
+#define LOG(...)
+#endif
+
 static void l_app_render(ev_app *app);
 
 static ev_app *lua_app = NULL;
+
+ev_app* ev_app_get_lua_instance(void)
+{
+    return lua_app;
+}
 
 struct _ev_app {
     uint32_t      width;
@@ -23,7 +34,16 @@ struct _ev_app {
     ev_app_mouse_event mouse_event;
 
     ev_stage *stage;
+
+    ev_app_state state;
 };
+
+ev_app_state ev_app_get_state(ev_app *a) {
+    if( a ) {
+        return a->state;
+    }
+    return EV_APP_INVALID;
+}
 
 static int initGL(ev_app *app)
 {
@@ -39,13 +59,13 @@ static int initGL(ev_app *app)
         ev_error("error initializing glew: %s", glewGetErrorString(err));
         return EV_FAIL;
     }
-    ev_log("Using OpenGL: %s", glGetString(GL_VERSION));
-    ev_log("Using GLEW: %s", glewGetString(GLEW_VERSION));
+    LOG("Using OpenGL: %s", glGetString(GL_VERSION));
+    LOG("Using GLEW: %s", glewGetString(GLEW_VERSION));
 
     return EV_OK;
 }
 
-static int initSDL(ev_app *app)
+static ev_err_t initSDL(ev_app *app)
 {
     int flags = IMG_INIT_JPG | IMG_INIT_PNG;
 
@@ -170,7 +190,7 @@ void ev_app_quit(ev_app *app)
 
 void ev_app_destroy(ev_app *app)
 {
-    ev_log("app_destroy!!");
+    LOG("app_destroy!!");
     if( app ) {
         ev_app_quit( app );
         ev_free( app );
@@ -187,6 +207,7 @@ ev_err_t ev_app_start(ev_app *app)
     SDL_StartTextInput();
 
     startTime = SDL_GetTicks();
+
 
     while( running ) {
         uint32_t t1 = SDL_GetTicks();
@@ -272,9 +293,15 @@ static int app_create(lua_State *l)
 {
     ev_app *app;
 
-    ev_log("app_create");
+    LOG("app_create");
 
     assert( l != NULL );
+
+    if( lua_app ) {
+        lua_pushstring(l, "app instance already running");
+        lua_error(l);
+        return 1;
+    }
 
     lua_newtable(l);
 
@@ -289,6 +316,8 @@ static int app_create(lua_State *l)
 
     app->lua_ref = ev_lua_create_ref( l, 1 );
 
+    lua_app = app;
+
     return 1;
 }
 
@@ -296,13 +325,15 @@ static int app_destroy(lua_State *l)
 {
     ev_app *app;
 
-    ev_log("app_destroy");
+    LOG("app_destroy");
 
     assert( l != NULL );
 
     app = get_app(l);
 
     ev_app_quit(app);
+
+    lua_app = NULL;
 
     return 0;
 }
@@ -316,7 +347,7 @@ static int app_set_dimensions(lua_State *l)
 
     assert( l != NULL );
 
-    ev_log("app_set_dimensions");
+    LOG("app_set_dimensions");
 
     n = lua_gettop(l);
     app = get_app(l);
@@ -341,13 +372,15 @@ static int app_init(lua_State *l)
 {
     ev_app *app;
 
-    ev_log("app_init");
+    LOG("app_init");
 
     assert( l != NULL );
 
     app = get_app(l);
 
-    ev_app_init(app);
+    if( ev_app_init(app) == EV_OK ) {
+        app->state = EV_APP_STATE_READY;
+    }
 
     return 0;
 }
@@ -356,7 +389,7 @@ static int app_show(lua_State *l)
 {
     ev_app *app;
 
-    ev_log("app_show");
+    LOG("app_show");
 
     assert( l != NULL );
 
@@ -371,7 +404,7 @@ static int app_quit(lua_State *l)
 {
     ev_app *app;
 
-    ev_log("app_quit");
+    LOG("app_quit");
     assert( l != NULL );
 
     app = get_app(l);

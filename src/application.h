@@ -29,6 +29,16 @@ void     ev_app_set_key_event(ev_app*, ev_app_key_event);
 void     ev_app_set_mouse_event(ev_app*, ev_app_mouse_event);
 ev_err_t ev_app_start(ev_app*);
 
+typedef enum {
+    EV_APP_STATE_RESET = 0,
+    EV_APP_STATE_READY = 1,
+    EV_APP_INVALID = -1
+} ev_app_state;
+
+ev_app_state ev_app_get_state(ev_app*);
+
+ev_app* ev_app_get_lua_instance(void);
+
 #ifdef __cplusplus
 }
 #endif

@@ -49,7 +49,6 @@ static void set_ortho_test(void **state)
 
     ev_matrix4_set_ortho(&matrix, 0, 800, 600, 1, -1, 1);
 
-
     for( i = 0 ; i < 16 ; ++i ) {
         assert_float_equals(matrix.m[i], ortho[i]);
     }

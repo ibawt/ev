@@ -8,7 +8,7 @@
 #include "utarray.h"
 #include "sprite.h"
 #include "sprite_sheet.h"
-
+#include "application.h"
 #include "ev_lua.h"
 
 #define SPRITE_BATCH_MAX 1024*10
@@ -320,6 +320,12 @@ static int l_sbatch_create(lua_State *l)
     ev_sbatch *s;
 
     assert( l != NULL );
+
+    if( ev_app_get_state(ev_app_get_lua_instance()) != EV_APP_STATE_READY) {
+        lua_pushstring(l, "app not ready, call init first!");
+        lua_error(l);
+        return 1;
+    }
 
     lua_newtable(l);
 
