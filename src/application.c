@@ -5,6 +5,7 @@
 #include "stage.h"
 #include "evil.h"
 #include "application.h"
+#include "ev_box2d.h"
 
 #ifdef TRACE_APP
 #define LOG(...) ev_log(##__VA_ARGS__)
@@ -36,6 +37,8 @@ struct _ev_app {
     ev_stage *stage;
 
     ev_app_state state;
+
+    ev_world *world;
 };
 
 ev_app_state ev_app_get_state(ev_app *a) {
@@ -112,6 +115,9 @@ ev_err_t ev_app_init(ev_app *app)
             return EV_FAIL;
         if( initGL(app) )
             return EV_FAIL;
+
+        app->world = ev_world_create();
+
         return EV_OK;
     }
     return EV_FAIL;
@@ -179,10 +185,17 @@ ev_app* ev_app_create(uint32_t width, uint32_t height)
 void ev_app_quit(ev_app *app)
 {
     if( app ) {
+
         if( app->window ) {
             SDL_DestroyWindow(app->window);
             app->window = NULL;
         }
+
+        if( app->world ) {
+            ev_world_destroy(app->world);
+            app->world = NULL;
+        }
+
         IMG_Quit();
         SDL_Quit();
     }
@@ -303,7 +316,7 @@ static int app_create(lua_State *l)
         lua_error(l);
         return 1;
     }
-    ev_lua_dump_stack(l);
+
     width = lua_tonumber(l, 1);
     height = lua_tonumber(l, 2);
 

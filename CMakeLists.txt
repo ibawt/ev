@@ -16,6 +16,7 @@ set(
   src/tile_map.c
   src/lua.c
   src/stage.c
+  src/ev_box2d.cpp
   vendor/glew/src/glew.c
 )
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_GENERATOR STREQUAL "Ninja")
@@ -48,6 +49,7 @@ include_directories(${gtest_SOURCE_DIR}/include
   vendor/glew/include
   vendor/uthash
   vendor/lua/src
+  vendor
   ${CMAKE_CURRENT_BINARY_DIR}/vendor/lua
   src)
 add_definitions(
