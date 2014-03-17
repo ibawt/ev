@@ -46,6 +46,11 @@ typedef enum {
     EV_DEBUG = 3
 } ev_log_level;
 
+typedef enum {
+    EV_FALSE = 0,
+    EV_TRUE
+} ev_bool;
+
 #define ev_log(fmt, ...) ev_logger(EV_LOG, "[LOG]%s:%d " fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 
 void ev_error(const char *fmt, ...);

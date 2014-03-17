@@ -60,7 +60,7 @@ typedef struct {
 } ev_tile;
 
 typedef struct {
-    char *name;
+    char    *name;
     uint32_t tile;
 } ev_terrain;
 
@@ -91,7 +91,7 @@ typedef struct {
     char     *name;
     float     opacity;
     char     *type;
-    int       visible;
+    ev_bool   visible;
     float     x;
     float     y;
 } ev_layer;

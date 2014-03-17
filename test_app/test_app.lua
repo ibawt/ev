@@ -1,9 +1,6 @@
-local app = ev.app.create()
+local app = ev.app.create(800,600)
 local sbatch = {}
 local stage = ev.stage.create()
-
-app:set_dimensions(800,600)
-app:init()
 
 app.render = function()
    print( 'this is a function')

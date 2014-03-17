@@ -18,7 +18,7 @@ struct _ev_sframe
     int         trimmed;
     ev_rect     texture_rect;
     ev_vec2     offset;
-    int         rotated;
+    ev_bool     rotated;
     ev_rect     color_rect;
     ev_bvertex  batch_verts[EV_SPRITE_NUM_VERTS];
 };
@@ -183,7 +183,7 @@ static ev_smap* parse_metadata(json_t *object)
     ev_smap *map;
     ev_size *size;
 
-    if(! object )
+    if( !object )
         return NULL;
 
     map = ev_smap_create();

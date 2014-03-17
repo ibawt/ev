@@ -292,6 +292,7 @@ static ev_app* get_app(lua_State *l)
 static int app_create(lua_State *l)
 {
     ev_app *app;
+    lua_Number width,height;
 
     LOG("app_create");
 
@@ -302,7 +303,15 @@ static int app_create(lua_State *l)
         lua_error(l);
         return 1;
     }
+    ev_lua_dump_stack(l);
+    width = lua_tonumber(l, 1);
+    height = lua_tonumber(l, 2);
 
+    if( width < 0 || height < 0 ) {
+        lua_pushstring(l, "width and height must be > 0");
+        lua_error(l);
+        return 1;
+    }
     lua_newtable(l);
 
     luaL_getmetatable(l, EV_APP_META);
@@ -316,7 +325,17 @@ static int app_create(lua_State *l)
 
     app->lua_ref = ev_lua_create_ref( l, 1 );
 
+    app->width = (int)width;
+    app->height = (int)height;
+
     lua_app = app;
+
+    if( ev_app_init(app)) {
+        lua_pushstring(l, "error in application init");
+        lua_error(l);
+    } else {
+        app->state = EV_APP_STATE_READY;
+    }
 
     return 1;
 }

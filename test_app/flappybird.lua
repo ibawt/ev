@@ -1,7 +1,4 @@
-local app = ev.app.create()
-
-app:set_dimensions(800,600)
-app:init()
+local app = ev.app.create(800,600)
 
 local stage = ev.stage.create()
 local sbatch = ev.sbatch.create()
