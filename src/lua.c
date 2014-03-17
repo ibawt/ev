@@ -68,6 +68,7 @@ ev_err_t ev_lua_load_libraries(lua_State *l)
     char path[512];
 
     dir = getenv("EV_LUA_LIBS");
+
     if (!dir) {
         dir = "../lib";
     }

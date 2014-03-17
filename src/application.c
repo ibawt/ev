@@ -234,6 +234,10 @@ ev_err_t ev_app_start(ev_app *app)
             }
         }
 
+        if( app->world ) {
+            ev_world_update(app->world, dt);
+        }
+
         if( app->update ) {
             app->update(app, dt);
         }
