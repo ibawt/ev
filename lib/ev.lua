@@ -10,3 +10,12 @@ function ev.sbatch:create_sprite(...)
   self:add_sprite(sprite)
   return sprite
 end
+
+ev.keys = {
+   UP = 82,
+   RIGHT = 79,
+   DOWN = 81,
+   LEFT = 80,
+   SPACE = 44,
+   ENTER = 40
+}

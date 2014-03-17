@@ -14,6 +14,7 @@
 #endif
 
 static void l_app_render(ev_app *app);
+static void l_app_update(ev_app *app, float dt);
 
 static ev_app *lua_app = NULL;
 
@@ -39,6 +40,8 @@ struct _ev_app {
     ev_app_state state;
 
     ev_world *world;
+
+    char key_states[256];
 };
 
 ev_app_state ev_app_get_state(ev_app *a) {
@@ -46,6 +49,12 @@ ev_app_state ev_app_get_state(ev_app *a) {
         return a->state;
     }
     return EV_APP_INVALID;
+}
+
+ev_world* ev_app_get_world()
+{
+    ev_app *app = ev_app_get_lua_instance();
+    return app ? app->world : NULL;
 }
 
 static int initGL(ev_app *app)
@@ -117,6 +126,10 @@ ev_err_t ev_app_init(ev_app *app)
             return EV_FAIL;
 
         app->world = ev_world_create();
+        if( !app->world )
+            return EV_FAIL;
+
+        ev_world_set_dimensions(app->world, 300, 400);
 
         return EV_OK;
     }
@@ -228,6 +241,13 @@ ev_err_t ev_app_start(ev_app *app)
 
         while( SDL_PollEvent(&e)) {
             switch(e.type) {
+            case SDL_KEYDOWN:
+                ev_log("key down: %d", e.key.keysym.scancode);
+                app->key_states[e.key.keysym.scancode & 0xff] = 1;
+                break;
+            case SDL_KEYUP:
+                app->key_states[e.key.keysym.scancode & 0xff] = 0;
+                break;
             case SDL_QUIT:
                 running = 0;
                 break;
@@ -236,6 +256,10 @@ ev_err_t ev_app_start(ev_app *app)
 
         if( app->world ) {
             ev_world_update(app->world, dt);
+        }
+
+        if( lua_app ) {
+            l_app_update(app, dt);
         }
 
         if( app->update ) {
@@ -288,6 +312,9 @@ static void l_app_update(ev_app *app, float dt)
     lua_rawgeti(l, 1, 1);
 
     lua_getfield(l, 1, "update");
+    lua_call(l, 0, 0);
+
+    lua_pop(l, 2);
 }
 
 static ev_app* get_app(lua_State *l)
@@ -464,6 +491,15 @@ static int app_set_stage(lua_State *l)
     return 0;
 }
 
+static int app_get_keystate(lua_State *l)
+{
+    ev_app *app = get_app(l);
+    int key = lua_tointeger(l, 2) & 0xff;
+
+    lua_pushboolean(l, app->key_states[key]);
+    return 1;
+}
+
 static const luaL_Reg appMethods[] = {
     { "create", app_create},
     { "__gc", app_destroy },
@@ -472,6 +508,7 @@ static const luaL_Reg appMethods[] = {
     { "show", app_show },
     { "quit", app_quit },
     { "set_stage", app_set_stage },
+    { "get_keystate", app_get_keystate},
     { 0, 0 }
 };
 

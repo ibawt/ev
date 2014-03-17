@@ -29,12 +29,9 @@ typedef struct {
 } ev_body_shape;
 
 typedef struct {
-    unsigned int tag;
+    unsigned int tag; /* this might become a string */
     void *opaque;
 } ev_body_user_data;
-
-typedef struct ev_world ev_world;
-typedef struct ev_body  ev_body;
 
 ev_world* ev_world_create(void);
 void      ev_world_destroy(ev_world*);
@@ -44,7 +41,7 @@ void      ev_world_set_dimensions(ev_world*, float w, float h);
 ev_bool   ev_world_intersects(ev_world *, ev_vec2 point, ev_size size);
 void      ev_world_update(ev_world *, float);
 
-ev_body*  ev_body_create(ev_world *, ev_body_user_data *);
+ev_body*  ev_body_create(ev_world *, ev_body_user_data );
 void      ev_body_destroy(ev_body* );
 ev_vec2   ev_body_get_position(ev_body*);
 void      ev_body_set_position(ev_body*, ev_vec2);

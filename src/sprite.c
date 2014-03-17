@@ -6,6 +6,8 @@
 #include "sprite.h"
 #include "animation.h"
 #include "sprite_sheet.h"
+#include "ev_box2d.h"
+#include "application.h"
 
 struct _ev_sprite
 {
@@ -15,6 +17,8 @@ struct _ev_sprite
     int      visible;
     ev_anim *animation;
     int      lua_ref;
+
+    ev_body *body;
 };
 
 static void ev_sprite_init(ev_sprite *s)
@@ -34,7 +38,6 @@ ev_sprite* ev_sprite_create(void)
     }
     return s;
 }
-
 
 void ev_sprite_destroy(ev_sprite* s)
 {
@@ -104,8 +107,15 @@ int ev_sprite_fill(ev_sprite* s, ev_bvertex* b)
 {
     int i;
     ev_bvertex *src;
+    ev_vec2 pos;
 
     if( s && b && s->visible) {
+        if( s->body ) {
+            pos = ev_body_get_position(s->body);
+        } else {
+            pos = s->position;
+        }
+
         src = ev_sframe_get_bvertex(ev_anim_get_current_sframe(s->animation));
         if( src ) {
 
@@ -113,13 +123,21 @@ int ev_sprite_fill(ev_sprite* s, ev_bvertex* b)
                 *b = *src;
                 b->scale = s->scale;
                 b->rotation = s->rotation;
-                b->tx = s->position.x;
-                b->ty = s->position.y;
+                b->tx = pos.x;
+                b->ty = pos.y;
             }
         }
         return 1;
     }
     return 0;
+}
+
+void ev_sprite_set_body(ev_sprite *s, ev_body *body)
+{
+    if( !(s && body) )
+        return;
+
+    s->body = body;
 }
 
 #define EV_SPRITE_META "__ev_sprite_meta"
@@ -265,6 +283,83 @@ static int l_sprite_get_visibilty(lua_State *l)
     return 1;
 }
 
+static ev_body_shape_type get_shape_from_string(const char *name)
+{
+    if( strcmp("circle", name) == 0 ) {
+        return EV_SHAPE_CIRCLE;
+    }
+    return EV_SHAPE_BOX;
+}
+
+static void parse_body_shape(lua_State *l, ev_body_shape *body_shape)
+{
+    const char *name;
+    const char *name_to_types[] = { "box", "circle" };
+
+    lua_getfield(l, -1, "type");
+    lua_getfield(l, -2, "radius");
+    lua_getfield(l, -3, "density");
+    lua_getfield(l, -4, "friction");
+    lua_getfield(l, -5, "restitution");
+
+    body_shape->shape = luaL_checkoption(l, -5, "circle", name_to_types);
+    body_shape->radius = luaL_optnumber(l, -4, 1.0);
+    body_shape->density = luaL_optnumber(l, -3, 1.0);
+    body_shape->friction = luaL_optnumber(l, -2, 0.0);
+    body_shape->restitution = luaL_optnumber(l, -1, 0.5);
+
+    ev_log("type: %d, radius: %.2f, density: %.2f, friction: %.2f, restitution: %.2f",
+           body_shape->shape, body_shape->radius, body_shape->density, body_shape->friction,
+           body_shape->restitution);
+
+    lua_pop(l, 5);
+}
+
+static int l_sprite_create_body(lua_State *l)
+{
+    ev_sprite *s;
+    ev_vec2 pos = {0};
+    const char *shape = NULL;
+    lua_Number gravity = 1.0f, linear_dampening = 0.0f;
+    ev_bool rotates = EV_TRUE;
+    ev_body *body;
+    ev_body_user_data user_data = {0};
+    ev_body_shape body_shape = {0};
+
+    s = check_sprite(l);
+
+    lua_getfield(l, 2, "x");
+    lua_getfield(l, 2, "y");
+    lua_getfield(l, 2, "gravity");
+    lua_getfield(l, 2, "linear_dampening");
+    lua_getfield(l, 2, "rotates");
+
+    pos.x = lua_tonumber(l, 4);
+    pos.y = lua_tonumber(l, 5);
+    shape = lua_tostring(l, 6);
+    gravity = lua_tonumber(l, 7);
+    linear_dampening = lua_tonumber(l, 8);
+    rotates = lua_toboolean(l, 9);
+
+    lua_pop(l, 6);
+
+    lua_getfield(l, 2, "shape");
+    parse_body_shape(l, &body_shape);
+    user_data.opaque = s;
+
+    body = ev_body_create( ev_app_get_world(), user_data);
+
+    ev_body_set_position(body, pos);
+    ev_body_set_shape(body, &body_shape);
+    ev_body_set_fixed_rotation(body, rotates);
+    ev_body_set_gravity_scale(body, gravity);
+    ev_body_set_linear_damping(body, linear_dampening);
+
+    s->body = body;
+
+    return 0;
+}
+
 ev_err_t ev_sprite_lua_init(lua_State *l)
 {
     luaL_Reg luaFuncs[] = {
@@ -277,6 +372,7 @@ ev_err_t ev_sprite_lua_init(lua_State *l)
         { "get_size", l_sprite_get_size },
         { "set_visiblity", l_sprite_set_visibilty },
         { "get_visibilty", l_sprite_get_visibilty },
+        { "create_body", l_sprite_create_body },
         { 0, 0 }
     };
 

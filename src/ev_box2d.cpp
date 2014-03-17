@@ -7,13 +7,15 @@ class ev_contact_listener : public b2ContactListener
 {
 public:
     virtual void BeginContact(b2Contact *b) {
+        ev_log("begin contact");
     }
     virtual void EndContact(b2Contact *b) {
+        ev_log("end contact");
     }
 };
 
 struct ev_world {
-    ev_world() : world(b2Vec2(0,-9.8f)) { }
+    ev_world() : world(b2Vec2(0, 9.8f)) { }
     float ptm_ratio;
     ev_contact_listener listener;
     b2World world;
@@ -21,8 +23,9 @@ struct ev_world {
 };
 
 struct ev_body {
-    b2Body *body;
-    ev_world *world;
+    b2Body           *body;
+    ev_world         *world;
+    ev_body_user_data user_data;
 };
 
 ev_world* ev_world_create(void)
@@ -93,7 +96,7 @@ void ev_world_update(ev_world *world, float dt)
     }
 }
 
-ev_body* ev_body_create(ev_world *world, ev_body_user_data *data)
+ev_body* ev_body_create(ev_world *world, ev_body_user_data data)
 {
     ev_body *b;
     b2BodyDef bodyDef;
@@ -102,12 +105,12 @@ ev_body* ev_body_create(ev_world *world, ev_body_user_data *data)
         return NULL;
     }
 
-    b = new (ev_malloc(sizeof(ev_body))) ev_body;
+    b = (ev_body*)ev_malloc(sizeof(ev_body));
     memset(b, 0, sizeof(ev_body));
-
+    b->user_data = data;
     bodyDef.type = b2_dynamicBody;
     bodyDef.position.Set(0,0);
-    bodyDef.userData = data;
+    bodyDef.userData = &b->user_data;
 
     b->body = world->world.CreateBody(&bodyDef);
     b->world = world;

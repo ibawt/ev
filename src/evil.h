@@ -103,6 +103,10 @@ typedef struct _ev_ssheet ev_ssheet;
 typedef struct _ev_tilemap ev_tilemap;
 typedef struct _ev_stage ev_stage;
 
+/* physics */
+typedef struct ev_world ev_world;
+typedef struct ev_body  ev_body;
+
 #ifdef __cplusplus
 }
 #endif
