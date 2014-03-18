@@ -6,6 +6,7 @@
 #include "ev_lua.h"
 
 static lua_State *lua_state = NULL;
+extern const char ev_lua_lib[];
 
 ev_err_t ev_application_lua_init(lua_State *l);
 ev_err_t ev_sbatch_lua_init(lua_State *l);
@@ -69,16 +70,21 @@ ev_err_t ev_lua_load_libraries(lua_State *l)
 
     dir = getenv("EV_LUA_LIBS");
 
-    if (!dir) {
-        dir = "../lib";
+    if (dir) {
+        ev_log("overriding default lua libs");
+        snprintf(path, sizeof(path), "%s/ev.lua", dir);
+
+        if (luaL_dofile(l, path)) {
+            ev_error("Error in lua: %s", lua_tostring(ev_lua_get_state(), -1));
+            return EV_FAIL;
+        }
+    } else {
+        if( luaL_dostring(l, ev_lua_lib)) {
+            ev_error("Error in lua: %s", lua_tostring(ev_lua_get_state(), -1));
+            return EV_FAIL;
+        }
     }
 
-    snprintf(path, sizeof(path), "%s/ev.lua", dir);
-
-    if (luaL_dofile(l, path)) {
-        ev_error("Error in lua: %s", lua_tostring(ev_lua_get_state(), -1));
-        return EV_FAIL;
-    }
     return EV_OK;
 }
 

@@ -9,6 +9,7 @@ set(
   src/texture.c
   src/animation.c
   src/shader.c
+  src/vector2.c
   src/matrix4.c
   src/sprite_sheet.c
   src/vertex_buffer.c
@@ -17,6 +18,7 @@ set(
   src/lua.c
   src/stage.c
   src/ev_box2d.cpp
+  ev_lua_lib.c
   vendor/glew/src/glew.c
 )
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_GENERATOR STREQUAL "Ninja")
@@ -61,6 +63,7 @@ add_definitions(
 add_library( ev STATIC
   ${SOURCES} )
 
+
 target_link_libraries( ev
   ${SDL2_LIBRARY}
   ${SDL2_IMAGE_LIBRARY}
@@ -84,3 +87,11 @@ target_link_libraries( test_app ev)
 
 enable_testing()
 add_subdirectory(test)
+
+add_executable(embedfile tools/embedfile.c)
+
+add_custom_command(
+  OUTPUT ev_lua_lib.c
+  COMMAND embedfile ../lib/ev.lua ev_lua_lib
+  DEPENDS lib/ev.lua
+  )

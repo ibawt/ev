@@ -112,6 +112,7 @@ int ev_sprite_fill(ev_sprite* s, ev_bvertex* b)
     if( s && b && s->visible) {
         if( s->body ) {
             pos = ev_body_get_position(s->body);
+            ev_log("pos.x: %.2f, pos.y: %.2f", pos.x, pos.y);
         } else {
             pos = s->position;
         }
@@ -283,17 +284,9 @@ static int l_sprite_get_visibilty(lua_State *l)
     return 1;
 }
 
-static ev_body_shape_type get_shape_from_string(const char *name)
-{
-    if( strcmp("circle", name) == 0 ) {
-        return EV_SHAPE_CIRCLE;
-    }
-    return EV_SHAPE_BOX;
-}
 
 static void parse_body_shape(lua_State *l, ev_body_shape *body_shape)
 {
-    const char *name;
     const char *name_to_types[] = { "box", "circle" };
 
     lua_getfield(l, -1, "type");
@@ -360,6 +353,21 @@ static int l_sprite_create_body(lua_State *l)
     return 0;
 }
 
+static int l_sprite_set_linear_velocity(lua_State *l)
+{
+    ev_sprite *s;
+    ev_vec2 vel;
+
+    s = check_sprite(l);
+
+    vel.x = lua_tonumber(l, 2);
+    vel.y = lua_tonumber(l, 3);
+
+    ev_body_set_linear_velocity(s->body, vel);
+
+    return 0;
+}
+
 ev_err_t ev_sprite_lua_init(lua_State *l)
 {
     luaL_Reg luaFuncs[] = {
@@ -373,6 +381,7 @@ ev_err_t ev_sprite_lua_init(lua_State *l)
         { "set_visiblity", l_sprite_set_visibilty },
         { "get_visibilty", l_sprite_get_visibilty },
         { "create_body", l_sprite_create_body },
+        { "set_linear_velocity", l_sprite_set_linear_velocity },
         { 0, 0 }
     };
 

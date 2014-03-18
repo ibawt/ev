@@ -49,6 +49,8 @@ void      ev_body_set_shape(ev_body*, ev_body_shape *);
 void      ev_body_set_gravity_scale(ev_body*, float);
 void      ev_body_set_linear_damping(ev_body*, float);
 void      ev_body_set_fixed_rotation(ev_body*, ev_bool);
+void      ev_body_set_linear_velocity(ev_body*, ev_vec2);
+void      ev_body_set_rotation(ev_body*, float);
 
 #ifdef __cplusplus
 }

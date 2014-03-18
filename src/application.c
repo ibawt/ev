@@ -292,18 +292,6 @@ ev_err_t ev_app_start(ev_app *app)
 #define EV_APP_KEY "__ev_app"
 #define EV_APP_META "__ev_app_meta"
 
-static void l_app_render(ev_app *app)
-{
-    lua_State *l = ev_lua_get_state();
-    lua_gettable(l, LUA_REGISTRYINDEX);
-    lua_rawgeti(l, -2, app->lua_ref);
-    lua_rawgeti(l, 1, 1);
-    lua_getfield(l, 1, "render");
-    lua_call(l, 0, 0);
-
-    lua_pop(l, 2);
-}
-
 static void l_app_update(ev_app *app, float dt)
 {
     lua_State *l = ev_lua_get_state();
@@ -312,7 +300,9 @@ static void l_app_update(ev_app *app, float dt)
     lua_rawgeti(l, 1, 1);
 
     lua_getfield(l, 1, "update");
-    lua_call(l, 0, 0);
+    lua_pushnumber(l, dt);
+
+    lua_call(l, 1, 0);
 
     lua_pop(l, 2);
 }

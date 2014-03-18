@@ -1,7 +1,7 @@
 #include <assert.h>
 #include "Box2D/Box2D.h"
 #include "ev_box2d.h"
-
+#include "vector2.h"
 
 class ev_contact_listener : public b2ContactListener
 {
@@ -189,5 +189,13 @@ void ev_body_set_fixed_rotation(ev_body *body, ev_bool b)
 {
     if( body ) {
         body->body->SetFixedRotation(b);
+    }
+}
+
+void ev_body_set_linear_velocity(ev_body *body, ev_vec2 v)
+{
+    if( body ) {
+        v = ev_vec2_scale(v, 1 / body->world->ptm_ratio);
+        body->body->SetLinearVelocity(b2Vec2(v.x, v.y));
     }
 }
