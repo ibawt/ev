@@ -6,3 +6,6 @@ install_manifest.txt
 cavebound
 build
 /lib/libglew.a
+/GPATH
+/GRTAGS
+/GTAGS
