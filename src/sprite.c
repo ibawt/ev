@@ -372,6 +372,21 @@ static int l_sprite_set_linear_velocity(lua_State *l)
     return 0;
 }
 
+static int l_sprite_get_linear_velocity(lua_State *l)
+{
+    ev_sprite *s;
+    ev_vec2 v;
+
+    s = check_sprite(l);
+
+    v = ev_body_get_linear_velocity(s->body);
+
+    lua_pushnumber(l, v.x);
+    lua_pushnumber(l, v.y);
+
+    return 2;
+}
+
 ev_err_t ev_sprite_lua_init(lua_State *l)
 {
     luaL_Reg luaFuncs[] = {
@@ -386,6 +401,7 @@ ev_err_t ev_sprite_lua_init(lua_State *l)
         { "get_visibilty", l_sprite_get_visibilty },
         { "create_body", l_sprite_create_body },
         { "set_linear_velocity", l_sprite_set_linear_velocity },
+        { "get_linear_velocity", l_sprite_get_linear_velocity },
         { 0, 0 }
     };
 

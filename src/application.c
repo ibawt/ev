@@ -150,7 +150,7 @@ ev_err_t ev_app_init(ev_app *app)
         if( !app->world )
             return EV_FAIL;
 
-        ev_world_set_dimensions(app->world, 300, 400);
+        ev_world_set_dimensions(app->world, app->width, app->height);
 
         return EV_OK;
     }

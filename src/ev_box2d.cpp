@@ -16,13 +16,13 @@ public:
 };
 
 struct ev_world {
-    ev_world() : world(b2Vec2(0, 9.8f)), debug_draw(32.0f) { }
+    /* TODO these shouldn't be constants some how */
+    ev_world() : world(b2Vec2(0, 9.8f)), debug_draw(NULL) { }
     float ptm_ratio;
     ev_contact_listener listener;
     b2World world;
     b2Body *world_box;
-
-    b2DebugDraw debug_draw;
+    b2DebugDraw *debug_draw;
 };
 
 struct ev_body {
@@ -53,16 +53,20 @@ void ev_world_render(ev_world *world)
 
 void ev_world_set_debug_draw(ev_world* world, ev_bool b, float width, float height)
 {
-    ev_log("enabling debug draw? %d", b);
-    world->world.SetDebugDraw( b ? &world->debug_draw : NULL);
-    world->debug_draw.SetOrtho(width,height);
+    if( b ) {
+        world->debug_draw = new b2DebugDraw(world->ptm_ratio);
+        world->debug_draw->SetOrtho(width,height);
+    } else {
+        delete world->debug_draw;
+    }
+    world->world.SetDebugDraw( world->debug_draw);
 }
 
 void ev_world_destroy(ev_world *world)
 {
     assert( world != NULL );
+    delete world->debug_draw;
     world->~ev_world();
-
     ev_free(world);
 }
 
@@ -86,7 +90,7 @@ void ev_world_set_dimensions(ev_world *world, float w, float h)
     w /= world->ptm_ratio;
     h /= world->ptm_ratio;
 
-    groundBodyDef.position.Set(0.0f, 0.0f);
+    groundBodyDef.position.Set(0, 0);
 
     world->world_box = world->world.CreateBody(&groundBodyDef);
 
@@ -213,4 +217,17 @@ void ev_body_set_linear_velocity(ev_body *body, ev_vec2 v)
         v = ev_vec2_scale(v, 1 / body->world->ptm_ratio);
         body->body->SetLinearVelocity(b2Vec2(v.x, v.y));
     }
+}
+
+ev_vec2 ev_body_get_linear_velocity(ev_body *body)
+{
+    ev_vec2 v;
+    b2Vec2  bv;
+
+    bv = body->body->GetLinearVelocity();
+
+    v.x = bv.x * body->world->ptm_ratio;
+    v.y = bv.y * body->world->ptm_ratio;
+
+    return v;
 }
