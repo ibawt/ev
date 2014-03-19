@@ -22,7 +22,7 @@ static const char fragment_shader[] =
 
 b2DebugDraw::b2DebugDraw(float ratio) : mRatio(ratio), mShader(NULL)
 {
-    SetFlags( b2Draw::e_shapeBit );
+    SetFlags( b2Draw::e_shapeBit | b2Draw::e_centerOfMassBit);
 
     ev_shader *vs = ev_shader_create();
 
@@ -58,7 +58,12 @@ b2DebugDraw::~b2DebugDraw()
 
 void b2DebugDraw::DrawPolygon(const b2Vec2* vertices, int cnt, const b2Color& color)
 {
+    GLfloat *verts = (GLfloat*)ev_vbuff_map(vbuff);
+    memcpy(verts, vertices, cnt * sizeof(b2Vec2));
+    ev_vbuff_unmap(vbuff);
+
     ev_program_use(mShader);
+    ev_vbuff_bind(vbuff);
 
     glUniformMatrix4fv( ev_program_get_uniform_loc(mShader, "u_projTrans"),
                         1, GL_FALSE, mMatrix.m);
@@ -71,16 +76,19 @@ void b2DebugDraw::DrawPolygon(const b2Vec2* vertices, int cnt, const b2Color& co
                 mRatio);
 
     glVertexAttribPointer(ev_program_get_attrib_loc(mShader, "a_position"),
-                          2, GL_FLOAT, GL_FALSE, 0, vertices);
+                          2, GL_FLOAT, GL_FALSE, 0, 0);
 
     glDrawArrays(GL_LINE_LOOP, 0, cnt);
 }
 
 void b2DebugDraw::DrawSolidPolygon(const b2Vec2* vertices, int cnt, const b2Color& color)
 {
-    ev_log("how about here?");
-    ev_program_use(mShader);
+    GLfloat *verts = (GLfloat*)ev_vbuff_map(vbuff);
+    memcpy(verts, vertices, cnt * sizeof(b2Vec2));
+    ev_vbuff_unmap(vbuff);
 
+    ev_program_use(mShader);
+    ev_vbuff_bind(vbuff);
 
     glUniformMatrix4fv( ev_program_get_uniform_loc(mShader, "u_projTrans"),
                         1, GL_FALSE, mMatrix.m);
@@ -93,7 +101,7 @@ void b2DebugDraw::DrawSolidPolygon(const b2Vec2* vertices, int cnt, const b2Colo
 
 
     glVertexAttribPointer(ev_program_get_attrib_loc(mShader, "a_position"),
-                          2, GL_FLOAT, GL_FALSE, 0,vertices);
+                          2, GL_FLOAT, GL_FALSE, 0,0);
 
     glDrawArrays(GL_TRIANGLE_FAN, 0, cnt);
 
