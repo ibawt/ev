@@ -33,7 +33,7 @@ typedef struct {
     void *opaque;
 } ev_body_user_data;
 
-void      ev_world_set_debug_draw(ev_world*, ev_bool);
+void      ev_world_set_debug_draw(ev_world*, ev_bool, float width, float height);
 ev_world* ev_world_create(void);
 void      ev_world_destroy(ev_world*);
 ev_vec2   ev_world_get_gravity(ev_world*);

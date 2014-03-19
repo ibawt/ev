@@ -51,10 +51,11 @@ void ev_world_render(ev_world *world)
     world->world.DrawDebugData();
 }
 
-void ev_world_set_debug_draw(ev_world* world, ev_bool b)
+void ev_world_set_debug_draw(ev_world* world, ev_bool b, float width, float height)
 {
-    ev_log("enabling debug draw? %b", b);
+    ev_log("enabling debug draw? %d", b);
     world->world.SetDebugDraw( b ? &world->debug_draw : NULL);
+    world->debug_draw.SetOrtho(width,height);
 }
 
 void ev_world_destroy(ev_world *world)

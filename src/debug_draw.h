@@ -5,6 +5,7 @@
 #include "Box2D/Box2D.h"
 #include "matrix4.h"
 #include "shader.h"
+#include "vertex_buffer.h"
 
 class b2DebugDraw : public b2Draw
 {
@@ -21,13 +22,14 @@ class b2DebugDraw : public b2Draw
     void DrawPoint(const b2Vec2& p, float32 size, const b2Color& color);
     void DrawString(int x, int y, const char* string, ...);
     void DrawAABB(b2AABB* aabb, const b2Color& color);
-    void SetMatrix(ev_matrix4 *matrix);
+    void SetOrtho(float w, float h);
 private:
     void SetColor(const b2Color& c, float ratio = 1.0f);
     ev_matrix4 mMatrix;
     ev_program *mShader;
     GLint mColorLocation;
     float mRatio;
+    ev_vbuff  *vbuff;
 };
 
 

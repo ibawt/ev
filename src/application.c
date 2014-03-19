@@ -394,7 +394,7 @@ static int app_create(lua_State *l)
         lua_error(l);
     } else {
         ev_log("in here?");
-        ev_world_set_debug_draw(app->world, EV_TRUE );
+        ev_world_set_debug_draw(app->world, EV_TRUE, app->width, app->height );
 
         app->state = EV_APP_STATE_READY;
     }
