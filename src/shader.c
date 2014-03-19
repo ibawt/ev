@@ -172,13 +172,19 @@ void ev_program_use(ev_program *p)
 GLint ev_program_get_attrib_loc(ev_program* p, const char *name)
 {
     int i = glGetAttribLocation(p->id, name);
-    //assert( i >= 0 );
+    if( i < 0 ) {
+        ev_error("can't find attribute: %s", name);
+    }
+    assert( i >= 0 );
     return i;
 }
 
 GLint ev_program_get_uniform_loc(ev_program *p, const char *name)
 {
     int i = glGetUniformLocation(p->id, name);
-    //assert(i >= 0);
+    if( i < 0 ) {
+        ev_error("can't find uniform: %s", name );
+    }
+    assert( i >= 0 );
     return i;
 }

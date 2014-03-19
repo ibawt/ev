@@ -8,7 +8,7 @@ static const char vertex_shader[]=
     "uniform float ratio;\n"
     "void main()\n"
     "{\n"
-    "gl_Position = u_projTrans * vec4(a_position.x, a_position.y, 0, 1);\n"
+    "gl_Position = u_projTrans * vec4(ratio * a_position.x, ratio * a_position.y, 0, 1);\n"
     "}\n";
 
 static const char fragment_shader[] =
@@ -28,11 +28,13 @@ b2DebugDraw::b2DebugDraw(float ratio) : mRatio(ratio), mShader(NULL)
 
     if( ev_shader_compile(vs, GL_VERTEX_SHADER, vertex_shader) ) {
         ev_error("vertex shader failed to compile");
+        assert(true);
     }
 
     ev_shader *fs = ev_shader_create();
     if( ev_shader_compile(fs, GL_FRAGMENT_SHADER, fragment_shader) ) {
         ev_error("fragment shader failed to compile");
+        assert(true);
     }
 
     mShader = ev_program_create();
@@ -40,6 +42,7 @@ b2DebugDraw::b2DebugDraw(float ratio) : mRatio(ratio), mShader(NULL)
     ev_program_set_shader(mShader, fs, GL_FRAGMENT_SHADER);
     if( ev_program_compile(mShader) ) {
         ev_error("shader failed to compile");
+        assert(true);
     }
     vbuff = ev_vbuff_create();
     ev_vbuff_set_capacity(vbuff, 2*2048);
@@ -118,8 +121,8 @@ void b2DebugDraw::DrawSolidCircle(const b2Vec2& center, float radius, const b2Ve
 
     for( i = 0 ; i < vertex_cnt ; ++i ) {
         b2Vec2 v = center + radius * b2Vec2(cosf(theta), sinf(theta));
-        verts[i*2] = v.x * mRatio;
-        verts[i*2+1] = v.y * mRatio;
+        verts[i*2] = v.x;
+        verts[i*2+1] = v.y;
         theta += k_inc;
     }
 
@@ -127,6 +130,7 @@ void b2DebugDraw::DrawSolidCircle(const b2Vec2& center, float radius, const b2Ve
 
     ev_program_use(mShader);
     ev_vbuff_bind(vbuff);
+
     glEnableVertexAttribArray(ev_program_get_attrib_loc(mShader, "a_position"));
     CHECK_GL();
     glUniformMatrix4fv( ev_program_get_uniform_loc(mShader, "u_projTrans"),
@@ -134,6 +138,9 @@ void b2DebugDraw::DrawSolidCircle(const b2Vec2& center, float radius, const b2Ve
 
     glUniform4f(ev_program_get_uniform_loc(mShader, "u_color"),
                 color.r*.5f, color.g*.5f, color.b*.5f, 0.5f);
+
+    glUniform1f(ev_program_get_uniform_loc(mShader, "ratio"),
+                mRatio);
 
     glVertexAttribPointer(ev_program_get_attrib_loc(mShader, "a_position"),
                            2, GL_FLOAT, GL_FALSE, 0, 0);
@@ -160,16 +167,20 @@ void b2DebugDraw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color&
     SetColor(color);
     GLfloat *verts = (GLfloat*)ev_vbuff_map(vbuff);
 
-    verts[0] = p1.x * mRatio;
-    verts[1] = p1.y * mRatio;
-    verts[2] = p2.x * mRatio;
-    verts[3] = p2.y * mRatio;
+    verts[0] = p1.x;
+    verts[1] = p1.y;
+    verts[2] = p2.x;
+    verts[3] = p2.y;
 
     ev_vbuff_unmap(vbuff);
 
     ev_vbuff_bind(vbuff);
+
     glUniformMatrix4fv( ev_program_get_uniform_loc(mShader, "u_projTrans"),
                         1, GL_FALSE, mMatrix.m);
+
+    glUniform1f( ev_program_get_uniform_loc(mShader, "ratio"),
+                 mRatio);
 
     glVertexAttribPointer(ev_program_get_attrib_loc(mShader, "a_position"),
                           2, GL_FLOAT, GL_FALSE, 0, 0);
