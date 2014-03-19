@@ -33,6 +33,7 @@ typedef struct {
     void *opaque;
 } ev_body_user_data;
 
+void      ev_world_set_debug_draw(ev_world*, ev_bool);
 ev_world* ev_world_create(void);
 void      ev_world_destroy(ev_world*);
 ev_vec2   ev_world_get_gravity(ev_world*);
@@ -40,7 +41,7 @@ void      ev_world_set_gravity(ev_vec2);
 void      ev_world_set_dimensions(ev_world*, float w, float h);
 ev_bool   ev_world_intersects(ev_world *, ev_vec2 point, ev_size size);
 void      ev_world_update(ev_world *, float);
-
+void      ev_world_render(ev_world *);
 ev_body*  ev_body_create(ev_world *, ev_body_user_data );
 void      ev_body_destroy(ev_body* );
 ev_vec2   ev_body_get_position(ev_body*);

@@ -112,7 +112,6 @@ int ev_sprite_fill(ev_sprite* s, ev_bvertex* b)
     if( s && b && s->visible) {
         if( s->body ) {
             pos = ev_body_get_position(s->body);
-            ev_log("pos.x: %.2f, pos.y: %.2f", pos.x, pos.y);
         } else {
             pos = s->position;
         }
@@ -226,6 +225,11 @@ static int l_sprite_set_position(lua_State *l)
     s->position.x = x;
     s->position.y = y;
 
+    if( s->body ) {
+        ev_vec2 v = { x, y };
+        ev_body_set_position(s->body, v);
+    }
+
     return 0;
 }
 
@@ -296,14 +300,14 @@ static void parse_body_shape(lua_State *l, ev_body_shape *body_shape)
     lua_getfield(l, -5, "restitution");
 
     body_shape->shape = luaL_checkoption(l, -5, "circle", name_to_types);
-    body_shape->radius = luaL_optnumber(l, -4, 1.0);
+    body_shape->radius = luaL_optnumber(l, -4, 1.0) / 32.0f;
     body_shape->density = luaL_optnumber(l, -3, 1.0);
     body_shape->friction = luaL_optnumber(l, -2, 0.0);
     body_shape->restitution = luaL_optnumber(l, -1, 0.5);
 
-    ev_log("type: %d, radius: %.2f, density: %.2f, friction: %.2f, restitution: %.2f",
-           body_shape->shape, body_shape->radius, body_shape->density, body_shape->friction,
-           body_shape->restitution);
+     /* ev_log("type: %d, radius: %.2f, density: %.2f, friction: %.2f, restitution: %.2f", */
+     /*       body_shape->shape, body_shape->radius, body_shape->density, body_shape->friction, */
+     /*       body_shape->restitution); */
 
     lua_pop(l, 5);
 }

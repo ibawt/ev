@@ -2,6 +2,7 @@
 #include "Box2D/Box2D.h"
 #include "ev_box2d.h"
 #include "vector2.h"
+#include "debug_draw.h"
 
 class ev_contact_listener : public b2ContactListener
 {
@@ -15,11 +16,13 @@ public:
 };
 
 struct ev_world {
-    ev_world() : world(b2Vec2(0, 9.8f)) { }
+    ev_world() : world(b2Vec2(0, 9.8f)), debug_draw(32.0f) { }
     float ptm_ratio;
     ev_contact_listener listener;
     b2World world;
     b2Body *world_box;
+
+    b2DebugDraw debug_draw;
 };
 
 struct ev_body {
@@ -41,6 +44,17 @@ ev_world* ev_world_create(void)
     world->ptm_ratio = 32.0f;
 
     return world;
+}
+
+void ev_world_render(ev_world *world)
+{
+    world->world.DrawDebugData();
+}
+
+void ev_world_set_debug_draw(ev_world* world, ev_bool b)
+{
+    ev_log("enabling debug draw? %b", b);
+    world->world.SetDebugDraw( b ? &world->debug_draw : NULL);
 }
 
 void ev_world_destroy(ev_world *world)

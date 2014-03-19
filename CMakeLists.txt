@@ -18,6 +18,7 @@ set(
   src/lua.c
   src/stage.c
   src/ev_box2d.cpp
+  src/debug_draw.cpp
   ev_lua_lib.c
   vendor/glew/src/glew.c
 )

@@ -28,6 +28,12 @@ extern "C" {
 
 #define ev_cmpf(x,y) ( fabs((x) - (y)) < 0.1f)
 
+#ifndef NDEBUG
+#define CHECK_GL() do { GLint err = glGetError(); if( err ) { ev_log("ERROR in gl: %s", gluErrorString(err));  } } while(0)
+#else
+#define CHECK_GL()
+#endif
+
 void *ev_malloc(size_t);
 void *ev_realloc(void *, size_t);
 void  ev_free(void *);

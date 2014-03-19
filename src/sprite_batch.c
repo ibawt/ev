@@ -235,6 +235,7 @@ void ev_sbatch_update(ev_sbatch* batch, float dt)
 
 void ev_sbatch_render(ev_sbatch *batch)
 {
+#if 1
     int pos,tex,transform,translation;
 
     if(!batch)
@@ -269,6 +270,7 @@ void ev_sbatch_render(ev_sbatch *batch)
     glDisableVertexAttribArray(transform);
     glDisableVertexAttribArray(tex);
     glDisableVertexAttribArray(pos);
+#endif
 }
 
 void ev_sbatch_set_matrix4(ev_sbatch *batch, ev_matrix4 *matrix)

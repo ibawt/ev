@@ -1,4 +1,5 @@
 #include "shader.h"
+#include <assert.h>
 
 struct _ev_shader
 {
@@ -108,6 +109,8 @@ void ev_program_set_shader(ev_program *p, ev_shader* s, GLenum type)
 
 ev_err_t ev_program_compile(ev_program* p)
 {
+    int status;
+
     if( p && p->vertex && p->fragment ) {
         if( !p->vertex->id || !p->fragment->id ) {
             ev_error("shader ids are not set");
@@ -129,6 +132,31 @@ ev_err_t ev_program_compile(ev_program* p)
         glAttachShader(p->id, p->fragment->id);
         glLinkProgram(p->id);
 
+        glGetProgramiv( p->id, GL_LINK_STATUS, &status);
+
+        if( status == GL_FALSE ) {
+            int   loglength;
+            char *log;
+
+            glGetProgramiv(p->id, GL_INFO_LOG_LENGTH, &loglength);
+            log = ev_malloc(loglength+1);
+            if( !log )
+                return EV_NOMEM;
+
+            glGetProgramInfoLog(p->id, loglength,&loglength, log);
+
+            log[loglength] = '\0';
+
+            ev_error("Error in linking program:\n%s", log);
+
+            ev_free(log);
+
+            return EV_FAIL;
+        }
+
+
+        CHECK_GL();
+
         return EV_OK;
     }
     return EV_FAIL;
@@ -143,10 +171,14 @@ void ev_program_use(ev_program *p)
 
 GLint ev_program_get_attrib_loc(ev_program* p, const char *name)
 {
-    return p ? glGetAttribLocation(p->id, name) : 0;
+    int i = glGetAttribLocation(p->id, name);
+    //assert( i >= 0 );
+    return i;
 }
 
 GLint ev_program_get_uniform_loc(ev_program *p, const char *name)
 {
-    return p ? glGetUniformLocation(p->id, name) : 0;
+    int i = glGetUniformLocation(p->id, name);
+    //assert(i >= 0);
+    return i;
 }

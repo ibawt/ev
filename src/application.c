@@ -63,6 +63,23 @@ static int initGL(ev_app *app)
 
     assert(app != NULL);
 
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, 800, 600, 1, -1, 1 );
+    CHECK_GL();
+
+    glDisable(GL_DEPTH_TEST);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    CHECK_GL();
+
+    glClearColor( 0.0f, 0.0f, 0.0f, 1.0f);
+    CHECK_GL();
+
+    glViewport( 0, 0, 800, 600 );
+
+
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glViewport(0, 0, app->width, app->height);
 
@@ -90,6 +107,10 @@ static ev_err_t initSDL(ev_app *app)
         ev_error("SDL init failed: %s", SDL_GetError());
         return EV_FAIL;
     }
+
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 1);
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 2);
+
 
     app->window = SDL_CreateWindow("Evil", SDL_WINDOWPOS_UNDEFINED,
                                    SDL_WINDOWPOS_UNDEFINED,
@@ -242,7 +263,6 @@ ev_err_t ev_app_start(ev_app *app)
         while( SDL_PollEvent(&e)) {
             switch(e.type) {
             case SDL_KEYDOWN:
-                ev_log("key down: %d", e.key.keysym.scancode);
                 app->key_states[e.key.keysym.scancode & 0xff] = 1;
                 break;
             case SDL_KEYUP:
@@ -271,7 +291,12 @@ ev_err_t ev_app_start(ev_app *app)
 
         if( app->stage ) {
             ev_stage_update(app->stage, dt);
+
             ev_stage_render(app->stage);
+
+            if( app->world ) {
+                ev_world_render(app->world);
+            }
         }
 
         SDL_GL_SwapWindow(app->window);
@@ -368,6 +393,9 @@ static int app_create(lua_State *l)
         lua_pushstring(l, "error in application init");
         lua_error(l);
     } else {
+        ev_log("in here?");
+        ev_world_set_debug_draw(app->world, EV_TRUE );
+
         app->state = EV_APP_STATE_READY;
     }
 
