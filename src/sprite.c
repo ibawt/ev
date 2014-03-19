@@ -94,6 +94,7 @@ void ev_sprite_update(ev_sprite* s, float dt)
 
 void ev_sprite_render(ev_sprite* s)
 {
+    UNUSED(s);
 }
 
 int ev_sprite_get_visiblity(ev_sprite *s)
@@ -177,6 +178,7 @@ int l_sprite_create(lua_State *l)
 
 int l_sprite_destroy(lua_State *l)
 {
+    UNUSED(l);
     return 0;
 }
 
@@ -315,13 +317,15 @@ static void parse_body_shape(lua_State *l, ev_body_shape *body_shape)
 static int l_sprite_create_body(lua_State *l)
 {
     ev_sprite *s;
-    ev_vec2 pos = {0};
+    ev_vec2 pos = {0, 0};
     const char *shape = NULL;
     lua_Number gravity = 1.0f, linear_dampening = 0.0f;
     ev_bool rotates = EV_TRUE;
     ev_body *body;
-    ev_body_user_data user_data = {0};
-    ev_body_shape body_shape = {0};
+    ev_body_user_data user_data = {0, 0};
+    ev_body_shape body_shape;
+
+    memset(&body_shape, 0, sizeof(body_shape));
 
     s = check_sprite(l);
 

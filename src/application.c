@@ -13,7 +13,6 @@
 #define LOG(...)
 #endif
 
-static void l_app_render(ev_app *app);
 static void l_app_update(ev_app *app, float dt);
 
 static ev_app *lua_app = NULL;

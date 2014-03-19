@@ -30,6 +30,7 @@ private:
     GLint mColorLocation;
     float mRatio;
     ev_vbuff  *vbuff;
+    ev_vbuff  *segment_vbuff;
 };
 
 

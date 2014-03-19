@@ -40,6 +40,8 @@ static void identity_test(void **state)
 
 static void set_ortho_test(void **state)
 {
+    UNUSED(state);
+
     const float ortho[] = { 0.002500,0.000000,0.000000,0.000000,
                       0.000000,-0.003339,0.000000,0.000000,
                       0.000000,0.000000,-1.000000,0.000000,

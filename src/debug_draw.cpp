@@ -20,7 +20,7 @@ static const char fragment_shader[] =
     "}\n";
 
 
-b2DebugDraw::b2DebugDraw(float ratio) : mRatio(ratio), mShader(NULL)
+b2DebugDraw::b2DebugDraw(float ratio) : mShader(NULL), mRatio(ratio)
 {
     SetFlags( b2Draw::e_shapeBit | b2Draw::e_centerOfMassBit);
 
@@ -45,7 +45,10 @@ b2DebugDraw::b2DebugDraw(float ratio) : mRatio(ratio), mShader(NULL)
         assert(true);
     }
     vbuff = ev_vbuff_create();
-    ev_vbuff_set_capacity(vbuff, 2*2048);
+    ev_vbuff_set_capacity(vbuff, 32*2);
+
+    segment_vbuff = ev_vbuff_create();
+    ev_vbuff_set_capacity(segment_vbuff, sizeof(float)*4);
     CHECK_GL();
 }
 
@@ -53,6 +56,7 @@ b2DebugDraw::~b2DebugDraw()
 {
     ev_program_destroy(mShader);
     ev_vbuff_destroy(vbuff);
+    ev_vbuff_destroy(segment_vbuff);
 }
 
 
@@ -173,16 +177,16 @@ void b2DebugDraw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color&
 {
     ev_program_use(mShader);
     SetColor(color);
-    GLfloat *verts = (GLfloat*)ev_vbuff_map(vbuff);
+    GLfloat *verts = (GLfloat*)ev_vbuff_map(segment_vbuff);
 
     verts[0] = p1.x;
     verts[1] = p1.y;
     verts[2] = p2.x;
     verts[3] = p2.y;
 
-    ev_vbuff_unmap(vbuff);
+    ev_vbuff_unmap(segment_vbuff);
 
-    ev_vbuff_bind(vbuff);
+    ev_vbuff_bind(segment_vbuff);
 
     glUniformMatrix4fv( ev_program_get_uniform_loc(mShader, "u_projTrans"),
                         1, GL_FALSE, mMatrix.m);

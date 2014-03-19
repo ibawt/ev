@@ -75,7 +75,7 @@ void ev_stage_add_actor(ev_stage *stage, ev_stage_render_fn render_fn, ev_stage_
 
 void ev_stage_update(ev_stage *stage, float dt)
 {
-    int i;
+    unsigned int i;
 
     for( i = 0 ; i < stage->node_cnt ; ++i ) {
         stage->nodes[i].update_fn(stage->nodes[i].opaque, dt);

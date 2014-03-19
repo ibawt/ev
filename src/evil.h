@@ -34,6 +34,8 @@ extern "C" {
 #define CHECK_GL()
 #endif
 
+#define UNUSED(x) (void)(x)
+
 void *ev_malloc(size_t);
 void *ev_realloc(void *, size_t);
 void  ev_free(void *);

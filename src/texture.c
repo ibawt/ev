@@ -86,13 +86,6 @@ ev_texture* ev_texture_from_lua(lua_State *l, int arg)
     return t;
 }
 
-static void ev_texture_get_lua(ev_texture *t, lua_State *l)
-{
-    lua_gettable(l, LUA_REGISTRYINDEX);
-    lua_rawgeti(l, -2, t->lua_ref);
-    lua_rawgeti(l, 1, 1);
-}
-
 static int l_texture_load(lua_State *l)
 {
     ev_texture *t;

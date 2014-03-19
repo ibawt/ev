@@ -39,6 +39,9 @@ int ev_lua_create_ref(lua_State *L, int weak_ref)
 
 static void* lua_alloc( void *ud, void *ptr, size_t osize, size_t nsize)
 {
+    UNUSED(ud);
+    UNUSED(osize);
+
     if( nsize ) {
         return ev_realloc(ptr, nsize);
     } else if( ptr ){

@@ -12,11 +12,17 @@
 
 int ev_lua_create_ref(lua_State *l, int weak_ref)
 {
+    UNUSED(l);
+    UNUSED(weak_ref);
     return 1;
 }
 
 void ev_lua_init_module(lua_State *l, luaL_Reg *funcs, const char *meta, const char *name)
 {
+    UNUSED(l);
+    UNUSED(funcs);
+    UNUSED(meta);
+    UNUSED(name);
 }
 
 static void create_test(void **state)
