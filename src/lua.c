@@ -116,19 +116,19 @@ void ev_lua_init(void)
     lua_state = luaL_newstate();
     open_lua_libs();
 
-    luaL_newmetatable(lua_state, "ev_meta");
-    luaL_openlib( lua_state, "ev", globals, 0 );
-    lua_pushvalue( lua_state, -1);
-    lua_setfield( lua_state, -1, "__index");
-    lua_setglobal(lua_state, "ev");
+    /* luaL_newmetatable(lua_state, "ev_meta"); */
+    /* luaL_openlib( lua_state, "ev", globals, 0 ); */
+    /* lua_pushvalue( lua_state, -1); */
+    /* lua_setfield( lua_state, -1, "__index"); */
+    /* lua_setglobal(lua_state, "ev"); */
 
-    ev_application_lua_init(lua_state);
+    /* ev_application_lua_init(lua_state); */
 
-    ev_sbatch_lua_init(lua_state);
-    ev_sprite_lua_init(lua_state);
-    ev_anim_lua_init(lua_state);
-    ev_texture_lua_init(lua_state);
-    ev_stage_lua_init(lua_state);
+    /* ev_sbatch_lua_init(lua_state); */
+    /* ev_sprite_lua_init(lua_state); */
+    /* ev_anim_lua_init(lua_state); */
+    /* ev_texture_lua_init(lua_state); */
+    /* ev_stage_lua_init(lua_state); */
 
     ev_lua_load_libraries(lua_state);
 }

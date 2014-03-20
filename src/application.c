@@ -278,7 +278,7 @@ ev_err_t ev_app_start(ev_app *app)
         }
 
         if( lua_app ) {
-            l_app_update(app, dt);
+            //l_app_update(app, dt);
         }
 
         if( app->update ) {

@@ -16,7 +16,7 @@ typedef void (*ev_app_update)(ev_app*, float);
 typedef void (*ev_app_key_event)(ev_app*, ev_key_event *);
 typedef void (*ev_app_mouse_event)(ev_app*, ev_mouse_event*);
 
-ev_app*  ev_app_create(uint32_t width, uint32_t height);
+ __attribute__ ((visibility ("default"))) ev_app*  ev_app_create(uint32_t width, uint32_t height);
 void     ev_app_destroy(ev_app*);
 uint32_t ev_app_get_height(ev_app*);
 uint32_t ev_app_get_width(ev_app*);

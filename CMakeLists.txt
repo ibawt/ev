@@ -67,7 +67,7 @@ add_definitions(
   -g
  )
 
-add_library( ev STATIC
+add_library( ev SHARED
   ${SOURCES} )
 
 
