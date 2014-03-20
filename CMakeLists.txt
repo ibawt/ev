@@ -46,7 +46,9 @@ else()
   set( SDL_MAIN "SDLmain")
 endif()
 
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pagezero_size 10000 -image_base 100000000")
+if("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pagezero_size 10000 -image_base 100000000")
+endif()
 
 
 include_directories(${gtest_SOURCE_DIR}/include
