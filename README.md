@@ -4,6 +4,11 @@ EV
 Yet Another 2D C library
 
 I didn't see many simple 2D C gaming libraries and I didn't want to use c++.
+This is a learning project for me, I'm sure there's more mature libraries out there.
+I'm having fun learning all the things from scratch, so if you want to do some heavy
+lifting with me please help!
+
+I'm currently rewriting this to take advantage of the luajit's FFI.
 
 ## Features
 - sprite batching with all transformations done in a vertex shader

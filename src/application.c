@@ -250,6 +250,8 @@ ev_err_t ev_app_start(ev_app *app)
     uint32_t startTime;
     uint64_t numFrames = 0;
 
+    ev_log("app start!");
+
     SDL_StartTextInput();
 
     startTime = SDL_GetTicks();
