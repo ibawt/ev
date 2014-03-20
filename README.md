@@ -13,14 +13,13 @@ I didn't see many simple 2D C gaming libraries and I didn't want to use c++.
 - CMake >= 2.8
 - a c/c++ compiler (C++ only for Box2D)
 - SDL2.0 and SDLImage 2.0
+- luajit
 
 ## Included libraries
-- lua 5.2
-- jannson json library
+- jannson
 - Box2D
 - uthash
-- gtest
-- gmock
+- cmocka
 
 ## HOWTO compile
 # OSX

@@ -533,14 +533,7 @@ ev_err_t ev_application_lua_init(lua_State *l)
 {
     assert( l != NULL );
 
-    luaL_newmetatable(l, EV_APP_META);
-    luaL_setfuncs( l, appMethods,0);
-    lua_pushvalue(l, -1);
-    lua_setfield(l, -1, "__index");
-
-    lua_getglobal(l, "ev");
-    lua_pushvalue(l, -2);
-    lua_setfield(l, -2, "app");
+    ev_lua_init_module(l, appMethods, EV_APP_META, "app");
 
     return EV_OK;
 }

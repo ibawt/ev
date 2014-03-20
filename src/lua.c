@@ -15,6 +15,19 @@ ev_err_t ev_anim_lua_init(lua_State *l);
 ev_err_t ev_texture_lua_init(lua_State *l);
 ev_err_t ev_stage_lua_init(lua_State *l);
 
+
+void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
+  luaL_checkstack(L, nup, "too many upvalues");
+  for (; l->name != NULL; l++) {  /* fill the table with given functions */
+    int i;
+    for (i = 0; i < nup; i++)  /* copy upvalues to the top */
+      lua_pushvalue(L, -nup);
+    lua_pushcclosure(L, l->func, nup);  /* closure with those upvalues */
+    lua_setfield(L, -(nup + 2), l->name);
+  }
+  lua_pop(L, nup);  /* remove upvalues */
+}
+
 int ev_lua_create_ref(lua_State *L, int weak_ref)
 {
     assert( L != NULL );
@@ -100,11 +113,11 @@ static void open_lua_libs(void)
 void ev_lua_init(void)
 {
     assert( lua_state == NULL );
-    lua_state = lua_newstate(lua_alloc, NULL);
+    lua_state = luaL_newstate();
     open_lua_libs();
 
     luaL_newmetatable(lua_state, "ev_meta");
-    luaL_setfuncs( lua_state, globals, 0 );
+    luaL_openlib( lua_state, "ev", globals, 0 );
     lua_pushvalue( lua_state, -1);
     lua_setfield( lua_state, -1, "__index");
     lua_setglobal(lua_state, "ev");

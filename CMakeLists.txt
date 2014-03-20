@@ -23,18 +23,20 @@ set(
   vendor/glew/src/glew.c
 )
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_GENERATOR STREQUAL "Ninja")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fcolor-diagnostics -Wall -W")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics -Wall -W")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fcolor-diagnostics -Wall")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics -Wall")
 endif()
+
+set(CMAKE_C_FLAGS_RELEASE, "#{CMAKE_C_FLAGS_RELEASE -O3}")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
 add_subdirectory( vendor/jansson)
 add_subdirectory( vendor/Box2D )
-add_subdirectory( vendor/lua )
 
 find_package(OpenGL)
 find_package(SDL2)
 find_package(SDL2_image)
+find_package(LuaJIT)
 
 if("${CMAKE_SYSTEM_NAME}" MATCHES "Linux" )
   set( SDL_MAIN "SDL2main")
@@ -44,16 +46,20 @@ else()
   set( SDL_MAIN "SDLmain")
 endif()
 
+if("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pagezero_size 10000 -image_base 100000000")
+endif()
+
+
 include_directories(${gtest_SOURCE_DIR}/include
   ${gtest_SOURCE_DIR}
   ${SDL2_INCLUDE_DIR}
   ${SDL2_IMAGE_INCLUDE_DIRS}
   ${jansson_BINARY_DIR}/include
   vendor/glew/include
+  ${LUA_INCLUDE_DIR}
   vendor/uthash
-  vendor/lua/src
   vendor
-  ${CMAKE_CURRENT_BINARY_DIR}/vendor/lua
   src)
 add_definitions(
   -D_CRT_SECURE_NO_WARNINGS
@@ -71,7 +77,7 @@ target_link_libraries( ev
   ${OPENGL_LIBRARY}
   Box2D
   jansson
-  liblua
+  ${LUA_LIBRARY}
   ${SDL_MAIN}
 )
 

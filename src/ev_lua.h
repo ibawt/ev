@@ -19,7 +19,7 @@ void ev_lua_dump_stack(lua_State *L);
 int ev_lua_table_insert(lua_State *l);
 int ev_lua_table_remove(lua_State *l);
 
-#define ev_lua_getn(L,n)	(luaL_checktype(L, n, LUA_TTABLE), luaL_len(L, n))
+#define ev_lua_getn(L,n)	(luaL_checktype(L, n, LUA_TTABLE), lua_objlen(L, n))
 
 #ifdef __cplusplus
 }

@@ -419,6 +419,18 @@ static int l_sbatch_get_sframe(lua_State *l)
     }
 }
 
+int luaL_getsubtable (lua_State *L, int idx, const char *fname) {
+  lua_getfield(L, idx, fname);
+  if (lua_istable(L, -1)) return 1;  /* table already there */
+  else {
+    lua_pop(L, 1);  /* remove previous result */
+    lua_newtable(L);
+    lua_pushvalue(L, -1);  /* copy to be left at top */
+    lua_setfield(L, idx, fname);  /* assign new table to field */
+    return 0;  /* false, because did not find table there */
+  }
+}
+
 static int l_sbatch_add_sprite(lua_State *l)
 {
     ev_sbatch *batch;
@@ -460,7 +472,7 @@ static int l_sbatch_set_ortho(lua_State *l)
     return 0;
 }
 
-static const luaL_Reg sbatch_lua_funcs[] = {
+static luaL_Reg sbatch_lua_funcs[] = {
     { "create", l_sbatch_create },
     { "__gc", l_sbatch_destroy },
     { "load", l_sbatch_load },
@@ -475,14 +487,7 @@ ev_err_t ev_sbatch_lua_init(lua_State *l)
 {
     assert( l != NULL );
 
-    luaL_newmetatable(l, EV_SBATCH_META);
-    luaL_setfuncs(l, sbatch_lua_funcs, 0);
-    lua_pushvalue(l, -1);
-    lua_setfield(l, -1, "__index");
-
-    lua_getglobal(l, "ev");
-    lua_pushvalue(l, -2);
-    lua_setfield(l, -2, "sbatch");
+    ev_lua_init_module(l, sbatch_lua_funcs, EV_SBATCH_META, "sbatch");
 
     return EV_OK;
 }

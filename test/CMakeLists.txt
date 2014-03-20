@@ -8,5 +8,5 @@ target_link_libraries(test_matrix4 cmocka)
 add_test(matrix4test test_matrix4)
 
 add_executable(test_animation animation_test.c)
-target_link_libraries(test_animation cmocka liblua)
+target_link_libraries(test_animation cmocka ${LUA_LIBRARY})
 add_test(animationtest test_animation)
