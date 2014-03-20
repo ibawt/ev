@@ -46,6 +46,9 @@ else()
   set( SDL_MAIN "SDLmain")
 endif()
 
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pagezero_size 10000 -image_base 100000000")
+
+
 include_directories(${gtest_SOURCE_DIR}/include
   ${gtest_SOURCE_DIR}
   ${SDL2_INCLUDE_DIR}
