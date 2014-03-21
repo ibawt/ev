@@ -11,6 +11,8 @@ struct _ev_stage {
     node* nodes;
     size_t node_len;
     size_t node_cnt;
+    ev_matrix4 transform;
+
     int    lua_ref;
 };
 
@@ -32,6 +34,13 @@ ev_stage* ev_stage_create(void)
     return stage;
 }
 
+void ev_stage_set_transform(ev_stage *s, const ev_matrix4 *m)
+{
+    if( s ) {
+        memcpy(&s->transform, m, sizeof(ev_matrix4));
+    }
+}
+
 void ev_stage_free(ev_stage *s)
 {
     if( s ) {
@@ -51,7 +60,7 @@ void ev_stage_render(ev_stage *s)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     for( i = s->node_cnt - 1 ; i >= 0 ; --i ) {
-        s->nodes[i].render_fn( s->nodes[i].opaque);
+        s->nodes[i].render_fn( s->nodes[i].opaque, &s->transform);
     }
 }
 

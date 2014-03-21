@@ -8,8 +8,10 @@ typedef enum {
 } ev_err_t;
 
 typedef struct ev_app ev_app;
-ev_app* ev_app_create(uint32_t w, uint32_t h);
+typedef struct ev_stage ev_stage;
 
+ev_app* ev_app_create(uint32_t w, uint32_t h);
+void ev_app_set_stage(ev_app *app, ev_stage *s);
 void     ev_app_destroy(ev_app*);
 uint32_t ev_app_get_height(ev_app*);
 uint32_t ev_app_get_width(ev_app*);
@@ -46,9 +48,13 @@ local properties = {
 local mt = {
    __index = function(self, key)
       return methods[key] or properties[key](self)
+   end,
+   __newindex = function(self, key, val)
+      if key == 'stage' then
+         C.ev_app_set_stage(self, val)
+      end
    end
 }
-
 ffi.metatype("ev_app", mt)
 
 app.create = function(width, height)

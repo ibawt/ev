@@ -13,7 +13,7 @@ extern "C" {
 
 ev_sbatch* ev_sbatch_create(void);
 void       ev_sbatch_destroy(ev_sbatch*);
-void       ev_sbatch_render(ev_sbatch*);
+void       ev_sbatch_render(ev_sbatch*, ev_matrix4 *);
 ev_err_t   ev_sbatch_load(ev_sbatch*, const char*);
 ev_sframe* ev_sbatch_get_sframe(ev_sbatch*, const char* );
 void       ev_sbatch_set_texture(ev_sbatch*, ev_texture*);

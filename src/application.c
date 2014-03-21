@@ -111,7 +111,7 @@ static ev_err_t initSDL(ev_app *app)
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 2);
 
 
-    app->window = SDL_CreateWindow("Evil", SDL_WINDOWPOS_UNDEFINED,
+    app->window = SDL_CreateWindow("ev", SDL_WINDOWPOS_UNDEFINED,
                                    SDL_WINDOWPOS_UNDEFINED,
                                    app->width, app->height,
                                    SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
@@ -313,6 +313,11 @@ ev_err_t ev_app_start(ev_app *app)
         }
     }
     return EV_OK;
+}
+
+void ev_app_set_stage(ev_app *app, ev_stage *s)
+{
+    app->stage = s;
 }
 
 #define EV_APP_KEY "__ev_app"

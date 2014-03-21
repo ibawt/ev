@@ -233,9 +233,8 @@ void ev_sbatch_update(ev_sbatch* batch, float dt)
     }
 }
 
-void ev_sbatch_render(ev_sbatch *batch)
+void ev_sbatch_render(ev_sbatch *batch, ev_matrix4 *t)
 {
-#if 1
     int pos,tex,transform,translation;
 
     if(!batch)
@@ -246,7 +245,7 @@ void ev_sbatch_render(ev_sbatch *batch)
     ev_texture_bind( batch->texture );
     ev_program_use( batch->program );
 
-    glUniformMatrix4fv( ev_program_get_uniform_loc(batch->program ,"u_projTrans" ), 1, GL_FALSE, batch->matrix.m );
+    glUniformMatrix4fv( ev_program_get_uniform_loc(batch->program ,"u_projTrans" ), 1, GL_FALSE, t ? t->m : batch->matrix.m );
 
 
     pos = ev_program_get_attrib_loc(batch->program, "a_position");
@@ -270,7 +269,6 @@ void ev_sbatch_render(ev_sbatch *batch)
     glDisableVertexAttribArray(transform);
     glDisableVertexAttribArray(tex);
     glDisableVertexAttribArray(pos);
-#endif
 }
 
 void ev_sbatch_set_matrix4(ev_sbatch *batch, ev_matrix4 *matrix)

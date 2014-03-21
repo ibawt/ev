@@ -28,6 +28,7 @@ void     ev_app_set_update(ev_app*, ev_app_update);
 void     ev_app_set_key_event(ev_app*, ev_app_key_event);
 void     ev_app_set_mouse_event(ev_app*, ev_app_mouse_event);
 ev_err_t ev_app_start(ev_app*);
+void ev_app_set_stage(ev_app *app, ev_stage *s);
 
 ev_world* ev_app_get_world(void);
 

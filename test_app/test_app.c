@@ -55,7 +55,7 @@ void render(ev_app* app)
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    ev_sbatch_render(sprite_batch);
+    ev_sbatch_render(sprite_batch, NULL);
 }
 
 void update(ev_app* app, float dt)
