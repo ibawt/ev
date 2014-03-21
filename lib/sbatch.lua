@@ -23,6 +23,9 @@ void       ev_sbatch_update(ev_sbatch *, float);
 
 local M = {}
 local C = ffi.C
+
+local ev
+
 local mt = {
    __index = {
       destroy = function(self)
@@ -48,6 +51,16 @@ local mt = {
       end,
       add_sprite = function(self, sprite)
          C.ev_sbatch_add_sprite(self, sprite)
+      end,
+      create_sprite = function(self, ...)
+         local sprite = ev.sprite.create()
+         local anim = ev.anim.create()
+         for i,v in ipairs({...}) do
+            anim:add_frame(self:get_frame(v))
+         end
+         sprite.animation = anim
+         self:add_sprite(sprite)
+         return sprite
       end
    },
    __newindex = function(self, k, v)
@@ -62,6 +75,11 @@ ffi.metatype("ev_sbatch", mt)
 M.create = function()
    local s = ffi.gc(C.ev_sbatch_create(), mt.__index.destroy)
    return s
+end
+
+M.init = function(e)
+   ev = e
+   return M
 end
 
 return M
