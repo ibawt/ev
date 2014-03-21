@@ -13,7 +13,6 @@ struct _ev_anim
     ev_sframe  **frames;
     uint32_t     frame_cnt;
     size_t       frame_size;
-    int          lua_ref;
 };
 
 static void grow_array(ev_anim *a)
@@ -126,86 +125,4 @@ ev_anim_mode ev_anim_get_mode(ev_anim *a)
         return a->mode;
     }
     return EV_LOOP;
-}
-
-#define EV_ANIM_KEY "__ev_anim"
-#define EV_ANIM_META "__ev_anim_meta"
-
-#define check_anim( x ) ev_anim_from_lua( x, 1 )
-
-ev_anim* ev_anim_from_lua(lua_State *l, int arg)
-{
-    ev_anim *a;
-
-    luaL_checktype(l, arg, LUA_TTABLE);
-    lua_getfield(l, arg, EV_ANIM_KEY );
-    a = lua_touserdata(l, -1 );
-
-    luaL_argcheck( l, a != NULL, 1, "ev_anim expected");
-
-    return a;
-}
-
-static int l_anim_add_frame(lua_State *l)
-{
-    ev_anim *a;
-    ev_sframe *s;
-
-    a = check_anim(l);
-
-    if( !lua_islightuserdata(l,2)) {
-        lua_pushstring(l, "it's not a sframe!");
-        lua_error(l);
-    } else {
-        s = lua_touserdata(l, 2);
-
-        luaL_argcheck(l, s != NULL, 1, "frame expected");
-
-        ev_anim_add_sframe(a, s);
-    }
-
-    return 0;
-}
-
-static int l_anim_create(lua_State *l)
-{
-    ev_anim *a;
-
-    lua_newtable(l);
-    luaL_getmetatable( l, EV_ANIM_META);
-    lua_setmetatable(l, -2);
-
-    a = lua_newuserdata(l, sizeof(ev_anim));
-    init_ev_anim(a);
-
-    lua_setfield(l, -2, EV_ANIM_KEY );
-    a->lua_ref = ev_lua_create_ref(l, 1);
-
-    return 1;
-}
-
-static int l_anim_destroy(lua_State *l)
-{
-    ev_anim *a;
-
-    a = check_anim(l);
-
-    if( a->frames ) {
-        ev_free(a->frames);
-    }
-
-    return 0;
-}
-
-ev_err_t ev_anim_lua_init(lua_State *l)
-{
-    luaL_Reg anim_lua_funcs[] = {
-        { "create",  l_anim_create },
-        { "__gc",    l_anim_destroy},
-        { "add_frame", l_anim_add_frame},
-        { 0, 0 }
-    };
-
-    ev_lua_init_module(l, anim_lua_funcs, EV_ANIM_META, "anim");
-    return EV_OK;
 }
