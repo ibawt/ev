@@ -12,8 +12,6 @@ struct _ev_stage {
     size_t node_len;
     size_t node_cnt;
     ev_matrix4 transform;
-
-    int    lua_ref;
 };
 
 static void stage_init(ev_stage *stage)

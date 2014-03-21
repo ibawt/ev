@@ -2,7 +2,6 @@
 #include <stdio.h>
 
 #include "utils.h"
-#include "ev_lua.h"
 #include "sprite.h"
 #include "animation.h"
 #include "sprite_sheet.h"
@@ -16,8 +15,6 @@ struct _ev_sprite
     float    scale;
     int      visible;
     ev_anim *animation;
-    int      lua_ref;
-
     ev_body *body;
 };
 

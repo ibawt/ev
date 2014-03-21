@@ -51,7 +51,6 @@ struct _ev_sbatch {
     ev_matrix4  matrix;
     ev_vbuff   *vbuff;
     ev_ssheet  *sheet;
-    int         lua_ref;
 };
 
 static ev_err_t set_default_shader_program(ev_sbatch *b)

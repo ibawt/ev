@@ -28,7 +28,7 @@ struct _ev_app {
     SDL_Window   *window;
     float         fps;
     SDL_GLContext context;
-    int           lua_ref;
+
     ev_app_render      render;
     ev_app_update      update;
     ev_app_key_event   key_event;

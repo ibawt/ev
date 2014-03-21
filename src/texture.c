@@ -14,7 +14,6 @@ struct _ev_texture
     GLuint   id;
     uint32_t width;
     uint32_t height;
-    int      lua_ref;
 };
 
 ev_texture* ev_texture_create(void)

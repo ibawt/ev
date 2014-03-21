@@ -22,7 +22,6 @@ EV_API void          ev_sprite_update(ev_sprite*, float);
 EV_API void          ev_sprite_render(ev_sprite*);
 EV_API int           ev_sprite_fill(ev_sprite*, ev_bvertex*);
 EV_API void          ev_sprite_set_body(ev_sprite *, ev_body *);
-EV_API ev_sprite* ev_sprite_from_lua(lua_State *l, int arg);
 
 #ifdef __cplusplus
 }
