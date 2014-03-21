@@ -1,9 +1,19 @@
 local ev = {}
 
-ev.app     = require 'app'
-ev.stage   = require 'stage'
-ev.sbatch  = require 'sbatch'.init(ev)
-ev.texture = require 'texture'
-ev.sprite  = require 'sprite'
-ev.anim    = require 'anim'
+local modules = {
+   'app',
+   'stage',
+   'sbatch',
+   'texture',
+   'sprite',
+   'anim'
+}
+
+for i,v in ipairs(modules) do
+   ev[v] = require(v)
+   if ev[v].init then
+      ev[v].init(ev)
+   end
+end
+
 return ev
