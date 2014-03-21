@@ -38,6 +38,7 @@ void ev_texture_destroy(ev_texture *t)
 
 void ev_texture_bind(ev_texture* t)
 {
+    assert( t->id != 0 );
     if( t && t->id) {
         glBindTexture( GL_TEXTURE_2D, t->id );
     }

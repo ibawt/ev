@@ -8,7 +8,11 @@ sbatch = ev.sbatch.create()
 sbatch:load("bats.json")
 
 texture = ev.texture.create()
-texture:load("bats.png")
+
+if texture:load("bats.png") == 'EV_FAIL' then
+   print("error in texture load")
+   return
+end
 
 sbatch.texture = texture
 

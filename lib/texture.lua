@@ -23,7 +23,7 @@ local mt = {
       destroy = function(self)
          C.ev_texture_destroy(self)
       end,
-      load = function(self)
+      load = function(self, filename)
          return C.ev_texture_load(self, filename)
       end
    }
