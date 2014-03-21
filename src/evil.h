@@ -36,10 +36,16 @@ extern "C" {
 
 #define UNUSED(x) (void)(x)
 
-void *ev_malloc(size_t);
-void *ev_realloc(void *, size_t);
-void  ev_free(void *);
-char *ev_strdup(const char*);
+#ifdef WIN32
+#define EV_API __declspec(dllexport)
+#else
+#define EV_API __attribute__((visibility ("default")))
+#endif
+
+EV_API void *ev_malloc(size_t);
+EV_API void *ev_realloc(void *, size_t);
+EV_API void  ev_free(void *);
+EV_API char *ev_strdup(const char*);
 
 typedef enum {
     EV_OK = 0,
@@ -61,9 +67,9 @@ typedef enum {
 
 #define ev_log(fmt, ...) ev_logger(EV_LOG, "[LOG]%s:%d " fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 
-void ev_error(const char *fmt, ...);
+EV_API void ev_error(const char *fmt, ...);
 
-void ev_logger(ev_log_level, const char *fmt, ...);
+EV_API void ev_logger(ev_log_level, const char *fmt, ...);
 
 typedef struct {
     float w;

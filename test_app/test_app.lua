@@ -21,7 +21,7 @@ for i=1,512,1 do
                                         'bats_fly2.png',
                                         'bats_fly3.png')
    sprite.rotation = 0.0
-   sprite:set_position(math.random(800),math.random(300))
+   sprite:set_position(math.random(800),math.random(600))
 end
 
 stage:add_sbatch(sbatch)
