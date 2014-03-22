@@ -24,6 +24,15 @@ typedef struct {
 
 typedef struct ev_body ev_body;
 
+typedef struct {
+  ev_vec2  position;
+  float    rotation;
+  float    scale;
+  int      visible;
+  ev_anim *animation;
+  ev_body *body;
+} ev_sprite;
+
 ev_sprite*    ev_sprite_create(void);
 ev_vec2*      ev_sprite_get_position(ev_sprite*);
 void          ev_sprite_set_position(ev_sprite*, float x, float y);
@@ -46,6 +55,13 @@ local setters = {
    end,
    rotation = function(self, val)
       C.ev_sprite_set_rotation(self._ev_sprite, val)
+   end,
+   body = function(self, val)
+      C.ev_sprite_set_body(self._ev_sprite, val._ev_body)
+      self.body = val
+   end,
+   scale = function(self, val)
+      self._ev_sprite.scale = val
    end
 }
 

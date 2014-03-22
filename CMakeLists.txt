@@ -83,19 +83,14 @@ target_link_libraries( ev
   ${SDL_MAIN}
 )
 
-add_executable( test_app
-  test_app/test_app.c
-)
-
 add_executable( ev_lua
   src/main.c
   )
 
 target_link_libraries( ev_lua ev)
-target_link_libraries( test_app ev)
 
-enable_testing()
-add_subdirectory(test)
+#enable_testing()
+#add_subdirectory(test)
 
 add_executable(embedfile tools/embedfile.c)
 

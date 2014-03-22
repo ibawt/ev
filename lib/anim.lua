@@ -8,6 +8,9 @@ typedef enum {
     EV_PING_PONG = 3
 } ev_anim_mode;
 
+typedef struct ev_anim ev_anim;
+typedef struct ev_sframe ev_sframe;
+
 ev_anim*     ev_anim_create(void);
 void         ev_anim_destroy(ev_anim *);
 void         ev_anim_add_sframe(ev_anim*, ev_sframe*);

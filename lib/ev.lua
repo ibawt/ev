@@ -2,11 +2,12 @@ local ev = {}
 
 local modules = {
    'app',
-   'stage',
-   'sbatch',
    'texture',
+   'stage',
    'sprite',
-   'anim'
+   'anim',
+   'sbatch',
+   'body'
 }
 
 for i,v in ipairs(modules) do

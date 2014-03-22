@@ -40,6 +40,8 @@ struct _ev_app {
 
     ev_world *world;
 
+    ev_bool done;
+
     char key_states[256];
 };
 
@@ -243,8 +245,46 @@ void ev_app_destroy(ev_app *app)
     }
 }
 
+int ev_app_get_ticks(ev_app *app)
+{
+    return SDL_GetTicks();
+}
+
+void ev_app_swap_buffers(ev_app *app)
+{
+    SDL_GL_SwapWindow(app->window);
+
+    lua_gc(ev_lua_get_state(), LUA_GCSTEP, 1 );
+}
+
+ev_event ev_app_poll_event(ev_app *app)
+{
+    ev_event event;
+    SDL_Event e;
+
+    if( SDL_PollEvent(&e) ) {
+        switch( e.type ) {
+        case SDL_KEYDOWN:
+            event.type = EV_KEYDOWN;
+            event.key = e.key.keysym.sym;
+            break;
+        case SDL_KEYUP:
+            event.type = EV_KEYUP;
+            event.key = e.key.keysym.sym;
+            break;
+        case SDL_QUIT:
+            event.type = EV_QUIT;
+            break;
+        }
+    } else {
+        event.type = EV_NO_EVENT;
+    }
+    return event;
+}
+
 ev_err_t ev_app_start(ev_app *app)
 {
+#if 0
     int running = 1;
     float dt = 0.0f;
     uint32_t startTime;
@@ -313,6 +353,7 @@ ev_err_t ev_app_start(ev_app *app)
         }
     }
     return EV_OK;
+#endif
 }
 
 void ev_app_set_stage(ev_app *app, ev_stage *s)
