@@ -145,6 +145,9 @@ include_directories( ../ )
     VERSION "2.3.0"
   )
 
+if("${CMAKE_SYSTEM_NAME}" MATCHES "Linux" )
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+endif()
 # These are used to create visual studio folders.
 source_group(Collision FILES ${BOX2D_Collision_SRCS} ${BOX2D_Collision_HDRS})
 source_group(Collision\\Shapes FILES ${BOX2D_Shapes_SRCS} ${BOX2D_Shapes_HDRS})
