@@ -40,6 +40,7 @@ find_package(LuaJIT)
 
 if("${CMAKE_SYSTEM_NAME}" MATCHES "Linux" )
   set( SDL_MAIN "SDL2main")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
     set (SDL_MAIN "c:/SDL2/lib/x86/SDL2main.lib")
 else()
