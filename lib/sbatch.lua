@@ -1,4 +1,5 @@
 local ffi = require 'ffi'
+local C = ffi.C
 
 ffi.cdef[[
 typedef struct ev_sbatch ev_sbatch;
@@ -20,66 +21,57 @@ void       ev_sbatch_set_matrix4(ev_sbatch*, ev_matrix4 *);
 ev_err_t   ev_sbatch_set_vbuff_capacity(ev_sbatch*, size_t);
 void       ev_sbatch_update(ev_sbatch *, float);
 ]]
+ffi.metatype("ev_sbatch", { __gc = function(self) C.ev_sbatch_destroy(self) end })
 
-local M = {}
-local C = ffi.C
-
+local SpriteBatch = {}
+SpriteBatch.__index = SpriteBatch
 local ev
 
-local mt = {
-   __index = {
-      destroy = function(self)
-         C.ev_sbatch_destroy(self)
-      end,
-      render = function(self)
-         C.ev_sbatch_render(self)
-      end,
-      load = function(self, filename)
-         return C.ev_sbatch_load(self, filename)
-      end,
-      get_frame = function(self, frame_name)
-         return C.ev_sbatch_get_sframe(self, frame_name)
-      end,
-      set_texture = function(self, texture)
-         C.ev_sbatch_set_texture(self, texture)
-      end,
-      add_sprite = function(self, sprite)
-         return C.ev_sbatch_add_sprite(self, sprite)
-      end,
-      set_transform = function(self, transform)
-         C.ev_sbatch_set_matrix4(self, transform)
-      end,
-      add_sprite = function(self, sprite)
-         C.ev_sbatch_add_sprite(self, sprite)
-      end,
-      create_sprite = function(self, ...)
-         local sprite = ev.sprite.create()
-         local anim = ev.anim.create()
-         for i,v in ipairs({...}) do
-            anim:add_frame(self:get_frame(v))
-         end
-         sprite.animation = anim
-         self:add_sprite(sprite)
-         return sprite
-      end
-   },
-   __newindex = function(self, k, v)
-      if k == 'texture' then
-         C.ev_sbatch_set_texture(self, v)
-      end
+function SpriteBatch:load(filename)
+   return C.ev_sbatch_load(self._ev_sbatch, filename)
+end
+
+function SpriteBatch:get_frame(frame_name)
+   return C.ev_sbatch_get_sframe(self._ev_sbatch, frame_name)
+end
+
+function SpriteBatch:set_texture(texture)
+   C.ev_sbatch_set_texture(self._ev_sbatch, texture._ev_texture)
+end
+
+function SpriteBatch:add_sprite(sprite)
+   return C.ev_sbatch_add_sprite(self._ev_sbatch, sprite._ev_sprite)
+end
+
+function SpriteBatch:create_sprite(...)
+   local sprite = ev.sprite.create()
+   local anim = ev.anim.create()
+   for i,v in ipairs({...}) do
+      anim:add_frame(self:get_frame(v))
    end
-}
-
-ffi.metatype("ev_sbatch", mt)
-
-M.create = function()
-   local s = ffi.gc(C.ev_sbatch_create(), mt.__index.destroy)
-   return s
+   sprite.animation = anim
+   self:add_sprite(sprite)
+   return sprite
 end
 
-M.init = function(e)
+function SpriteBatch:__newindex(k, v)
+   if k == 'texture' then
+      C.ev_sbatch_set_texture(self._ev_sbatch, v._ev_texture)
+   else
+      rawset(self, k, v)
+   end
+end
+
+function SpriteBatch.create()
+   local sbatch = {}
+   setmetatable(sbatch, SpriteBatch)
+   sbatch._ev_sbatch = C.ev_sbatch_create()
+   return sbatch
+end
+
+function SpriteBatch.init(e)
    ev = e
-   return M
+   return SpriteBatch
 end
 
-return M
+return SpriteBatch

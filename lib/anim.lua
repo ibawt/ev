@@ -16,24 +16,22 @@ void         ev_anim_set_mode(ev_anim *, ev_anim_mode);
 ev_anim_mode ev_anim_get_mode(ev_anim *);
 ]]
 
-local M = {}
+ffi.metatype("ev_anim", { __gc = function(self) C.ev_anim_destroy(self) end })
 local C = ffi.C
 
-local mt = {
-   __index = function(self, key)
-      if key == 'add_frame' then
-         return C.ev_anim_add_sframe
-      end
-   end,
-   __gc = function(self)
-      print 'anim gc'
-   end
-}
+local Anim = {}
+Anim.__index = Anim
 
-ffi.metatype("ev_anim", mt)
-
-M.create = function()
-   return ffi.C.ev_anim_create()
+function Anim:add_frame(sframe)
+   C.ev_anim_add_sframe(self._ev_anim, sframe)
 end
 
-return M
+Anim.create = function()
+   local ev_anim = ffi.C.ev_anim_create()
+   local anim = {}
+   setmetatable(anim, Anim)
+   anim._ev_anim = ev_anim
+   return anim
+end
+
+return Anim

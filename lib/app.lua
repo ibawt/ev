@@ -20,47 +20,33 @@ ev_err_t ev_app_init(ev_app* );
 void     ev_app_quit(ev_app*);
 ev_err_t ev_app_start(ev_app*);
 ]]
+ffi.metatype("ev_app", { __gc = function(self) C.ev_app_destroy(self) end })
 
 local C = ffi.C
-local app = {}
+local App = {}
+App.__index = App
 
-local methods = {
-   show=function(a)
-      C.ev_app_start(a)
-   end,
-   quit=function(a)
-      C.ev_app_quit(a)
-   end,
-   destroy=function(a)
-      C.ev_app_destroy(a)
-   end
-}
 
-local properties = {
-   height = function(a)
-      return C.ev_app_get_height(a)
-   end,
-   width = function(a)
-      C.ev_app_get_width(a)
-   end
-}
-
-local mt = {
-   __index = function(self, key)
-      return methods[key] or properties[key](self)
-   end,
-   __newindex = function(self, key, val)
-      if key == 'stage' then
-         C.ev_app_set_stage(self, val)
-      end
-   end
-}
-ffi.metatype("ev_app", mt)
-
-app.create = function(width, height)
-   local a = ffi.gc(C.ev_app_create(width, height), methods.destroy)
-   local r = C.ev_app_init(a)
-   return a
+function App:show()
+   C.ev_app_start(self._ev_app)
 end
 
-return app
+function App:__newindex(key, val)
+   if key == 'stage' then
+      C.ev_app_set_stage(self._ev_app, val._ev_stage)
+   else
+      rawset(self, key, val)
+   end
+end
+
+function App.create(width,height)
+   local ev_app = C.ev_app_create(width, height)
+   C.ev_app_init(ev_app)
+
+   local app = {}
+   setmetatable(app, App)
+   app._ev_app = ev_app
+   return app
+end
+
+return App

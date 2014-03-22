@@ -8,7 +8,6 @@ sbatch = ev.sbatch.create()
 sbatch:load("bats.json")
 
 texture = ev.texture.create()
-
 if texture:load("bats.png") == 'EV_FAIL' then
    print("error in texture load")
    return
@@ -26,5 +25,4 @@ end
 
 stage:add_sbatch(sbatch)
 app.stage = stage
-
 app:show()

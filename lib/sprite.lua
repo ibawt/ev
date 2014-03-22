@@ -1,4 +1,5 @@
 local ffi = require 'ffi'
+local C = ffi.C
 
 ffi.cdef[[
 typedef struct {
@@ -34,37 +35,39 @@ void          ev_sprite_update(ev_sprite*, float);
 void          ev_sprite_render(ev_sprite*);
 void          ev_sprite_set_body(ev_sprite *, ev_body *);
 ]]
+ffi.metatype("ev_sprite", { __gc = function(self) C.ev_sprite_destroy(self) end})
 
-local M = {}
-local C = ffi.C
+local Sprite = {}
+Sprite.__index = Sprite
 
 local setters = {
    animation = function(self, val)
-      C.ev_sprite_set_animation(self, val)
+      C.ev_sprite_set_animation(self._ev_sprite, val._ev_anim)
    end,
    rotation = function(self, val)
-      C.ev_sprite_set_rotation(self, val)
+      C.ev_sprite_set_rotation(self._ev_sprite, val)
    end
 }
 
-local mt = {
-   __index = {
-      set_position = function(self, x, y)
-         C.ev_sprite_set_position(self, x, y)
-      end
-   },
-   __newindex = function(self, key, val)
-      setters[key](self, val)
-   end,
-   __gc = function(self)
-      print('sprite gc')
-   end
-}
-
-ffi.metatype("ev_sprite", mt)
-
-M.create = function()
-   return ffi.C.ev_sprite_create()
+function Sprite:set_position(x,y)
+   C.ev_sprite_set_position(self._ev_sprite, x, y)
 end
 
-return M
+function Sprite:__newindex(key, val)
+   if setters[key] then
+      setters[key](self,val)
+   else
+      rawset(self, key, val)
+   end
+end
+
+function Sprite.create()
+   local ev_sprite = ffi.C.ev_sprite_create()
+   local sprite = {}
+   setmetatable(sprite, Sprite)
+
+   sprite._ev_sprite = ev_sprite
+   return sprite
+end
+
+return Sprite

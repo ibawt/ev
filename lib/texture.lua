@@ -1,4 +1,5 @@
 local ffi = require 'ffi'
+local C = ffi.C
 
 ffi.cdef[[
 struct ev_texture {
@@ -14,25 +15,20 @@ ev_err_t    ev_texture_load(ev_texture*, const char*);
 uint32_t    ev_texture_get_width(ev_texture*);
 uint32_t    ev_texture_get_height(ev_texture*);
 ]]
+ffi.metatype("ev_texture", { __gc = function(self) C.ev_texture_destroy(self._ev_texture) end })
 
-local M = {}
-local C = ffi.C
+local Texture = {}
+Texture.__index = Texture
 
-local mt = {
-   __index = {
-      destroy = function(self)
-         C.ev_texture_destroy(self)
-      end,
-      load = function(self, filename)
-         return C.ev_texture_load(self, filename)
-      end
-   }
-}
-
-ffi.metatype("ev_texture", mt)
-
-M.create = function()
-   return ffi.gc(C.ev_texture_create(), mt.__index.destroy)
+function Texture:load(filename)
+   return C.ev_texture_load(self._ev_texture, filename)
 end
 
-return M
+function Texture.create()
+   local texture = {}
+   setmetatable(texture, Texture)
+   texture._ev_texture = C.ev_texture_create()
+   return texture
+end
+
+return Texture

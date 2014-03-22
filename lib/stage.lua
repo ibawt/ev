@@ -1,4 +1,5 @@
 local ffi = require 'ffi'
+local C = ffi.C
 
 ffi.cdef[[
 typedef struct {
@@ -17,30 +18,26 @@ void      ev_stage_add_actor(ev_stage *s, ev_stage_render_fn func, ev_stage_upda
 
 void      ev_stage_set_transform(ev_stage *, ev_matrix4*);
 ]]
+ffi.metatype("ev_stage", { __gc = function(self) C.ev_stage_destroy(self) end })
 
-local _M = {}
-local C = ffi.C
-local mt = {
-   __index = {
-      destroy=function(a)
-         C.ev_stage_destroy(a)
-      end,
-      add_sbatch=function(self, sbatch)
-         C.ev_stage_add_actor(self, C.ev_sbatch_render, C.ev_sbatch_update, sbatch)
-      end,
-      set_ortho = function(self, width, height)
-         local m = ffi.new("ev_matrix4")
-         C.ev_matrix4_set_ortho(m, 0, width, height, 1, -1, 1 )
-         C.ev_stage_set_transform(self, m)
-      end
-   }
-}
+local Stage = {}
+Stage.__index = Stage
 
-ffi.metatype("ev_stage", mt)
+function Stage:add_sbatch(sbatch)
+   C.ev_stage_add_actor(self._ev_stage, C.ev_sbatch_render, C.ev_sbatch_update, sbatch._ev_sbatch)
+end
 
-_M.create = function()
-   local stage = ffi.gc(C.ev_stage_create(), mt.__index.destroy)
+function Stage:set_ortho(width, height)
+   local m = ffi.new("ev_matrix4")
+   C.ev_matrix4_set_ortho(m, 0, width, height, 1, -1, 1 )
+   C.ev_stage_set_transform(self._ev_stage, m)
+end
+
+function Stage.create()
+   local stage = {}
+   setmetatable(stage, Stage)
+   stage._ev_stage = C.ev_stage_create()
    return stage
 end
 
-return _M
+return Stage
