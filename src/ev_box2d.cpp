@@ -46,16 +46,16 @@ ev_world* ev_world_create(void)
     return world;
 }
 
-void ev_world_render(ev_world *world)
+void ev_world_render(ev_world *world, ev_matrix4 *t)
 {
+    world->debug_draw->SetTransform(t);
     world->world.DrawDebugData();
 }
 
-void ev_world_set_debug_draw(ev_world* world, ev_bool b, float width, float height)
+void ev_world_set_debug_draw(ev_world* world, ev_bool b)
 {
     if( b ) {
         world->debug_draw = new b2DebugDraw(world->ptm_ratio);
-        world->debug_draw->SetOrtho(width,height);
     } else {
         delete world->debug_draw;
     }

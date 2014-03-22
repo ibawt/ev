@@ -63,24 +63,7 @@ static int initGL(ev_app *app)
     GLenum err = GL_NO_ERROR;
 
     assert(app != NULL);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, 800, 600, 1, -1, 1 );
-    CHECK_GL();
-
     glDisable(GL_DEPTH_TEST);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    CHECK_GL();
-
-    glClearColor( 0.0f, 0.0f, 0.0f, 1.0f);
-    CHECK_GL();
-
-    glViewport( 0, 0, 800, 600 );
-
-
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glViewport(0, 0, app->width, app->height);
 
@@ -257,103 +240,27 @@ void ev_app_swap_buffers(ev_app *app)
     lua_gc(ev_lua_get_state(), LUA_GCSTEP, 1 );
 }
 
-ev_event ev_app_poll_event(ev_app *app)
+int ev_app_poll_event(ev_app *app, ev_event *event)
 {
-    ev_event event;
     SDL_Event e;
 
     if( SDL_PollEvent(&e) ) {
         switch( e.type ) {
         case SDL_KEYDOWN:
-            event.type = EV_KEYDOWN;
-            event.key = e.key.keysym.sym;
+            event->type = EV_KEYDOWN;
+            event->key = e.key.keysym.sym;
             break;
         case SDL_KEYUP:
-            event.type = EV_KEYUP;
-            event.key = e.key.keysym.sym;
+            event->type = EV_KEYUP;
+            event->key = e.key.keysym.sym;
             break;
         case SDL_QUIT:
-            event.type = EV_QUIT;
+            event->type = EV_QUIT;
             break;
         }
-    } else {
-        event.type = EV_NO_EVENT;
+        return 1;
     }
-    return event;
-}
-
-ev_err_t ev_app_start(ev_app *app)
-{
-#if 0
-    int running = 1;
-    float dt = 0.0f;
-    uint32_t startTime;
-    uint64_t numFrames = 0;
-
-    ev_log("app start!");
-
-    SDL_StartTextInput();
-
-    startTime = SDL_GetTicks();
-
-
-    while( running ) {
-        uint32_t t1 = SDL_GetTicks();
-        SDL_Event e;
-
-        while( SDL_PollEvent(&e)) {
-            switch(e.type) {
-            case SDL_KEYDOWN:
-                app->key_states[e.key.keysym.scancode & 0xff] = 1;
-                break;
-            case SDL_KEYUP:
-                app->key_states[e.key.keysym.scancode & 0xff] = 0;
-                break;
-            case SDL_QUIT:
-                running = 0;
-                break;
-            }
-        }
-
-        if( app->world ) {
-            ev_world_update(app->world, dt);
-        }
-
-        if( lua_app ) {
-            //l_app_update(app, dt);
-        }
-
-        if( app->update ) {
-            app->update(app, dt);
-        }
-        if( app->render ) {
-            app->render(app);
-        }
-
-        if( app->stage ) {
-            ev_stage_update(app->stage, dt);
-
-            ev_stage_render(app->stage);
-
-            if( app->world ) {
-                ev_world_render(app->world);
-            }
-        }
-
-        SDL_GL_SwapWindow(app->window);
-
-        lua_gc(ev_lua_get_state(), LUA_GCSTEP, 1 );
-
-        dt = ( SDL_GetTicks() - t1 ) / 1000.0f;
-
-        numFrames++;
-
-        if( (numFrames % 10 ) == 0 ) {
-            app->fps = numFrames / (( SDL_GetTicks() - startTime) / 1000.0f);
-        }
-    }
-    return EV_OK;
-#endif
+    return 0;
 }
 
 void ev_app_set_stage(ev_app *app, ev_stage *s)

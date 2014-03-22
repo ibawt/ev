@@ -7,6 +7,7 @@ local modules = {
    'sprite',
    'anim',
    'sbatch',
+   'world',
    'body'
 }
 

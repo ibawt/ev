@@ -168,9 +168,9 @@ void b2DebugDraw::DrawSolidCircle(const b2Vec2& center, float radius, const b2Ve
     DrawSegment(center, center + radius * axis, color );
 }
 
-void b2DebugDraw::SetOrtho(float w, float h)
+void b2DebugDraw::SetTransform(ev_matrix4 *m)
 {
-    ev_matrix4_set_ortho(&mMatrix, 0, w, h, 1, -1, 1);
+    memcpy( &mMatrix.m, m->m, sizeof(ev_matrix4));
 }
 
 void b2DebugDraw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color)
