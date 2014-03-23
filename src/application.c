@@ -248,11 +248,11 @@ int ev_app_poll_event(ev_app *app, ev_event *event)
         switch( e.type ) {
         case SDL_KEYDOWN:
             event->type = EV_KEYDOWN;
-            event->key = e.key.keysym.sym;
+            event->key = SDL_GetKeyName(e.key.keysym.sym);
             break;
         case SDL_KEYUP:
             event->type = EV_KEYUP;
-            event->key = e.key.keysym.sym;
+            event->key = SDL_GetKeyName(e.key.keysym.sym);
             break;
         case SDL_QUIT:
             event->type = EV_QUIT;

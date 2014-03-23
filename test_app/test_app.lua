@@ -34,6 +34,14 @@ for i=1,8,1 do
    sprite:set_position(math.random(800),math.random(600))
 end
 
+app.onkeydown = function(key)
+   print('keydown: ' .. key )
+end
+
+app.onkeyup = function(key)
+   print('keydown: ' .. key )
+end
+
 stage:add_sbatch(sbatch)
 app.stage = stage
 app:show()

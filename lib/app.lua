@@ -10,7 +10,7 @@ typedef enum {
 
 typedef struct {
     ev_event_type type;
-    int key;
+    const char* key;
     int x;
     int y;
 } ev_event;
@@ -55,6 +55,27 @@ function App:swap_buffers()
    C.ev_app_swap_buffers(self._ev_app)
 end
 
+function App:__index(key)
+   return getmetatable(self)[key] or rawget(self, key)
+end
+
+function App:keyup(event)
+   local key = ffi.string(event.key)
+   self.key_state[key] = false
+
+   if self.onkeyup then
+      self.onkeyup(key)
+   end
+end
+
+function App:keydown(event)
+   local key = ffi.string(event.key)
+   self.key_state[key] = true
+   if self.onkeydown then
+      self.onkeydown(key)
+   end
+end
+
 function App:show()
    local keep_running = true
    local num_frames = 0
@@ -66,8 +87,13 @@ function App:show()
       local t1 = self:get_ticks()
 
       while self:poll_event(event) do
+         -- can't do a table index with an enum with ffi :(
          if event.type == "EV_QUIT" then
             keep_running = false
+         elseif event.type == "EV_KEYUP" then
+            self:keyup(event)
+         elseif event.type == "EV_KEYDOWN" then
+            self:keydown(event)
          end
       end
 
@@ -117,6 +143,11 @@ function App.create(width,height)
    local app = {}
    setmetatable(app, App)
    app._ev_app = ev_app
+   app.width = width
+   app.height = height
+
+   app.key_state = {}
+
    return app
 end
 

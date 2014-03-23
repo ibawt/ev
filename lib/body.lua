@@ -54,7 +54,7 @@ function Body:get_position(x, y)
    return C.ev_body_get_position(self._ev_body)
 end
 
-function Body.create(world, user_data)
+function Body.create(world)
    local body = {}
    setmetatable(body, Body)
    body._ev_body = C.ev_body_create(world._ev_world, nil)
