@@ -29,11 +29,6 @@ typedef struct {
     unsigned int  mask_bits;
 } ev_body_shape;
 
-typedef struct {
-    unsigned int tag; /* this might become a string */
-    void *opaque;
-} ev_body_user_data;
-
 EV_API void      ev_world_set_debug_draw(ev_world*, ev_bool);
 EV_API ev_world* ev_world_create(void);
 EV_API void      ev_world_destroy(ev_world*);
@@ -43,7 +38,8 @@ EV_API void      ev_world_set_dimensions(ev_world*, float w, float h);
 EV_API ev_bool   ev_world_intersects(ev_world *, ev_vec2 point, ev_size size);
 EV_API void      ev_world_update(ev_world *, float);
 EV_API void      ev_world_render(ev_world *, ev_matrix4 *t);
-EV_API ev_body*  ev_body_create(ev_world *, ev_body_user_data );
+
+EV_API ev_body*  ev_body_create(ev_world *, void *);
 EV_API void      ev_body_destroy(ev_body* );
 EV_API ev_vec2   ev_body_get_position(ev_body*);
 EV_API void      ev_body_set_position(ev_body*, ev_vec2);

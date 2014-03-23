@@ -14,14 +14,12 @@ typedef enum {
     EV_STATIC = 1
 } ev_body_type;
 
- typedef enum {
-     EV_SHAPE_BOX    = 0,
-     EV_SHAPE_CIRCLE = 1
- } ev_body_shape_type;
+typedef enum {
+    box    = 0,
+    circle = 1
+} ev_body_shape_type;
 
- typedef struct ev_body_user_data ev_body_user_data;
-
- typedef struct {
+typedef struct {
      ev_body_shape_type shape;
      float         radius; /* CIRCLE */
      ev_size       size;   /* BOX */
@@ -30,9 +28,9 @@ typedef enum {
      float         restitution;
      unsigned int  category_bits;
      unsigned int  mask_bits;
- } ev_body_shape;
+} ev_body_shape;
 
-  ev_body*  ev_body_create(ev_world *, ev_body_user_data );
+  ev_body*  ev_body_create(ev_world *, void *);
   void      ev_body_destroy(ev_body* );
   ev_vec2   ev_body_get_position(ev_body*);
   void      ev_body_set_position(ev_body*, ev_vec2);
@@ -53,11 +51,10 @@ function Body:get_position(x, y)
    return C.ev_body_get_position(self._ev_body)
 end
 
-function Body.create(world, shape)
+function Body.create(world, user_data)
    local body = {}
    setmetatable(body, Body)
-   body._ev_body = C.ev_body_create(world, 0)
-   C.ev_body_set_shape(shape)
+   body._ev_body = C.ev_body_create(world._ev_world, nil)
    return body
 end
 
@@ -68,8 +65,23 @@ function Body:__index(key)
       end
    }
    if props[key] then
-      props[key]()
+      return props[key]()
+   else
+      return getmetatable(self)[key] or rawget(self, key)
    end
+end
+
+local function body_shape_default()
+   local bit = require 'bit'
+   local bs = ffi.new("ev_body_shape")
+   bs.shape = "circle"
+   bs.radius = 1
+   bs.density = 1
+   bs.friction = 0
+   bs.restitution = 1
+   bs.category_bits = 1
+   bs.mask_bits = 0xFFFF
+   return bs
 end
 
 function Body:__newindex(key, val)
@@ -88,6 +100,13 @@ function Body:__newindex(key, val)
       end,
       velocity = function(val)
          C.ev_body_set_linear_velocity(self._ev_body, val)
+      end,
+      shape = function(val)
+         local bs = body_shape_default()
+         for k,v in pairs(val) do
+            bs[k] = v
+         end
+         C.ev_body_set_shape(self._ev_body, bs)
       end
    }
    if props[key] then

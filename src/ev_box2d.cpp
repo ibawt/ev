@@ -17,7 +17,7 @@ public:
 
 struct ev_world {
     /* TODO these shouldn't be constants some how */
-    ev_world() : world(b2Vec2(0, 9.8f)), debug_draw(NULL) { }
+    ev_world() : world(b2Vec2(0, 1.0f)), debug_draw(NULL) { }
     float ptm_ratio;
     ev_contact_listener listener;
     b2World world;
@@ -28,7 +28,6 @@ struct ev_world {
 struct ev_body {
     b2Body           *body;
     ev_world         *world;
-    ev_body_user_data user_data;
 };
 
 ev_world* ev_world_create(void)
@@ -115,7 +114,7 @@ void ev_world_update(ev_world *world, float dt)
     }
 }
 
-ev_body* ev_body_create(ev_world *world, ev_body_user_data data)
+ev_body* ev_body_create(ev_world *world, void *opaque)
 {
     ev_body *b;
     b2BodyDef bodyDef;
@@ -126,10 +125,9 @@ ev_body* ev_body_create(ev_world *world, ev_body_user_data data)
 
     b = (ev_body*)ev_malloc(sizeof(ev_body));
     memset(b, 0, sizeof(ev_body));
-    b->user_data = data;
     bodyDef.type = b2_dynamicBody;
     bodyDef.position.Set(0,0);
-    bodyDef.userData = &b->user_data;
+    bodyDef.userData = opaque;
 
     b->body = world->world.CreateBody(&bodyDef);
     b->world = world;
@@ -172,11 +170,12 @@ void ev_body_set_shape(ev_body *body, ev_body_shape *shape)
 
     switch(shape->shape) {
     case EV_SHAPE_BOX:
-        polyShape.SetAsBox( shape->size.w, shape->size.h);
+        polyShape.SetAsBox( shape->size.w / body->world->ptm_ratio,
+                            shape->size.h / body->world->ptm_ratio);
         fixtureDef.shape = &polyShape;
         break;
     case EV_SHAPE_CIRCLE:
-        circleShape.m_radius = shape->radius;
+        circleShape.m_radius = shape->radius / body->world->ptm_ratio;
         fixtureDef.shape = &circleShape;
         break;
     }

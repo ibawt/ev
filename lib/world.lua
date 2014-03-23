@@ -17,7 +17,6 @@ void      ev_world_render(ev_world *, ev_matrix4*);
 ffi.metatype("ev_world", { __gc = function(self) C.ev_world_destroy(self._ev_world) end })
 
 local World = {}
-World.__index = World
 
 function World.create()
    local world = {}
@@ -27,15 +26,15 @@ function World.create()
 end
 
 function World:set_dimensions(width,height)
-   C.ev_app_set_dimensions(self._ev_world, width, height)
+   C.ev_world_set_dimensions(self._ev_world, width, height)
 end
 
 function World:render(transform)
-   C.ev_app_render(self._ev_world, transform)
+   C.ev_world_render(self._ev_world, transform)
 end
 
 function World:update(dt)
-   C.ev_app_update(self._ev_world, dt)
+   C.ev_world_update(self._ev_world, dt)
 end
 
 function World:__index(key, val)
@@ -47,7 +46,7 @@ function World:__index(key, val)
    if props[key] then
       return props[key](val)
    else
-      return rawget(self, key, val)
+      return getmetatable(self)[key] or rawget(self, key)
    end
 end
 

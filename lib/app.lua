@@ -85,11 +85,8 @@ function App:show()
          end
       end
 
-      for i, v in ipairs(actors) do
-         if self[v] then
-            self[v]:render()
-         end
-      end
+      self.stage:render()
+      self.world:render(self.stage.transform)
 
       self:swap_buffers()
 

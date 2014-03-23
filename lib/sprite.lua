@@ -58,7 +58,7 @@ local setters = {
    end,
    body = function(self, val)
       C.ev_sprite_set_body(self._ev_sprite, val._ev_body)
-      self.body = val
+      rawset(self, 'body', val)
    end,
    scale = function(self, val)
       self._ev_sprite.scale = val
