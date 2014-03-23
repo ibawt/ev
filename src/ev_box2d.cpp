@@ -3,16 +3,56 @@
 #include "ev_box2d.h"
 #include "vector2.h"
 #include "debug_draw.h"
+#include <search.h>
+#include "uthash.h"
+
+typedef struct {
+    b2Contact *contact;
+    UT_hash_handle hh;
+} contact;
 
 class ev_contact_listener : public b2ContactListener
 {
 public:
+    ev_contact_listener() : head(NULL) {
+    }
+
+    ~ev_contact_listener() {
+        contact *c;
+        contact *tmp;
+
+        HASH_ITER(hh, head, c, tmp) {
+            HASH_DEL(head, c);
+            ev_free(c);
+        }
+    }
+
     virtual void BeginContact(b2Contact *b) {
-        ev_log("begin contact");
+        void *key = b;
+        contact *c;
+        HASH_FIND_PTR(head, &key, c);
+        if( c == NULL ) {
+            c = (contact *)ev_malloc(sizeof(contact));
+            c->contact = b;
+            HASH_ADD_PTR(head, contact, c);
+        } else {
+            assert(true);
+        }
     }
     virtual void EndContact(b2Contact *b) {
-        ev_log("end contact");
+        void *key = b;
+        contact *c;
+        HASH_FIND_PTR(head, &key, c);
+
+        if( c ) {
+            HASH_DEL( head, c);
+            ev_free(c);
+        } else {
+            assert(true);
+        }
+
     }
+    contact *head;
 };
 
 struct ev_world {
@@ -23,6 +63,7 @@ struct ev_world {
     b2World world;
     b2Body *world_box;
     b2DebugDraw *debug_draw;
+
 };
 
 struct ev_body {
@@ -35,7 +76,6 @@ ev_world* ev_world_create(void)
     ev_world *world;
 
     world = new (ev_malloc(sizeof(ev_world))) ev_world;
-
     world->world.SetContactListener(&world->listener);
     world->world.SetAllowSleeping(true);
     world->world.SetContinuousPhysics(true);
@@ -43,6 +83,24 @@ ev_world* ev_world_create(void)
     world->ptm_ratio = 32.0f;
 
     return world;
+}
+int ev_world_get_contacts(ev_world *world, ev_contact *contacts, int max)
+{
+    int num = 0;
+    contact *c;
+    contact *tmp;
+
+    HASH_ITER(hh, world->listener.head, c, tmp) {
+        contacts->a = c->contact->GetFixtureA()->GetBody()->GetUserData();
+        contacts->b = c->contact->GetFixtureB()->GetBody()->GetUserData();
+        contacts++;
+        num++;
+
+        if( num >= max ) {
+            break;
+        }
+    }
+    return num;
 }
 
 void ev_world_render(ev_world *world, ev_matrix4 *t)
@@ -127,7 +185,8 @@ ev_body* ev_body_create(ev_world *world, void *opaque)
     memset(b, 0, sizeof(ev_body));
     bodyDef.type = b2_dynamicBody;
     bodyDef.position.Set(0,0);
-    bodyDef.userData = opaque;
+
+    bodyDef.userData = b;
 
     b->body = world->world.CreateBody(&bodyDef);
     b->world = world;

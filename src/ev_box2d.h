@@ -29,6 +29,11 @@ typedef struct {
     unsigned int  mask_bits;
 } ev_body_shape;
 
+typedef struct {
+    void *a; /* user data a */
+    void *b; /* user data b */
+} ev_contact;
+
 EV_API void      ev_world_set_debug_draw(ev_world*, ev_bool);
 EV_API ev_world* ev_world_create(void);
 EV_API void      ev_world_destroy(ev_world*);
@@ -50,7 +55,7 @@ EV_API void      ev_body_set_fixed_rotation(ev_body*, ev_bool);
 EV_API void      ev_body_set_linear_velocity(ev_body*, ev_vec2);
 EV_API ev_vec2   ev_body_get_linear_velocity(ev_body*);
 EV_API void      ev_body_set_rotation(ev_body*, float);
-
+EV_API int       ev_world_get_contacts(ev_world *, ev_contact*, int max);
 #ifdef __cplusplus
 }
 #endif

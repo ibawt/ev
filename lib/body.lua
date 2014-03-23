@@ -47,6 +47,9 @@ ffi.metatype("ev_body", { __gc = function(self) C.ev_body_destroy(self) end })
 local Body = {}
 Body.__index = Body
 
+Body.__gc = function(self)
+   self.world.body_keys[self.key] = nil
+end
 function Body:get_position(x, y)
    return C.ev_body_get_position(self._ev_body)
 end
@@ -55,6 +58,9 @@ function Body.create(world, user_data)
    local body = {}
    setmetatable(body, Body)
    body._ev_body = C.ev_body_create(world._ev_world, nil)
+   body.key = tonumber(ffi.cast("int", body.ev_body))
+   body.world= world
+   world.body_keys[ body.key ] = body
    return body
 end
 
