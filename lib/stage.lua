@@ -40,6 +40,7 @@ function Stage:set_ortho(width, height)
    local m = ffi.new("ev_matrix4")
    C.ev_matrix4_set_ortho(m, 0, width, height, 1, -1, 1 )
    C.ev_stage_set_transform(self._ev_stage, m)
+   self.transform = m
 end
 
 function Stage.create()

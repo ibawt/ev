@@ -3,32 +3,72 @@
 #include "ev_box2d.h"
 #include "vector2.h"
 #include "debug_draw.h"
+#include <search.h>
+#include "uthash.h"
+
+typedef struct {
+    b2Contact *contact;
+    UT_hash_handle hh;
+} contact;
 
 class ev_contact_listener : public b2ContactListener
 {
 public:
+    ev_contact_listener() : head(NULL) {
+    }
+
+    ~ev_contact_listener() {
+        contact *c;
+        contact *tmp;
+
+        HASH_ITER(hh, head, c, tmp) {
+            HASH_DEL(head, c);
+            ev_free(c);
+        }
+    }
+
     virtual void BeginContact(b2Contact *b) {
-        ev_log("begin contact");
+        void *key = b;
+        contact *c;
+        HASH_FIND_PTR(head, &key, c);
+        if( c == NULL ) {
+            c = (contact *)ev_malloc(sizeof(contact));
+            c->contact = b;
+            HASH_ADD_PTR(head, contact, c);
+        } else {
+            assert(true);
+        }
     }
     virtual void EndContact(b2Contact *b) {
-        ev_log("end contact");
+        void *key = b;
+        contact *c;
+        HASH_FIND_PTR(head, &key, c);
+
+        if( c ) {
+            HASH_DEL( head, c);
+            ev_free(c);
+        } else {
+            assert(true);
+        }
+
     }
+    contact *head;
 };
 
 struct ev_world {
     /* TODO these shouldn't be constants some how */
-    ev_world() : world(b2Vec2(0, 9.8f)), debug_draw(NULL) { }
+    ev_world() : world(b2Vec2(0, 1.0f)), debug_draw(NULL) { }
     float ptm_ratio;
     ev_contact_listener listener;
     b2World world;
     b2Body *world_box;
     b2DebugDraw *debug_draw;
+
 };
 
 struct ev_body {
     b2Body           *body;
     ev_world         *world;
-    ev_body_user_data user_data;
 };
 
 ev_world* ev_world_create(void)
@@ -36,7 +76,6 @@ ev_world* ev_world_create(void)
     ev_world *world;
 
     world = new (ev_malloc(sizeof(ev_world))) ev_world;
-
     world->world.SetContactListener(&world->listener);
     world->world.SetAllowSleeping(true);
     world->world.SetContinuousPhysics(true);
@@ -45,17 +84,35 @@ ev_world* ev_world_create(void)
 
     return world;
 }
-
-void ev_world_render(ev_world *world)
+int ev_world_get_contacts(ev_world *world, ev_contact *contacts, int max)
 {
+    int num = 0;
+    contact *c;
+    contact *tmp;
+
+    HASH_ITER(hh, world->listener.head, c, tmp) {
+        contacts->a = c->contact->GetFixtureA()->GetBody()->GetUserData();
+        contacts->b = c->contact->GetFixtureB()->GetBody()->GetUserData();
+        contacts++;
+        num++;
+
+        if( num >= max ) {
+            break;
+        }
+    }
+    return num;
+}
+
+void ev_world_render(ev_world *world, ev_matrix4 *t)
+{
+    world->debug_draw->SetTransform(t);
     world->world.DrawDebugData();
 }
 
-void ev_world_set_debug_draw(ev_world* world, ev_bool b, float width, float height)
+void ev_world_set_debug_draw(ev_world* world, ev_bool b)
 {
     if( b ) {
         world->debug_draw = new b2DebugDraw(world->ptm_ratio);
-        world->debug_draw->SetOrtho(width,height);
     } else {
         delete world->debug_draw;
     }
@@ -115,7 +172,7 @@ void ev_world_update(ev_world *world, float dt)
     }
 }
 
-ev_body* ev_body_create(ev_world *world, ev_body_user_data data)
+ev_body* ev_body_create(ev_world *world, void *opaque)
 {
     ev_body *b;
     b2BodyDef bodyDef;
@@ -126,10 +183,10 @@ ev_body* ev_body_create(ev_world *world, ev_body_user_data data)
 
     b = (ev_body*)ev_malloc(sizeof(ev_body));
     memset(b, 0, sizeof(ev_body));
-    b->user_data = data;
     bodyDef.type = b2_dynamicBody;
     bodyDef.position.Set(0,0);
-    bodyDef.userData = &b->user_data;
+
+    bodyDef.userData = b;
 
     b->body = world->world.CreateBody(&bodyDef);
     b->world = world;
@@ -172,11 +229,12 @@ void ev_body_set_shape(ev_body *body, ev_body_shape *shape)
 
     switch(shape->shape) {
     case EV_SHAPE_BOX:
-        polyShape.SetAsBox( shape->size.w, shape->size.h);
+        polyShape.SetAsBox( shape->size.w / body->world->ptm_ratio,
+                            shape->size.h / body->world->ptm_ratio);
         fixtureDef.shape = &polyShape;
         break;
     case EV_SHAPE_CIRCLE:
-        circleShape.m_radius = shape->radius;
+        circleShape.m_radius = shape->radius / body->world->ptm_ratio;
         fixtureDef.shape = &circleShape;
         break;
     }

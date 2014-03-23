@@ -53,6 +53,11 @@ void ev_sprite_set_position(ev_sprite *s, float x, float y)
     if( s ) {
         s->position.x = x;
         s->position.y = y;
+
+        if( s->body ) {
+            ev_vec2 v = { x, y };
+            ev_body_set_position(s->body, v);
+        }
     }
 }
 

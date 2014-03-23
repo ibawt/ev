@@ -35,7 +35,7 @@ void     ev_app_quit(ev_app*);
 ev_err_t ev_app_start(ev_app*);
 int      ev_app_get_ticks(ev_app *app);
 void     ev_app_swap_buffers(ev_app*);
-ev_event ev_app_poll_event(ev_app*);
+bool     ev_app_poll_event(ev_app*, ev_event *);
 ]]
 ffi.metatype("ev_app", { __gc = function(self) C.ev_app_destroy(self) end })
 
@@ -47,8 +47,8 @@ function App:get_ticks()
    return C.ev_app_get_ticks(self._ev_app)
 end
 
-function App:poll_event()
-   return C.ev_app_poll_event(self._ev_app)
+function App:poll_event(event)
+   return C.ev_app_poll_event(self._ev_app, event)
 end
 
 function App:swap_buffers()
@@ -60,18 +60,14 @@ function App:show()
    local num_frames = 0
    local start_time = self:get_ticks()
    local dt = 0
+   local event = ffi.new("ev_event")
 
    while keep_running do
       local t1 = self:get_ticks()
-      local has_events = true
 
-      while has_events do
-         local event = self:poll_event()
-
+      while self:poll_event(event) do
          if event.type == "EV_QUIT" then
             keep_running = false
-         elseif event.type == "EV_NO_EVENT" then
-            has_events = false
          end
       end
 
@@ -89,11 +85,8 @@ function App:show()
          end
       end
 
-      for i, v in ipairs(actors) do
-         if self[v] then
-            self[v]:render()
-         end
-      end
+      self.stage:render()
+      self.world:render(self.stage.transform)
 
       self:swap_buffers()
 
@@ -105,9 +98,15 @@ function App:show()
 end
 
 function App:__newindex(key, val)
-   if key == 'stage' then
-      C.ev_app_set_stage(self._ev_app, val._ev_stage)
+   local props = {
+      stage = function(val)
+         C.ev_app_set_stage(self._ev_app, val._ev_stage)
+      end
+   }
+   if props[key] then
+      props[key](val)
    end
+
    rawset(self, key, val)
 end
 

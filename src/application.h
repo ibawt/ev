@@ -45,8 +45,8 @@ EV_API ev_err_t ev_app_start(ev_app*);
 EV_API void     ev_app_set_stage(ev_app *app, ev_stage *s);
 EV_API int      ev_app_get_ticks(ev_app *app);
 EV_API void     ev_app_swap_buffers(ev_app*);
-EV_API ev_event ev_app_poll_event(ev_app *);
-EV_API ev_world*       ev_app_get_world(void);
+EV_API int       ev_app_poll_event(ev_app *, ev_event *);
+EV_API ev_world* ev_app_get_world(void);
 
 typedef enum {
     EV_APP_STATE_RESET = 0,

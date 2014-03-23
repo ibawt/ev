@@ -13,13 +13,24 @@ if texture:load("bats.png") == 'EV_FAIL' then
    return
 end
 
+local world = ev.world.create()
+world:set_dimensions(800, 600)
+
+app.world = world
+world.debug_draw = true
+
 sbatch.texture = texture
 
-for i=1,512,1 do
+for i=1,8,1 do
    local sprite = sbatch:create_sprite( 'bats_fly1.png',
                                         'bats_fly2.png',
                                         'bats_fly3.png')
    sprite.rotation = 0.0
+   sprite.body = ev.body.create(world, sprite)
+   sprite.body.shape = {
+      shape = 'circle',
+      radius = 5
+   }
    sprite:set_position(math.random(800),math.random(600))
 end
 
