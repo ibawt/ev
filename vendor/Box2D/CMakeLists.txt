@@ -1,3 +1,7 @@
+if("${CMAKE_SYSTEM_NAME}" MATCHES "Linux" )
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+endif()
+
 set(BOX2D_Collision_SRCS
   Collision/b2BroadPhase.cpp
   Collision/b2CollideCircle.cpp
@@ -31,19 +35,27 @@ set(BOX2D_Shapes_HDRS
 set(BOX2D_Common_SRCS
   Common/b2BlockAllocator.cpp
   Common/b2Draw.cpp
+  Common/b2FreeList.cpp
   Common/b2Math.cpp
   Common/b2Settings.cpp
   Common/b2StackAllocator.cpp
+  Common/b2Stat.cpp
   Common/b2Timer.cpp
+  Common/b2TrackedBlock.cpp
 )
 set(BOX2D_Common_HDRS
   Common/b2BlockAllocator.h
   Common/b2Draw.h
+  Common/b2FreeList.h
   Common/b2GrowableStack.h
+  Common/b2IntrusiveList.h
   Common/b2Math.h
   Common/b2Settings.h
+  Common/b2SlabAllocator.h
   Common/b2StackAllocator.h
+  Common/b2Stat.h
   Common/b2Timer.h
+  Common/b2TrackedBlock.h
 )
 set(BOX2D_Dynamics_SRCS
   Dynamics/b2Body.cpp
@@ -91,6 +103,7 @@ set(BOX2D_Joints_SRCS
   Dynamics/Joints/b2Joint.cpp
   Dynamics/Joints/b2MotorJoint.cpp
   Dynamics/Joints/b2MouseJoint.cpp
+  Dynamics/Joints/b2MotorJoint.cpp
   Dynamics/Joints/b2PrismaticJoint.cpp
   Dynamics/Joints/b2PulleyJoint.cpp
   Dynamics/Joints/b2RevoluteJoint.cpp
@@ -112,6 +125,19 @@ set(BOX2D_Joints_HDRS
   Dynamics/Joints/b2WeldJoint.h
   Dynamics/Joints/b2WheelJoint.h
 )
+set(BOX2D_Particle_SRCS
+  Particle/b2Particle.cpp
+  Particle/b2ParticleGroup.cpp
+  Particle/b2ParticleSystem.cpp
+  Particle/b2VoronoiDiagram.cpp
+)
+set(BOX2D_Particle_HDRS
+  Particle/b2Particle.h
+  Particle/b2ParticleGroup.h
+  Particle/b2ParticleSystem.h
+  Particle/b2StackQueue.h
+  Particle/b2VoronoiDiagram.h
+)
 set(BOX2D_Rope_SRCS
   Rope/b2Rope.cpp
 )
@@ -122,6 +148,37 @@ set(BOX2D_General_HDRS
   Box2D.h
 )
 include_directories( ../ )
+
+if(BOX2D_BUILD_SHARED)
+  add_library(Box2D_shared SHARED
+    ${BOX2D_General_HDRS}
+    ${BOX2D_Joints_SRCS}
+    ${BOX2D_Joints_HDRS}
+    ${BOX2D_Contacts_SRCS}
+    ${BOX2D_Contacts_HDRS}
+    ${BOX2D_Dynamics_SRCS}
+    ${BOX2D_Dynamics_HDRS}
+    ${BOX2D_Common_SRCS}
+    ${BOX2D_Common_HDRS}
+    ${BOX2D_Shapes_SRCS}
+    ${BOX2D_Shapes_HDRS}
+    ${BOX2D_Collision_SRCS}
+    ${BOX2D_Collision_HDRS}
+    ${BOX2D_Particle_SRCS}
+    ${BOX2D_Particle_HDRS}
+    ${BOX2D_Rope_SRCS}
+    ${BOX2D_Rope_HDRS}
+  )
+  set_target_properties(Box2D_shared PROPERTIES
+    OUTPUT_NAME "liquidfun"
+    CLEAN_DIRECT_OUTPUT 1
+    VERSION ${BOX2D_VERSION}
+  )
+
+  if(UNIX AND NOT APPLE)
+    target_link_libraries(Box2D_shared rt)
+  endif(UNIX AND NOT APPLE)
+endif()
 
   add_library(Box2D STATIC
     ${BOX2D_General_HDRS}
@@ -137,17 +194,21 @@ include_directories( ../ )
     ${BOX2D_Shapes_HDRS}
     ${BOX2D_Collision_SRCS}
     ${BOX2D_Collision_HDRS}
+    ${BOX2D_Particle_SRCS}
+    ${BOX2D_Particle_HDRS}
     ${BOX2D_Rope_SRCS}
     ${BOX2D_Rope_HDRS}
   )
   set_target_properties(Box2D PROPERTIES
+    OUTPUT_NAME "liquidfun"
     CLEAN_DIRECT_OUTPUT 1
-    VERSION "2.3.0"
+    VERSION "1.0"
   )
 
-if("${CMAKE_SYSTEM_NAME}" MATCHES "Linux" )
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-endif()
+  if(UNIX AND NOT APPLE)
+    target_link_libraries(Box2D rt)
+  endif(UNIX AND NOT APPLE)
+
 # These are used to create visual studio folders.
 source_group(Collision FILES ${BOX2D_Collision_SRCS} ${BOX2D_Collision_HDRS})
 source_group(Collision\\Shapes FILES ${BOX2D_Shapes_SRCS} ${BOX2D_Shapes_HDRS})
@@ -156,6 +217,7 @@ source_group(Dynamics FILES ${BOX2D_Dynamics_SRCS} ${BOX2D_Dynamics_HDRS})
 source_group(Dynamics\\Contacts FILES ${BOX2D_Contacts_SRCS} ${BOX2D_Contacts_HDRS})
 source_group(Dynamics\\Joints FILES ${BOX2D_Joints_SRCS} ${BOX2D_Joints_HDRS})
 source_group(Include FILES ${BOX2D_General_HDRS})
+source_group(Particle FILES ${BOX2D_Particle_SRCS} ${BOX2D_Particle_HDRS})
 source_group(Rope FILES ${BOX2D_Rope_SRCS} ${BOX2D_Rope_HDRS})
 
 if(BOX2D_INSTALL)
@@ -167,11 +229,15 @@ if(BOX2D_INSTALL)
   install(FILES ${BOX2D_Dynamics_HDRS} DESTINATION include/Box2D/Dynamics)
   install(FILES ${BOX2D_Contacts_HDRS} DESTINATION include/Box2D/Dynamics/Contacts)
   install(FILES ${BOX2D_Joints_HDRS} DESTINATION include/Box2D/Dynamics/Joints)
+  install(FILES ${BOX2D_Particle_HDRS} DESTINATION include/Box2D/Particle)
   install(FILES ${BOX2D_Rope_HDRS} DESTINATION include/Box2D/Rope)
 
   # install libraries
   if(BOX2D_BUILD_SHARED)
-    install(TARGETS Box2D_shared EXPORT Box2D-targets DESTINATION ${LIB_INSTALL_DIR})
+    install(TARGETS Box2D_shared EXPORT Box2D-targets
+                  LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+                  ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+                  RUNTIME DESTINATION bin)
   endif()
   if(BOX2D_BUILD_STATIC)
     install(TARGETS Box2D EXPORT Box2D-targets DESTINATION ${LIB_INSTALL_DIR})
@@ -179,5 +245,13 @@ if(BOX2D_INSTALL)
 
   # install build system hooks for third-party apps
   install(EXPORT Box2D-targets DESTINATION ${LIB_INSTALL_DIR}/Box2D)
-  install(FILES Box2DConfig.cmake DESTINATION ${LIB_INSTALL_DIR}/Box2D)
+
+        set (BOX2D_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
+        set (BOX2D_INCLUDE_DIRS ${BOX2D_INCLUDE_DIR} )
+        set (BOX2D_LIBRARY_DIRS ${CMAKE_INSTALL_PREFIX}/${LIB_INSTALL_DIR})
+        set (BOX2D_LIBRARY Box2D)
+        set (BOX2D_LIBRARIES ${BOX2D_LIBRARY})
+        set (BOX2D_USE_FILE ${CMAKE_INSTALL_PREFIX}/${LIB_INSTALL_DIR}/cmake/Box2D/UseBox2D.cmake)
+        configure_file(Box2DConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/Box2DConfig.cmake @ONLY ESCAPE_QUOTES)
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Box2DConfig.cmake UseBox2D.cmake DESTINATION ${LIB_INSTALL_DIR}/cmake/Box2D)
 endif(BOX2D_INSTALL)

@@ -173,6 +173,10 @@ void b2DebugDraw::SetTransform(ev_matrix4 *m)
     memcpy( &mMatrix.m, m->m, sizeof(ev_matrix4));
 }
 
+void b2DebugDraw::DrawParticles(const b2Vec2 *centers, float32 radius, const b2ParticleColor *colors, int32 count)
+{
+}
+
 void b2DebugDraw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color)
 {
     ev_program_use(mShader);

@@ -23,6 +23,7 @@ class b2DebugDraw : public b2Draw
     void DrawString(int x, int y, const char* string, ...);
     void DrawAABB(b2AABB* aabb, const b2Color& color);
     void SetTransform(ev_matrix4 *);
+    void DrawParticles(const b2Vec2 *centers, float32 radius, const b2ParticleColor *colors, int32 count);
 private:
     //TODO: these member names are inconsistent
     void SetColor(const b2Color& c, float ratio = 1.0f);
