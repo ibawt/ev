@@ -122,8 +122,10 @@ ev_err_t ev_sbatch_set_vbuff_capacity(ev_sbatch *batch, size_t size)
     return EV_OK;
 }
 
-static void sbatch_init(ev_sbatch *s)
+ev_sbatch* ev_sbatch_create(void)
 {
+    ev_sbatch* s = ev_malloc(sizeof(ev_sbatch));
+
     memset(s, 0, sizeof(ev_sbatch));
 
     utarray_new(s->sprites, &icd);
@@ -131,13 +133,6 @@ static void sbatch_init(ev_sbatch *s)
     if( ev_sbatch_set_vbuff_capacity(s, GROW_FAC) ) {
         ev_error("can't create sbatch");
     }
-}
-
-ev_sbatch* ev_sbatch_create(void)
-{
-    ev_sbatch* s = ev_malloc(sizeof(ev_sbatch));
-
-    sbatch_init(s);
 
     return s;
 }

@@ -16,7 +16,9 @@ struct _ev_program
 ev_shader* ev_shader_create(void)
 {
     ev_shader *s = ev_malloc(sizeof(ev_shader));
-    memset( s, 0, sizeof(ev_shader));
+    if( s ) {
+        memset( s, 0, sizeof(ev_shader));
+    }
     return s;
 }
 

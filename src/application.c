@@ -45,7 +45,8 @@ struct _ev_app {
     char key_states[256];
 };
 
-ev_app_state ev_app_get_state(ev_app *a) {
+ev_app_state ev_app_get_state(ev_app *a)
+{
     if( a ) {
         return a->state;
     }
@@ -63,6 +64,7 @@ static int initGL(ev_app *app)
     GLenum err = GL_NO_ERROR;
 
     assert(app != NULL);
+
     glDisable(GL_DEPTH_TEST);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glViewport(0, 0, app->width, app->height);
@@ -91,10 +93,6 @@ static ev_err_t initSDL(ev_app *app)
         ev_error("SDL init failed: %s", SDL_GetError());
         return EV_FAIL;
     }
-
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 1);
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 2);
-
 
     app->window = SDL_CreateWindow("ev", SDL_WINDOWPOS_UNDEFINED,
                                    SDL_WINDOWPOS_UNDEFINED,
@@ -187,6 +185,7 @@ void ev_app_set_mouse_event(ev_app *app, ev_app_mouse_event fn)
 ev_app* ev_app_create(uint32_t width, uint32_t height)
 {
     ev_app *app;
+
     if( width == 0 || height == 0 )
         return NULL;
 
@@ -195,6 +194,7 @@ ev_app* ev_app_create(uint32_t width, uint32_t height)
         return NULL;
 
     memset(app, 0, sizeof(ev_app));
+
     app->width = width;
     app->height = height;
 
@@ -235,12 +235,18 @@ int ev_app_get_ticks(ev_app *app)
 
 void ev_app_swap_buffers(ev_app *app)
 {
-    SDL_GL_SwapWindow(app->window);
+    lua_State *l = ev_lua_get_state();
 
-    lua_gc(ev_lua_get_state(), LUA_GCSTEP, 1 );
+    if( app && app->window ) {
+        SDL_GL_SwapWindow(app->window);
+    }
+
+    if( l ) {
+        lua_gc(l, LUA_GCSTEP, 1 );
+    }
 }
 
-int ev_app_poll_event(ev_app *app, ev_event *event)
+ev_bool ev_app_poll_event(ev_app *app, ev_event *event)
 {
     SDL_Event e;
 
@@ -258,12 +264,14 @@ int ev_app_poll_event(ev_app *app, ev_event *event)
             event->type = EV_QUIT;
             break;
         }
-        return 1;
+        return EV_TRUE;
     }
-    return 0;
+    return EV_FALSE;
 }
 
 void ev_app_set_stage(ev_app *app, ev_stage *s)
 {
-    app->stage = s;
+    if( app ) {
+        app->stage = s;
+    }
 }

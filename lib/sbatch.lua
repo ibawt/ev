@@ -35,12 +35,20 @@ function SpriteBatch:get_frame(frame_name)
    return C.ev_sbatch_get_sframe(self._ev_sbatch, frame_name)
 end
 
+function SpriteBatch:update(dt)
+   C.ev_sbatch_update(self._ev_sbatch, dt)
+end
+
 function SpriteBatch:set_texture(texture)
    C.ev_sbatch_set_texture(self._ev_sbatch, texture._ev_texture)
 end
 
 function SpriteBatch:add_sprite(sprite)
    return C.ev_sbatch_add_sprite(self._ev_sbatch, sprite._ev_sprite)
+end
+
+function SpriteBatch:render(transform)
+   C.ev_sbatch_render(self._ev_sbatch, transform)
 end
 
 function SpriteBatch:create_sprite(...)

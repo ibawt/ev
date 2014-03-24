@@ -25,15 +25,21 @@ local Stage = {}
 Stage.__index = Stage
 
 function Stage:update(dt)
-   C.ev_stage_update(self._ev_stage, dt)
+   for _,v in ipairs(self.actors) do
+      v:update(dt)
+   end
 end
 
 function Stage:render()
    C.ev_stage_render(self._ev_stage)
+
+   for _,v in ipairs(self.actors) do
+      v:render(self.transform)
+   end
 end
 
-function Stage:add_sbatch(sbatch)
-   C.ev_stage_add_actor(self._ev_stage, C.ev_sbatch_render, C.ev_sbatch_update, sbatch._ev_sbatch)
+function Stage:add_sbatch(actor)
+   self.actors[#self.actors+1] = actor
 end
 
 function Stage:set_ortho(width, height)
@@ -47,6 +53,7 @@ function Stage.create()
    local stage = {}
    setmetatable(stage, Stage)
    stage._ev_stage = C.ev_stage_create()
+   stage.actors = {}
    return stage
 end
 
