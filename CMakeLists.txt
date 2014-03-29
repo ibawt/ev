@@ -80,7 +80,7 @@ target_link_libraries( ev
   Box2D
   jansson
   ${LUA_LIBRARY}
-  ${SDL_MAIN}
+  ${SDL2_MAIN}
 )
 
 add_executable( ev_lua

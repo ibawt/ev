@@ -45,7 +45,7 @@ b2DebugDraw::b2DebugDraw(float ratio) : mShader(NULL), mRatio(ratio)
         assert(true);
     }
     vbuff = ev_vbuff_create();
-    ev_vbuff_set_capacity(vbuff, 32*2);
+    ev_vbuff_set_capacity(vbuff, 64*2);
 
     segment_vbuff = ev_vbuff_create();
     ev_vbuff_set_capacity(segment_vbuff, sizeof(float)*4);
