@@ -7,8 +7,10 @@
 #include "application.h"
 #include "ev_box2d.h"
 
+#define TRACE_APP
+
 #ifdef TRACE_APP
-#define LOG(...) ev_log(##__VA_ARGS__)
+#define LOG(...) ev_log(__VA_ARGS__)
 #else
 #define LOG(...)
 #endif

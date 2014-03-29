@@ -175,6 +175,71 @@ void b2DebugDraw::SetTransform(ev_matrix4 *m)
 
 void b2DebugDraw::DrawParticles(const b2Vec2 *centers, float32 radius, const b2ParticleColor *colors, int32 count)
 {
+
+    if (!particle_texture ||
+        !glIsTexture(particle_texture))  {
+        // generate a "gaussian blob" texture procedurally
+        glGenTextures(1, &particle_texture);
+        b2Assert(particle_texture);
+        const int TSIZE = 64;
+        unsigned char tex[TSIZE][TSIZE][4];
+        for (int y = 0; y < TSIZE; y++) {
+            for (int x = 0; x < TSIZE; x++)  {
+                float fx = (x + 0.5f) / TSIZE * 2 - 1;
+                float fy = (y + 0.5f) / TSIZE * 2 - 1;
+                float dist = sqrtf(fx * fx + fy * fy);
+                unsigned char intensity = (unsigned char)(dist <= 1 ? smoothstep(1 - dist) * 255 : 0);
+                tex[y][x][0] = tex[y][x][1] = tex[y][x][2] = 128;
+                tex[y][x][3] = intensity;
+            }
+        }
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, particle_texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, TSIZE, TSIZE, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex);
+
+        glDisable(GL_TEXTURE_2D);
+
+        glEnable(GL_POINT_SMOOTH);
+    }
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, particle_texture);
+
+    // but for some reason this is not applying textures, so we use alpha instead
+    glEnable(GL_POINT_SPRITE);
+    glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+    const float particle_size_multiplier = 2;  // no falloff
+    const float global_alpha = 0.35f;  // instead of texture
+
+    glPointSize(radius * currentscale * particle_size_multiplier);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(2, GL_FLOAT, 0, &centers[0].x);
+    if (colors)   {
+        // hack to render with proper alpha on desktop for Testbed
+        b2ParticleColor * mcolors = const_cast<b2ParticleColor *>(colors);
+        for (int i = 0; i < count; i++) {
+            mcolors[i].a = static_cast<uint8>(global_alpha * 255);
+        }
+        glEnableClientState(GL_COLOR_ARRAY);
+        glColorPointer(4, GL_UNSIGNED_BYTE, 0, &colors[0].r);
+    }
+    else {
+        glColor4f(1, 1, 1, global_alpha);
+    }
+
+    glDrawArrays(GL_POINTS, 0, count);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    if (colors) glDisableClientState(GL_COLOR_ARRAY);
+
+    glDisable(GL_BLEND);
+    glDisable(GL_TEXTURE_2D);
 }
 
 void b2DebugDraw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color)
