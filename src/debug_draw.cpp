@@ -20,9 +20,10 @@ static const char fragment_shader[] =
     "}\n";
 
 
+#define smoothstep(x) ( x * x * (3 - 2*x ) )
 b2DebugDraw::b2DebugDraw(float ratio) : mShader(NULL), mRatio(ratio)
 {
-    SetFlags( b2Draw::e_shapeBit | b2Draw::e_centerOfMassBit);
+    SetFlags( b2Draw::e_shapeBit | b2Draw::e_centerOfMassBit | b2Draw::e_particleBit);
 
     ev_shader *vs = ev_shader_create();
 
@@ -45,7 +46,7 @@ b2DebugDraw::b2DebugDraw(float ratio) : mShader(NULL), mRatio(ratio)
         assert(true);
     }
     vbuff = ev_vbuff_create();
-    ev_vbuff_set_capacity(vbuff, 64*2);
+    ev_vbuff_set_capacity(vbuff, 1024*1024*2);
 
     segment_vbuff = ev_vbuff_create();
     ev_vbuff_set_capacity(segment_vbuff, sizeof(float)*4);
@@ -175,6 +176,9 @@ void b2DebugDraw::SetTransform(ev_matrix4 *m)
 
 void b2DebugDraw::DrawParticles(const b2Vec2 *centers, float32 radius, const b2ParticleColor *colors, int32 count)
 {
+    static unsigned particle_texture = 0;
+    float currentscale = 2.0f;
+    ev_log("in here?");
 
     if (!particle_texture ||
         !glIsTexture(particle_texture))  {
@@ -219,24 +223,47 @@ void b2DebugDraw::DrawParticles(const b2Vec2 *centers, float32 radius, const b2P
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(2, GL_FLOAT, 0, &centers[0].x);
-    if (colors)   {
-        // hack to render with proper alpha on desktop for Testbed
-        b2ParticleColor * mcolors = const_cast<b2ParticleColor *>(colors);
-        for (int i = 0; i < count; i++) {
-            mcolors[i].a = static_cast<uint8>(global_alpha * 255);
-        }
-        glEnableClientState(GL_COLOR_ARRAY);
-        glColorPointer(4, GL_UNSIGNED_BYTE, 0, &colors[0].r);
-    }
-    else {
-        glColor4f(1, 1, 1, global_alpha);
-    }
+
+    GLfloat *verts = (GLfloat*)ev_vbuff_map(vbuff);
+    memcpy(verts, &centers[0].x, count*2);
+    ev_vbuff_unmap(vbuff);
+
+    ev_vbuff_bind(vbuff);
+
+    glEnableVertexAttribArray(ev_program_get_attrib_loc(mShader, "a_position"));
+    CHECK_GL();
+    glUniformMatrix4fv( ev_program_get_uniform_loc(mShader, "u_projTrans"),
+                        1, GL_FALSE, mMatrix.m);
+
+    glUniform4f(ev_program_get_uniform_loc(mShader, "u_color"),
+                1,1,1,1);
+
+    glUniform1f(ev_program_get_uniform_loc(mShader, "ratio"),
+                mRatio);
+
+    glVertexAttribPointer(ev_program_get_attrib_loc(mShader, "a_position"),
+                           2, GL_FLOAT, GL_FALSE, 0, 0);
+
+
+    //glVertexPointer(2, GL_FLOAT, 0, &centers[0].x);
+
+    // if (colors)   {
+    //     // hack to render with proper alpha on desktop for Testbed
+    //     b2ParticleColor * mcolors = const_cast<b2ParticleColor *>(colors);
+    //     for (int i = 0; i < count; i++) {
+    //         mcolors[i].a = static_cast<uint8>(global_alpha * 255);
+    //     }
+    //     glEnableClientState(GL_COLOR_ARRAY);
+    //     glColorPointer(4, GL_UNSIGNED_BYTE, 0, &colors[0].r);
+    // }
+    // else {
+    //     glColor4f(1, 1, 1, global_alpha);
+    // }
 
     glDrawArrays(GL_POINTS, 0, count);
 
-    glDisableClientState(GL_VERTEX_ARRAY);
-    if (colors) glDisableClientState(GL_COLOR_ARRAY);
+    //  glDisableClientState(GL_VERTEX_ARRAY);
+    //    if (colors) glDisableClientState(GL_COLOR_ARRAY);
 
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);

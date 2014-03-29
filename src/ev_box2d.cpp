@@ -57,7 +57,7 @@ public:
 
 struct ev_world {
     /* TODO these shouldn't be constants some how */
-    ev_world() : world(b2Vec2(0, 1.0f)), debug_draw(NULL) { }
+    ev_world() : world(b2Vec2(0, 5.0f)), debug_draw(NULL) { }
     float ptm_ratio;
     ev_contact_listener listener;
     b2World world;
@@ -69,6 +69,14 @@ struct ev_world {
 struct ev_body {
     b2Body           *body;
     ev_world         *world;
+};
+
+struct ev_particle_group {
+    b2ParticleGroup *group;
+};
+
+struct ev_particle_system {
+    b2ParticleSystem *system;
 };
 
 ev_world* ev_world_create(void)
@@ -288,4 +296,43 @@ ev_vec2 ev_body_get_linear_velocity(ev_body *body)
     v.y = bv.y * body->world->ptm_ratio;
 
     return v;
+}
+
+ev_particle_system* ev_particle_system_create(ev_world* world)
+{
+    b2ParticleSystemDef systemDef;
+
+    ev_particle_system *system = new (ev_malloc(sizeof(ev_particle_system))) ev_particle_system;
+    system->system = world->world.CreateParticleSystem(&systemDef);
+
+    return system;
+}
+void                ev_particle_system_destroy(ev_particle_system* sys)
+{
+}
+
+ev_particle_group*  ev_particle_group_create(ev_particle_system *sys)
+{
+
+    b2ParticleGroupDef groupDef;
+    ev_particle_group *grp = new (ev_malloc(sizeof(ev_particle_group))) ev_particle_group;
+    grp->group = sys->system->CreateParticleGroup(groupDef);
+
+    return grp;
+}
+void                ev_particle_group_destroy(ev_particle_group*);
+
+
+int ev_particle_create(ev_particle_system *system, float x, float y)
+{
+    b2ParticleDef def;
+    int index;
+
+    def.position.Set(x/32,y/32);
+
+    def.color = b2ParticleColor(255,255,255,255);
+
+    index = system->system->CreateParticle(def);
+
+    return index;
 }

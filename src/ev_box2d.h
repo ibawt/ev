@@ -56,6 +56,16 @@ EV_API void      ev_body_set_fixed_rotation(ev_body*, ev_bool);
 EV_API void      ev_body_set_linear_velocity(ev_body*, ev_vec2);
 EV_API ev_vec2   ev_body_get_linear_velocity(ev_body*);
 EV_API void      ev_body_set_rotation(ev_body*, float);
+
+
+EV_API ev_particle_system* ev_particle_system_create(ev_world*);
+EV_API void                ev_particle_system_destroy(ev_particle_system*);
+
+EV_API int ev_particle_create(ev_particle_system *particle, float x, float y);
+
+EV_API ev_particle_group*  ev_particle_group_create(ev_particle_system*);
+EV_API void                ev_particle_group_destroy(ev_particle_group*);
+
 #ifdef __cplusplus
 }
 #endif

@@ -13,15 +13,19 @@ if texture:load("bats.png") == 'EV_FAIL' then
    return
 end
 
+
 local world = ev.world.create()
 world:set_dimensions(800, 600)
+
+local system = ev.particle.system.create(world)
+local grp = ev.particle.group.create(system)
 
 app.world = world
 world.debug_draw = true
 
 sbatch.texture = texture
-
-for i=1,8,1 do
+local bats = {}
+for i=1,1,1 do
    local sprite = sbatch:create_sprite( 'bats_fly1.png',
                                         'bats_fly2.png',
                                         'bats_fly3.png')
@@ -32,6 +36,23 @@ for i=1,8,1 do
       radius = 5
    }
    sprite:set_position(math.random(800),math.random(600))
+   bats[#bats+1] = sprite
+end
+
+local function echo_wave()
+   local pos = bats[1].position
+
+   local theta = 0
+   local iter = 64
+   local radius = 10
+   local inc = 2 * math.pi / iter
+   for i=1,iter do
+      system:spawn_particle( {
+            position = { x=math.cos(theta)*radius, y=math.sin(theta)*radius},
+            group=grp
+      })
+      theta = theta + iter
+   end
 end
 
 app.onkeydown = function(key)
@@ -40,6 +61,10 @@ end
 
 app.onkeyup = function(key)
    print('keydown: ' .. key )
+
+   if key == 'Return' then
+      echo_wave()
+   end
 end
 
 stage:add_sbatch(sbatch)

@@ -65,6 +65,14 @@ local setters = {
    end
 }
 
+function Sprite:__index(key)
+   if key == 'position' then
+      return C.ev_sprite_get_position(self._ev_sprite)
+   else
+      return getmetatable(self)[key] or rawget(self, key)
+   end
+end
+
 function Sprite:set_position(x,y)
    C.ev_sprite_set_position(self._ev_sprite, x, y)
 end
