@@ -178,8 +178,6 @@ void b2DebugDraw::DrawParticles(const b2Vec2 *centers, float32 radius, const b2P
 {
     static unsigned particle_texture = 0;
     float currentscale = 2.0f;
-    ev_log("in here?");
-
     if (!particle_texture ||
         !glIsTexture(particle_texture))  {
         // generate a "gaussian blob" texture procedurally

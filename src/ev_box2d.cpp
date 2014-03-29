@@ -11,6 +11,23 @@ typedef struct {
     UT_hash_handle hh;
 } contact;
 
+class ContactFilter : public b2ContactFilter
+{
+public:
+
+    virtual bool ShouldCollide(b2Fixture* fixture,
+                                   b2ParticleSystem* particleSystem,
+                               int32 particleIndex) {
+        return true;
+    }
+    virtual bool ShouldCollide(b2ParticleSystem* particleSystem, int32 particleIndexA, int32 particleIndexB) {
+        UNUSED(particleSystem);
+        UNUSED(particleIndexA);
+        UNUSED(particleIndexB);
+        return false;
+    }
+};
+
 class ev_contact_listener : public b2ContactListener
 {
 public:
@@ -63,6 +80,7 @@ struct ev_world {
     b2World world;
     b2Body *world_box;
     b2DebugDraw *debug_draw;
+    ContactFilter contactFilter;
 
 };
 
@@ -87,7 +105,7 @@ ev_world* ev_world_create(void)
     world->world.SetContactListener(&world->listener);
     world->world.SetAllowSleeping(true);
     world->world.SetContinuousPhysics(true);
-
+    world->world.SetContactFilter(&world->contactFilter);
     world->ptm_ratio = 32.0f;
 
     return world;
@@ -301,36 +319,57 @@ ev_vec2 ev_body_get_linear_velocity(ev_body *body)
 ev_particle_system* ev_particle_system_create(ev_world* world)
 {
     b2ParticleSystemDef systemDef;
+    systemDef.radius = 4.0/32.0;
 
     ev_particle_system *system = new (ev_malloc(sizeof(ev_particle_system))) ev_particle_system;
     system->system = world->world.CreateParticleSystem(&systemDef);
-
+    system->system->SetGravityScale(0.0);
     return system;
 }
-void                ev_particle_system_destroy(ev_particle_system* sys)
+void ev_particle_system_destroy(ev_particle_system* sys)
 {
 }
 
-ev_particle_group*  ev_particle_group_create(ev_particle_system *sys)
+ev_particle_group* ev_particle_group_create(ev_particle_system *sys)
 {
 
     b2ParticleGroupDef groupDef;
+    b2CircleShape shape;
+
+    shape.m_radius = 20;
+    groupDef.shape = &shape;
+    groupDef.groupFlags = b2_particleGroupCanBeEmpty | b2_solidParticleGroup;
+
     ev_particle_group *grp = new (ev_malloc(sizeof(ev_particle_group))) ev_particle_group;
     grp->group = sys->system->CreateParticleGroup(groupDef);
 
     return grp;
 }
-void                ev_particle_group_destroy(ev_particle_group*);
+void ev_particle_group_destroy(ev_particle_group*);
 
+void ev_particle_group_destroy_particles(ev_particle_group *grp)
+{
+    if( grp->group->GetParticleCount() > 0 ) {
+        grp->group->DestroyParticles();
+    }
+}
 
-int ev_particle_create(ev_particle_system *system, float x, float y)
+int ev_particle_create(ev_particle_system *system, ev_particle_group *grp, float x, float y, float xvel, float yvel)
 {
     b2ParticleDef def;
     int index;
 
-    def.position.Set(x/32,y/32);
+    def.flags = b2_particleContactFilterParticle |
+        b2_repulsiveParticle;
 
+    def.position.Set(x/32.0f,y/32.0f);
     def.color = b2ParticleColor(255,255,255,255);
+    def.velocity.Set(xvel/32.0f,yvel/32.0f);
+    def.lifetime = 5;
+
+    if( grp ) {
+        def.group = grp->group;
+    }
 
     index = system->system->CreateParticle(def);
 

@@ -10,7 +10,8 @@ void                ev_particle_system_destroy(ev_particle_system*);
 
 ev_particle_group*  ev_particle_group_create(ev_particle_system*);
 void                ev_particle_group_destroy(ev_particle_group*);
-int ev_particle_create(ev_particle_system*, float, float);
+int ev_particle_create(ev_particle_system*, ev_particle_group *, float, float, float, float);
+void ev_particle_group_destroy_particles(ev_particle_group *grp);
 ]]
 local M = {}
 M.__index = M
@@ -28,13 +29,22 @@ function System.create(world)
 end
 
 function System:spawn_particle(options)
-   return C.ev_particle_create(self._ev_system, options.position.x, options.position.y)
+   return C.ev_particle_create(self._ev_system,
+                               options.group._ev_group,
+                               options.position.x,
+                               options.position.y,
+                               options.vel.x,
+                               options.vel.y )
 end
 
 M.system = System
 
 local Group = {}
 Group.__index = Group
+
+function Group:destroy_particles()
+   C.ev_particle_group_destroy_particles(self._ev_group)
+end
 
 function Group.create(system)
    local grp = {}

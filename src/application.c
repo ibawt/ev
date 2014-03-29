@@ -252,7 +252,9 @@ ev_bool ev_app_poll_event(ev_app *app, ev_event *event)
 {
     SDL_Event e;
 
-    if( SDL_PollEvent(&e) ) {
+    event->type = EV_NO_EVENT;
+
+    while( SDL_PollEvent(&e) ) {
         switch( e.type ) {
         case SDL_KEYDOWN:
             event->type = EV_KEYDOWN;
@@ -266,7 +268,9 @@ ev_bool ev_app_poll_event(ev_app *app, ev_event *event)
             event->type = EV_QUIT;
             break;
         }
-        return EV_TRUE;
+        if( event->type != EV_NO_EVENT ) {
+            return EV_TRUE;
+        }
     }
     return EV_FALSE;
 }

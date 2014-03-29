@@ -40,15 +40,18 @@ for i=1,1,1 do
 end
 
 local function echo_wave()
-   local pos = bats[1].position
+   grp:destroy_particles()
 
+   local pos = bats[1].position
    local theta = 0
-   local iter = 64
-   local radius = 10
+   local iter = 2048
+   local radius = 40
    local inc = 2 * math.pi / iter
+   local vel = 2000
    for i=1,iter do
       system:spawn_particle( {
-            position = { x=math.cos(theta)*radius, y=math.sin(theta)*radius},
+            position = { x=pos.x + math.cos(theta)*radius, y=pos.y + math.sin(theta)*radius},
+            vel = { x=math.cos(theta)*vel, y=math.sin(theta)*vel },
             group=grp
       })
       theta = theta + iter

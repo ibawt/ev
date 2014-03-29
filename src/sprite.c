@@ -7,6 +7,7 @@
 #include "sprite_sheet.h"
 #include "ev_box2d.h"
 #include "application.h"
+#include "vector2.h"
 
 struct _ev_sprite
 {
