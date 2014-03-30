@@ -18,6 +18,7 @@ public:
     virtual bool ShouldCollide(b2Fixture* fixture,
                                    b2ParticleSystem* particleSystem,
                                int32 particleIndex) {
+
         return true;
     }
     virtual bool ShouldCollide(b2ParticleSystem* particleSystem, int32 particleIndexA, int32 particleIndexB) {
@@ -320,7 +321,7 @@ ev_particle_system* ev_particle_system_create(ev_world* world)
 {
     b2ParticleSystemDef systemDef;
     systemDef.radius = 4.0/32.0;
-
+    systemDef.destroyByAge = true;
     ev_particle_system *system = new (ev_malloc(sizeof(ev_particle_system))) ev_particle_system;
     system->system = world->world.CreateParticleSystem(&systemDef);
     system->system->SetGravityScale(0.0);
@@ -336,9 +337,7 @@ ev_particle_group* ev_particle_group_create(ev_particle_system *sys)
     b2ParticleGroupDef groupDef;
     b2CircleShape shape;
 
-    shape.m_radius = 20;
-    groupDef.shape = &shape;
-    groupDef.groupFlags = b2_particleGroupCanBeEmpty | b2_solidParticleGroup;
+    groupDef.groupFlags = b2_particleGroupCanBeEmpty;
 
     ev_particle_group *grp = new (ev_malloc(sizeof(ev_particle_group))) ev_particle_group;
     grp->group = sys->system->CreateParticleGroup(groupDef);
@@ -359,8 +358,7 @@ int ev_particle_create(ev_particle_system *system, ev_particle_group *grp, float
     b2ParticleDef def;
     int index;
 
-    def.flags = b2_particleContactFilterParticle |
-        b2_repulsiveParticle;
+    def.flags = b2_particleContactFilterParticle | b2_fixtureContactFilterParticle;
 
     def.position.Set(x/32.0f,y/32.0f);
     def.color = b2ParticleColor(255,255,255,255);
@@ -368,10 +366,40 @@ int ev_particle_create(ev_particle_system *system, ev_particle_group *grp, float
     def.lifetime = 5;
 
     if( grp ) {
-        def.group = grp->group;
+        //      def.group = grp->group;
     }
 
     index = system->system->CreateParticle(def);
 
     return index;
+}
+
+int ev_particle_system_body_contact_count(ev_particle_system *sys)
+{
+    return sys->system->GetBodyContactCount();
+}
+
+ev_vec2 convert_vector(b2Vec2 v)
+{
+    ev_vec2 vv = { v.x, v.y };
+    return vv;
+}
+
+void ev_particle_system_destroy_particle(ev_particle_system *s, int i)
+{
+    s->system->DestroyParticle(i);
+}
+
+int ev_particle_system_body_contact_at(ev_particle_system *s, int index, ev_particle_body_contact *bc)
+{
+    const b2ParticleBodyContact *c = s->system->GetBodyContacts() + index;
+
+    bc->index = c->index;
+    bc->body = c->body;
+    bc->fixture = c->fixture;
+    bc->weight = c->weight;
+    bc->normal = convert_vector(c->normal);
+    bc->mass = c->mass;
+
+    return 0;
 }

@@ -33,6 +33,8 @@ private:
     float mRatio;
     ev_vbuff  *vbuff;
     ev_vbuff  *segment_vbuff;
+    ev_vbuff  *color_buff;
+    ev_program *particle_shader;
 };
 
 

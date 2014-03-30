@@ -45,17 +45,39 @@ local function echo_wave()
    local pos = bats[1].position
    local theta = 0
    local iter = 2048
-   local radius = 40
+   local radius = 20
    local inc = 2 * math.pi / iter
    local vel = 2000
    for i=1,iter do
+      local pos = { x=pos.x + math.cos(theta)*radius, y=pos.y + math.sin(theta)*radius}
       system:spawn_particle( {
-            position = { x=pos.x + math.cos(theta)*radius, y=pos.y + math.sin(theta)*radius},
+            position =pos ,
             vel = { x=math.cos(theta)*vel, y=math.sin(theta)*vel },
             group=grp
       })
       theta = theta + iter
    end
+end
+
+local function spawn_light(pos)
+
+end
+
+local function check_wave(dt)
+   local contacts = system:get_body_contacts()
+
+   for i,bc in ipairs(contacts) do
+      local part = bc.index
+      local body = bc.body
+      system:destroy_particle(part)
+      -- local tag = body.tag
+      -- print('collided with a ' .. tag)
+      -- spawn_light(body.position)
+   end
+end
+
+app.onupdate = function(dt)
+   check_wave(dt)
 end
 
 app.onkeydown = function(key)
