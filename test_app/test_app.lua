@@ -47,7 +47,7 @@ local function echo_wave()
    local iter = 2048
    local radius = 20
    local inc = 2 * math.pi / iter
-   local vel = 2000
+   local vel = 200
    for i=1,iter do
       local pos = { x=pos.x + math.cos(theta)*radius, y=pos.y + math.sin(theta)*radius}
       system:spawn_particle( {

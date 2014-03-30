@@ -317,6 +317,8 @@ ev_vec2 ev_body_get_linear_velocity(ev_body *body)
     return v;
 }
 
+b2ParticleSystem *g_system = NULL;
+
 ev_particle_system* ev_particle_system_create(ev_world* world)
 {
     b2ParticleSystemDef systemDef;
@@ -325,6 +327,7 @@ ev_particle_system* ev_particle_system_create(ev_world* world)
     ev_particle_system *system = new (ev_malloc(sizeof(ev_particle_system))) ev_particle_system;
     system->system = world->world.CreateParticleSystem(&systemDef);
     system->system->SetGravityScale(0.0);
+    system->system->SetDestructionByAge(true);
     return system;
 }
 void ev_particle_system_destroy(ev_particle_system* sys)
@@ -364,9 +367,8 @@ int ev_particle_create(ev_particle_system *system, ev_particle_group *grp, float
     def.color = b2ParticleColor(255,255,255,255);
     def.velocity.Set(xvel/32.0f,yvel/32.0f);
     def.lifetime = 5;
-
     if( grp ) {
-        //      def.group = grp->group;
+        def.group = grp->group;
     }
 
     index = system->system->CreateParticle(def);
@@ -387,7 +389,8 @@ ev_vec2 convert_vector(b2Vec2 v)
 
 void ev_particle_system_destroy_particle(ev_particle_system *s, int i)
 {
-    s->system->DestroyParticle(i);
+    (s->system->GetColorBuffer() + i)->a *= 0.95f;
+    s->system->DestroyParticle(i, true);
 }
 
 int ev_particle_system_body_contact_at(ev_particle_system *s, int index, ev_particle_body_contact *bc)

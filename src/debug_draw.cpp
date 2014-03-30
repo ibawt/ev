@@ -39,7 +39,7 @@ static const char particle_fragment_shader[] =
     "uniform sampler2D texture;\n"
     "void main()"
     "{"
-    "gl_FragColor = color.bgra;\n"
+    "gl_FragColor = color;\n"
     "}";
 
 
@@ -217,54 +217,61 @@ void b2DebugDraw::DrawParticles(const b2Vec2 *centers, float32 radius, const b2P
 {
     static unsigned particle_texture = 0;
     float currentscale = 2.0f;
-    if (!particle_texture ||
-        !glIsTexture(particle_texture))  {
-        // generate a "gaussian blob" texture procedurally
-        glGenTextures(1, &particle_texture);
-        b2Assert(particle_texture);
-        const int TSIZE = 64;
-        unsigned char tex[TSIZE][TSIZE][4];
-        for (int y = 0; y < TSIZE; y++) {
-            for (int x = 0; x < TSIZE; x++)  {
-                float fx = (x + 0.5f) / TSIZE * 2 - 1;
-                float fy = (y + 0.5f) / TSIZE * 2 - 1;
-                float dist = sqrtf(fx * fx + fy * fy);
-                unsigned char intensity = (unsigned char)(dist <= 1 ? smoothstep(1 - dist) * 255 : 0);
-                tex[y][x][0] = tex[y][x][1] = tex[y][x][2] = 128;
-                tex[y][x][3] = intensity;
-            }
-        }
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, particle_texture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, TSIZE, TSIZE, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex);
 
-        glDisable(GL_TEXTURE_2D);
+    //    count = 2048;
+    // if (!particle_texture ||
+    //     !glIsTexture(particle_texture))  {
+    //     // generate a "gaussian blob" texture procedurally
+    //     glGenTextures(1, &particle_texture);
+    //     b2Assert(particle_texture);
+    //     const int TSIZE = 64;
+    //     unsigned char tex[TSIZE][TSIZE][4];
+    //     for (int y = 0; y < TSIZE; y++) {
+    //         for (int x = 0; x < TSIZE; x++)  {
+    //             float fx = (x + 0.5f) / TSIZE * 2 - 1;
+    //             float fy = (y + 0.5f) / TSIZE * 2 - 1;
+    //             float dist = sqrtf(fx * fx + fy * fy);
+    //             unsigned char intensity = (unsigned char)(dist <= 1 ? smoothstep(1 - dist) * 255 : 0);
+    //             tex[y][x][0] = tex[y][x][1] = tex[y][x][2] = 128;
+    //             tex[y][x][3] = intensity;
+    //         }
+    //     }
+    //     glEnable(GL_TEXTURE_2D);
+    //     glBindTexture(GL_TEXTURE_2D, particle_texture);
+    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    //     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, TSIZE, TSIZE, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex);
 
-        glEnable(GL_POINT_SMOOTH);
-    }
+    //     glDisable(GL_TEXTURE_2D);
+
+    //     glEnable(GL_POINT_SMOOTH);
+    // }
 
     ev_program_use(particle_shader);
     CHECK_GL();
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, particle_texture);
+    //glEnable(GL_TEXTURE_2D);
+    // glBindTexture(GL_TEXTURE_2D, particle_texture);
 
     // but for some reason this is not applying textures, so we use alpha instead
-    glEnable(GL_POINT_SPRITE);
+    //    glEnable(GL_POINT_SPRITE);
     glEnable(GL_PROGRAM_POINT_SIZE);
-    glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+    //    glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
     const float particle_size_multiplier = 2;  // no falloff
     const float global_alpha = 0.35f;  // instead of texture
 
     glPointSize(radius * currentscale * particle_size_multiplier);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    //    glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-    glEnableClientState(GL_VERTEX_ARRAY);
+    //    glEnableClientState(GL_VERTEX_ARRAY);
     CHECK_GL();
     GLfloat *verts = (GLfloat*)ev_vbuff_map(vbuff);
-    memcpy(verts, &centers[0].x, count*2);
+    // for( int i = 0 ; i < count ; ++i ) {
+    //     verts[i*2]   = centers[i].x;
+    //     verts[i*2+1] = centers[i].y;
+    // }
+
+    memcpy(verts, &centers[0].x, count*2*sizeof(float));
     ev_vbuff_unmap(vbuff);
     ev_vbuff_bind(vbuff);
 
@@ -286,13 +293,16 @@ void b2DebugDraw::DrawParticles(const b2Vec2 *centers, float32 radius, const b2P
     CHECK_GL();
     //glVertexPointer(2, GL_FLOAT, 0, &centers[0].x);
 
-    for(int i = 0 ; i < count ; ++i ) {
-        ev_log("%d,%d,%d,%d", colors[i].r, colors[i].g, colors[i].b, colors[i].a);
-    }
 
     if (colors)   {
         verts = (GLfloat*)ev_vbuff_map(color_buff);
-        memcpy(verts, &colors[0].r, sizeof(char) * 4 * count);
+        // for(int i = 0 ; i < count ; ++i ) {
+        //     verts[i*4] = colors[i].r  / 255.0;
+        //     verts[i*4+1] = colors[i].g / 255.0;
+        //     verts[i*4+2] = colors[i].b / 255.0;
+        //     verts[i*4+3] = colors[i].a / 255.0;
+        // }
+        memcpy( verts, &colors[0].r, count* 4);
         ev_vbuff_unmap(color_buff);
         ev_vbuff_bind(color_buff);
 
@@ -301,7 +311,7 @@ void b2DebugDraw::DrawParticles(const b2Vec2 *centers, float32 radius, const b2P
 
         glVertexAttribPointer(ev_program_get_attrib_loc(particle_shader,
                                                         "a_color"),
-                              4, GL_UNSIGNED_BYTE, GL_FALSE, 0, 0);
+                              4, GL_UNSIGNED_BYTE, GL_TRUE, 0, 0);
 
     }
          // hack to render with proper alpha on desktop for Testbed
