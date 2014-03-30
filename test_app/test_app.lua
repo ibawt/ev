@@ -59,8 +59,20 @@ local function echo_wave()
    end
 end
 
-local function spawn_light(pos)
+local lights = {}
 
+local function spawn_light(pos)
+   lights[#lights+1] = { position= pos, alpha=1.0 }
+end
+
+local function render_lights()
+   render_texture:bind()
+   for i,light in ipairs(lights) do
+      light_sprite:set_position( light.pos.x, light.pos.y)
+      light_sprite:set_opacity(light.alpha)
+      light_sprite:render()
+   end
+   render_texture:unbind()
 end
 
 local function check_wave(dt)
@@ -72,7 +84,7 @@ local function check_wave(dt)
       system:destroy_particle(part)
       -- local tag = body.tag
       -- print('collided with a ' .. tag)
-      -- spawn_light(body.position)
+      spawn_light(bc.position)
    end
 end
 

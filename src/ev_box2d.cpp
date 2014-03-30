@@ -403,6 +403,6 @@ int ev_particle_system_body_contact_at(ev_particle_system *s, int index, ev_part
     bc->weight = c->weight;
     bc->normal = convert_vector(c->normal);
     bc->mass = c->mass;
-
+    bc->position = convert_vector( *(s->system->GetPositionBuffer() + c->index));
     return 0;
 }

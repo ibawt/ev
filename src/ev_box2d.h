@@ -65,6 +65,7 @@ typedef struct {
     float   weight;
     ev_vec2 normal;
     float   mass;
+    ev_vec2 position;
 } ev_particle_body_contact;
 
 

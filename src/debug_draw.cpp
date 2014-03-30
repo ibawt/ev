@@ -244,8 +244,9 @@ void b2DebugDraw::DrawParticles(const b2Vec2 *centers, float32 radius, const b2P
 
     //     glDisable(GL_TEXTURE_2D);
 
-    //     glEnable(GL_POINT_SMOOTH);
     // }
+
+    glEnableClientState(GL_VERTEX_ARRAY);
 
     ev_program_use(particle_shader);
     CHECK_GL();
@@ -260,17 +261,10 @@ void b2DebugDraw::DrawParticles(const b2Vec2 *centers, float32 radius, const b2P
     const float global_alpha = 0.35f;  // instead of texture
 
     glPointSize(radius * currentscale * particle_size_multiplier);
-    //    glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
-    //    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     CHECK_GL();
     GLfloat *verts = (GLfloat*)ev_vbuff_map(vbuff);
-    // for( int i = 0 ; i < count ; ++i ) {
-    //     verts[i*2]   = centers[i].x;
-    //     verts[i*2+1] = centers[i].y;
-    // }
-
     memcpy(verts, &centers[0].x, count*2*sizeof(float));
     ev_vbuff_unmap(vbuff);
     ev_vbuff_bind(vbuff);
