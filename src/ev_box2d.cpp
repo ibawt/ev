@@ -11,6 +11,24 @@ typedef struct {
     UT_hash_handle hh;
 } contact;
 
+class ContactFilter : public b2ContactFilter
+{
+public:
+
+    virtual bool ShouldCollide(b2Fixture* fixture,
+                                   b2ParticleSystem* particleSystem,
+                               int32 particleIndex) {
+
+        return true;
+    }
+    virtual bool ShouldCollide(b2ParticleSystem* particleSystem, int32 particleIndexA, int32 particleIndexB) {
+        UNUSED(particleSystem);
+        UNUSED(particleIndexA);
+        UNUSED(particleIndexB);
+        return false;
+    }
+};
+
 class ev_contact_listener : public b2ContactListener
 {
 public:
@@ -57,18 +75,27 @@ public:
 
 struct ev_world {
     /* TODO these shouldn't be constants some how */
-    ev_world() : world(b2Vec2(0, 1.0f)), debug_draw(NULL) { }
+    ev_world() : world(b2Vec2(0, 5.0f)), debug_draw(NULL) { }
     float ptm_ratio;
     ev_contact_listener listener;
     b2World world;
     b2Body *world_box;
     b2DebugDraw *debug_draw;
+    ContactFilter contactFilter;
 
 };
 
 struct ev_body {
     b2Body           *body;
     ev_world         *world;
+};
+
+struct ev_particle_group {
+    b2ParticleGroup *group;
+};
+
+struct ev_particle_system {
+    b2ParticleSystem *system;
 };
 
 ev_world* ev_world_create(void)
@@ -79,7 +106,7 @@ ev_world* ev_world_create(void)
     world->world.SetContactListener(&world->listener);
     world->world.SetAllowSleeping(true);
     world->world.SetContinuousPhysics(true);
-
+    world->world.SetContactFilter(&world->contactFilter);
     world->ptm_ratio = 32.0f;
 
     return world;
@@ -288,4 +315,94 @@ ev_vec2 ev_body_get_linear_velocity(ev_body *body)
     v.y = bv.y * body->world->ptm_ratio;
 
     return v;
+}
+
+b2ParticleSystem *g_system = NULL;
+
+ev_particle_system* ev_particle_system_create(ev_world* world)
+{
+    b2ParticleSystemDef systemDef;
+    systemDef.radius = 4.0/32.0;
+    systemDef.destroyByAge = true;
+    ev_particle_system *system = new (ev_malloc(sizeof(ev_particle_system))) ev_particle_system;
+    system->system = world->world.CreateParticleSystem(&systemDef);
+    system->system->SetGravityScale(0.0);
+    system->system->SetDestructionByAge(true);
+    return system;
+}
+void ev_particle_system_destroy(ev_particle_system* sys)
+{
+}
+
+ev_particle_group* ev_particle_group_create(ev_particle_system *sys)
+{
+
+    b2ParticleGroupDef groupDef;
+    b2CircleShape shape;
+
+    groupDef.groupFlags = b2_particleGroupCanBeEmpty;
+
+    ev_particle_group *grp = new (ev_malloc(sizeof(ev_particle_group))) ev_particle_group;
+    grp->group = sys->system->CreateParticleGroup(groupDef);
+
+    return grp;
+}
+void ev_particle_group_destroy(ev_particle_group*);
+
+void ev_particle_group_destroy_particles(ev_particle_group *grp)
+{
+    if( grp->group->GetParticleCount() > 0 ) {
+        grp->group->DestroyParticles();
+    }
+}
+
+int ev_particle_create(ev_particle_system *system, ev_particle_group *grp, float x, float y, float xvel, float yvel)
+{
+    b2ParticleDef def;
+    int index;
+
+    def.flags = b2_particleContactFilterParticle | b2_fixtureContactFilterParticle;
+
+    def.position.Set(x/32.0f,y/32.0f);
+    def.color = b2ParticleColor(255,255,255,255);
+    def.velocity.Set(xvel/32.0f,yvel/32.0f);
+    def.lifetime = 5;
+    if( grp ) {
+        def.group = grp->group;
+    }
+
+    index = system->system->CreateParticle(def);
+
+    return index;
+}
+
+int ev_particle_system_body_contact_count(ev_particle_system *sys)
+{
+    return sys->system->GetBodyContactCount();
+}
+
+ev_vec2 convert_vector(b2Vec2 v)
+{
+    ev_vec2 vv = { v.x, v.y };
+    return vv;
+}
+
+void ev_particle_system_destroy_particle(ev_particle_system *s, int i)
+{
+    (s->system->GetColorBuffer() + i)->a *= 0.95f;
+    s->system->DestroyParticle(i, true);
+}
+
+int ev_particle_system_body_contact_at(ev_particle_system *s, int index, ev_particle_body_contact *bc)
+{
+    const b2ParticleBodyContact *c = s->system->GetBodyContacts() + index;
+
+    bc->index = c->index;
+    bc->body = c->body;
+    bc->fixture = c->fixture;
+    bc->weight = c->weight;
+    bc->normal = convert_vector(c->normal);
+    bc->mass = c->mass;
+    bc->position = convert_vector( *(s->system->GetPositionBuffer() + c->index));
+    return 0;
 }

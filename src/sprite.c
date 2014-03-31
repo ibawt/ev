@@ -7,6 +7,7 @@
 #include "sprite_sheet.h"
 #include "ev_box2d.h"
 #include "application.h"
+#include "vector2.h"
 
 struct _ev_sprite
 {
@@ -45,7 +46,13 @@ void ev_sprite_destroy(ev_sprite* s)
 
 ev_vec2* ev_sprite_get_position(ev_sprite* s)
 {
-    return s ? &s->position : NULL;
+    if( s ) {
+        if( s->body ) {
+            s->position = ev_body_get_position(s->body);
+        }
+        return &s->position;
+    }
+    return NULL;
 }
 
 void ev_sprite_set_position(ev_sprite *s, float x, float y)

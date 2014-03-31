@@ -8,7 +8,8 @@ local modules = {
    'anim',
    'sbatch',
    'world',
-   'body'
+   'body',
+   'particle'
 }
 
 for i,v in ipairs(modules) do

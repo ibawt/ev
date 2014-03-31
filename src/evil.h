@@ -29,7 +29,7 @@ extern "C" {
 #define ev_cmpf(x,y) ( fabs((x) - (y)) < 0.1f)
 
 #ifndef NDEBUG
-#define CHECK_GL() do { GLint err = glGetError(); if( err ) { ev_log("ERROR in gl: %s", gluErrorString(err));  } } while(0)
+#define CHECK_GL() do { GLint err = glGetError(); if( err ) { ev_log("ERROR in gl: %d", err);  } } while(0)
 #else
 #define CHECK_GL()
 #endif
@@ -120,6 +120,8 @@ typedef struct _ev_stage ev_stage;
 /* physics */
 typedef struct ev_world ev_world;
 typedef struct ev_body  ev_body;
+typedef struct ev_particle_group ev_particle_group;
+typedef struct ev_particle_system ev_particle_system;
 
 #ifdef __cplusplus
 }
