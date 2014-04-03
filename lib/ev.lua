@@ -9,7 +9,8 @@ local modules = {
    'sbatch',
    'world',
    'body',
-   'particle'
+   'particle',
+   'render_texture'
 }
 
 for i,v in ipairs(modules) do
