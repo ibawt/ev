@@ -31,6 +31,17 @@ set(
 	lua_stage.o
 	lua_texture.o
 	lua_world.o
+	lib/ev.lua
+	lib/anim.lua
+	lib/app.lua
+	lib/particle.lua
+	lib/render_texture.lua
+	lib/sbatch.lua
+	lib/sprite.lua
+	lib/stage.lua
+	lib/texture.lua
+	lib/world.lua
+	lib/body.lua
 	vendor/glew/src/glew.c
 )
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_GENERATOR STREQUAL "Ninja")
@@ -67,8 +78,7 @@ if("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
 endif()
 
 
-include_directories(${gtest_SOURCE_DIR}/include
-	${gtest_SOURCE_DIR}
+include_directories(
 	${SDL2_INCLUDE_DIR}
 	${SDL2_IMAGE_INCLUDE_DIRS}
 	${jansson_BINARY_DIR}/include
