@@ -36,8 +36,8 @@ static const uint32 yShift = tagBits - yTruncBits;
 static const uint32 xShift = tagBits - yTruncBits - xTruncBits;
 static const uint32 xScale = 1 << xShift;
 static const uint32 xOffset = xScale * (1 << (xTruncBits - 1));
-static const uint32 xMask = (1 << xTruncBits) - 1;
-static const uint32 yMask = (1 << yTruncBits) - 1;
+//static const uint32 xMask = (1 << xTruncBits) - 1;
+//static const uint32 yMask = (1 << yTruncBits) - 1;
 
 // This functor is passed to std::remove_if in RemoveSpuriousBodyContacts
 // to implement the algorithm described there.  It was hoisted out and friended
@@ -49,7 +49,7 @@ public:
 	b2ParticleBodyContactRemovePredicate(b2ParticleSystem* system,
 										 int32* discarded)
 		: m_system(system), m_lastIndex(-1), m_currentContacts(0),
-		  m_discarded(discarded) {}
+			m_discarded(discarded) {}
 
 	bool operator()(const b2ParticleBodyContact& contact)
 	{
@@ -336,7 +336,7 @@ static inline uint32 computeRelativeTag(uint32 tag, int32 x, int32 y)
 }
 
 b2ParticleSystem::b2ParticleSystem(const b2ParticleSystemDef* def,
-								   b2World* world) :
+									 b2World* world) :
 	m_handleAllocator(b2_minParticleSystemBufferCapacity)
 {
 	b2Assert(def);
@@ -511,7 +511,7 @@ void b2ParticleSystem::ReallocateHandleBuffers(int32 newCapacity)
 		true);
 	// Set the size of the next handle allocation.
 	m_handleAllocator.SetItemsPerSlab(newCapacity -
-									  m_internalAllocatedCapacity);
+										m_internalAllocatedCapacity);
 }
 
 template <typename T> T* b2ParticleSystem::RequestBuffer(T* buffer)
@@ -524,7 +524,7 @@ template <typename T> T* b2ParticleSystem::RequestBuffer(T* buffer)
 				b2_minParticleSystemBufferCapacity);
 		}
 		buffer = (T*) (m_world->m_blockAllocator.Allocate(
-						   sizeof(T) * m_internalAllocatedCapacity));
+							 sizeof(T) * m_internalAllocatedCapacity));
 		b2Assert(buffer);
 		memset(buffer, 0, sizeof(T) * m_internalAllocatedCapacity);
 	}
@@ -823,7 +823,7 @@ int32 b2ParticleSystem::DestroyParticlesInShape(
 
 			b2Assert(index >=0 && index < m_system->m_count);
 			if (m_shape->TestPoint(m_xf,
-								   m_system->m_positionBuffer.data[index]))
+									 m_system->m_positionBuffer.data[index]))
 			{
 				m_system->DestroyParticle(index, m_callDestructionListener);
 				m_destroyed++;
@@ -1100,7 +1100,7 @@ b2ParticleGroup* b2ParticleSystem::CreateParticleGroup(
 }
 
 void b2ParticleSystem::JoinParticleGroups(b2ParticleGroup* groupA,
-										  b2ParticleGroup* groupB)
+											b2ParticleGroup* groupB)
 {
 	b2Assert(m_world->IsLocked() == false);
 	if (m_world->IsLocked())
@@ -1232,7 +1232,7 @@ void b2ParticleSystem::UpdatePairsAndTriads(
 					groupA ? groupA->m_strength : 1,
 					groupB ? groupB->m_strength : 1);
 				pair.distance = b2Distance(m_positionBuffer.data[a],
-										   m_positionBuffer.data[b]);
+											 m_positionBuffer.data[b]);
 				m_pairCount++;
 			}
 		}
@@ -1440,8 +1440,8 @@ void b2ParticleSystem::ComputeDepth()
 		{
 			groupsToUpdate[groupsToUpdateCount++] = group;
 			SetGroupFlags(group,
-						  group->m_groupFlags &
-						  ~b2_particleGroupNeedsUpdateDepth);
+							group->m_groupFlags &
+							~b2_particleGroupNeedsUpdateDepth);
 			for (int32 i = group->m_firstIndex; i < group->m_lastIndex; i++)
 			{
 				m_accumulationBuffer[i] = 0;
@@ -1520,16 +1520,16 @@ inline void b2ParticleSystem::AddContact(
 	float32 distBtParticlesSq = b2Dot(d, d);
 	if (distBtParticlesSq < m_squaredDiameter)
 	{
-        // Optionally filter the contact.
-        if (contactFilter)
-        {
-            const uint32* const flags = GetFlagsBuffer();
-            if (((flags[a] | flags[b]) & b2_particleContactFilterParticle) &&
-                !contactFilter->ShouldCollide(this, a, b))
-            {
-                return;
-            }
-        }
+				// Optionally filter the contact.
+				if (contactFilter)
+				{
+						const uint32* const flags = GetFlagsBuffer();
+						if (((flags[a] | flags[b]) & b2_particleContactFilterParticle) &&
+								!contactFilter->ShouldCollide(this, a, b))
+						{
+								return;
+						}
+				}
 
 		m_contactBuffer = RequestGrowableBuffer(m_contactBuffer,
 												m_contactCount,
@@ -1615,7 +1615,7 @@ void b2ParticleSystem::UpdateContacts(bool exceptZombie)
 		{
 			if (rightTag < b->tag) break;
 			AddContact(a->index, b->index, contactFilter,
-					   contactListener, &particlePairs);
+						 contactListener, &particlePairs);
 		}
 		uint32 bottomLeftTag = computeRelativeTag(a->tag, -1, 1);
 		for (; c < endProxy; c++)
@@ -1627,7 +1627,7 @@ void b2ParticleSystem::UpdateContacts(bool exceptZombie)
 		{
 			if (bottomRightTag < b->tag) break;
 			AddContact(a->index, b->index, contactFilter,
-					   contactListener, &particlePairs);
+						 contactListener, &particlePairs);
 		}
 	}
 	if (exceptZombie)
@@ -1769,7 +1769,7 @@ void FixedSetAllocator::Clear()
 	{
 		m_allocator->Free(m_buffer);
 		m_buffer = NULL;
-        m_count = 0;
+				m_count = 0;
 	}
 }
 
@@ -1781,7 +1781,7 @@ static int32 FindItemIndexInFixedSet(const TypedFixedSetAllocator<T>& set,
 {
 	if (set.GetCount())
 	{
-        const T* buffer = set.GetBuffer();
+				const T* buffer = set.GetBuffer();
 		return set.GetIndex(std::lower_bound(
 								buffer, buffer + set.GetCount(), item,
 								T::Compare));
@@ -1807,7 +1807,7 @@ void FixtureParticleSet::Initialize(
 			const b2ParticleBodyContact& bodyContact = bodyContacts[i];
 			if (bodyContact.index == b2_invalidParticleIndex ||
 				!(particleFlagsBuffer[bodyContact.index] &
-				  b2_fixtureContactListenerParticle))
+					b2_fixtureContactListenerParticle))
 			{
 				continue;
 			}
@@ -1845,8 +1845,8 @@ void b2ParticlePairSet::Initialize(
 			if (contact.indexA == b2_invalidParticleIndex ||
 				contact.indexB == b2_invalidParticleIndex ||
 				!((particleFlagsBuffer[contact.indexA] |
-				   particleFlagsBuffer[contact.indexB]) &
-				  b2_particleContactListenerParticle))
+					 particleFlagsBuffer[contact.indexB]) &
+					b2_particleContactListenerParticle))
 			{
 				continue;
 			}
@@ -1882,7 +1882,7 @@ void b2ParticleSystem::UpdateBodyContacts()
 	if (contactListener)
 	{
 		fixtureSet.Initialize(m_bodyContactBuffer, m_bodyContactCount,
-							  GetFlagsBuffer());
+								GetFlagsBuffer());
 	}
 
 	if (m_stuckThreshold > 0)
@@ -1908,7 +1908,7 @@ void b2ParticleSystem::UpdateBodyContacts()
 		// filter this contact.  Returns true if contact calculations should
 		// be performed, false otherwise.
 		inline bool ShouldCollide(b2Fixture * const fixture,
-								  int32 particleIndex)
+									int32 particleIndex)
 		{
 			if (m_contactFilter)
 			{
@@ -1916,7 +1916,7 @@ void b2ParticleSystem::UpdateBodyContacts()
 				if (flags[particleIndex] & b2_fixtureContactFilterParticle)
 				{
 					return m_contactFilter->ShouldCollide(fixture, m_system,
-														  particleIndex);
+															particleIndex);
 				}
 			}
 			return true;
@@ -2056,7 +2056,7 @@ void b2ParticleSystem::UpdateBodyContacts()
 			m_fixtureSet = fixtureSet;
 		}
 	} callback(this, m_world, GetFixtureContactFilter(),
-			   GetFixtureContactListener(), &fixtureSet);
+				 GetFixtureContactListener(), &fixtureSet);
 
 	b2AABB aabb;
 	ComputeAABB(&aabb);
@@ -2119,7 +2119,7 @@ void b2ParticleSystem::RemoveSpuriousBodyContacts()
 }
 
 bool b2ParticleSystem::BodyContactCompare(const b2ParticleBodyContact &lhs,
-										  const b2ParticleBodyContact &rhs)
+											const b2ParticleBodyContact &rhs)
 {
 	if (lhs.index == rhs.index)
 	{
@@ -2226,7 +2226,7 @@ void b2ParticleSystem::SolveCollision(const b2TimeStep& step)
 
 	public:
 		SolveCollisionCallback(b2ParticleSystem* system,
-							   const b2TimeStep& step)
+								 const b2TimeStep& step)
 		{
 			m_system = system;
 			m_step = step;
@@ -2543,7 +2543,7 @@ void b2ParticleSystem::SolveStaticPressure(const b2TimeStep& step)
 	for (int32 t = 0; t < m_def.staticPressureIterations; t++)
 	{
 		memset(m_accumulationBuffer, 0,
-			   sizeof(*m_accumulationBuffer) * m_count);
+				 sizeof(*m_accumulationBuffer) * m_count);
 		for (int32 k = 0; k < m_contactCount; k++)
 		{
 			const b2ParticleContact& contact = m_contactBuffer[k];
@@ -2657,7 +2657,7 @@ void b2ParticleSystem::SolveDamping(const b2TimeStep& step)
 		b2Vec2 n = contact.normal;
 		b2Vec2 p = m_positionBuffer.data[a];
 		b2Vec2 v = b->GetLinearVelocityFromWorldPoint(p) -
-				   m_velocityBuffer.data[a];
+					 m_velocityBuffer.data[a];
 		float32 vn = b2Dot(v, n);
 		if (vn < 0)
 		{
@@ -2848,7 +2848,7 @@ void b2ParticleSystem::SolveTensile(const b2TimeStep& step)
 	float32 pressureStrength = m_def.surfaceTensionPressureStrength
 							 * criticalVelocity;
 	float32 normalStrength = m_def.surfaceTensionNormalStrength
-						   * criticalVelocity;
+							 * criticalVelocity;
 	float32 maxVelocityVariation = b2_maxParticleForce * criticalVelocity;
 	for (int32 k = 0; k < m_contactCount; k++)
 	{
@@ -2885,7 +2885,7 @@ void b2ParticleSystem::SolveViscous()
 			float32 m = contact.mass;
 			b2Vec2 p = m_positionBuffer.data[a];
 			b2Vec2 v = b->GetLinearVelocityFromWorldPoint(p) -
-					   m_velocityBuffer.data[a];
+						 m_velocityBuffer.data[a];
 			b2Vec2 f = viscousStrength * m * w * v;
 			m_velocityBuffer.data[a] += GetParticleInvMass() * f;
 			b->ApplyLinearImpulse(-f, p, true);
@@ -3228,8 +3228,8 @@ void b2ParticleSystem::SolveZombie()
 				if (group->m_groupFlags & b2_solidParticleGroup)
 				{
 					SetGroupFlags(group,
-								  group->m_groupFlags |
-								  b2_particleGroupNeedsUpdateDepth);
+									group->m_groupFlags |
+									b2_particleGroupNeedsUpdateDepth);
 				}
 				// TODO: flag to split if needed
 			}
@@ -3285,8 +3285,8 @@ void b2ParticleSystem::SolveLifetimes(const b2TimeStep& step)
 		const ExpirationTimeComparator expirationTimeComparator(
 			expirationTimes);
 		std::sort(expirationTimeIndices,
-				  expirationTimeIndices + particleCount,
-				  expirationTimeComparator);
+					expirationTimeIndices + particleCount,
+					expirationTimeComparator);
 		m_expirationTimeBufferRequiresSorting = false;
 	}
 
@@ -3471,7 +3471,7 @@ void b2ParticleSystem::RotateBuffer(int32 start, int32 mid, int32 end)
 /// Set the lifetime (in seconds) of a particle relative to the current
 /// time.
 void b2ParticleSystem::SetParticleLifetime(const int32 index,
-										   const float32 lifetime)
+											 const float32 lifetime)
 {
 	b2Assert(ValidateParticleIndex(index));
 	const bool initializeExpirationTimes =
@@ -3510,8 +3510,8 @@ float32 b2ParticleSystem::ExpirationTimeToLifetime(
 	const int32 expirationTime) const
 {
 	return (float32)(expirationTime > 0 ?
-					 	expirationTime - GetQuantizedTimeElapsed() :
-					 	expirationTime) * m_def.lifetimeGranularity;
+						expirationTime - GetQuantizedTimeElapsed() :
+						expirationTime) * m_def.lifetimeGranularity;
 }
 
 /// Get the lifetime (in seconds) of a particle relative to the current
@@ -3570,7 +3570,7 @@ int32 b2ParticleSystem::GetQuantizedTimeElapsed() const
 int64 b2ParticleSystem::LifetimeToExpirationTime(const float32 lifetime) const
 {
 	return m_timeElapsed + (int64)((lifetime / m_def.lifetimeGranularity) *
-								   (float32)(1LL << 32));
+									 (float32)(1LL << 32));
 }
 
 template <typename T> void b2ParticleSystem::SetUserOverridableBuffer(
@@ -3604,7 +3604,7 @@ void b2ParticleSystem::SetVelocityBuffer(b2Vec2* buffer,
 }
 
 void b2ParticleSystem::SetColorBuffer(b2ParticleColor* buffer,
-											  int32 capacity)
+												int32 capacity)
 {
 	SetUserOverridableBuffer(&m_colorBuffer, buffer, capacity);
 }
@@ -3685,7 +3685,7 @@ inline void b2ParticleSystem::PrepareForceBuffer()
 }
 
 void b2ParticleSystem::ApplyForce(int32 firstIndex, int32 lastIndex,
-								  const b2Vec2& force)
+									const b2Vec2& force)
 {
 	// Ensure we're not trying to apply force to particles that can't move,
 	// such as wall particles.
@@ -3723,7 +3723,7 @@ void b2ParticleSystem::ParticleApplyForce(int32 index, const b2Vec2& force)
 }
 
 void b2ParticleSystem::ApplyLinearImpulse(int32 firstIndex, int32 lastIndex,
-										  const b2Vec2& impulse)
+											const b2Vec2& impulse)
 {
 	const float32 numParticles = (float32)(lastIndex - firstIndex);
 	const float32 totalMass = numParticles * GetParticleMass();
@@ -3769,8 +3769,8 @@ void b2ParticleSystem::QueryAABB(b2QueryCallback* callback,
 }
 
 void b2ParticleSystem::QueryShapeAABB(b2QueryCallback* callback,
-									  const b2Shape& shape,
-									  const b2Transform& xf) const
+										const b2Shape& shape,
+										const b2Transform& xf) const
 {
 	b2AABB aabb;
 	shape.ComputeAABB(&aabb, xf, 0);
@@ -3778,8 +3778,8 @@ void b2ParticleSystem::QueryShapeAABB(b2QueryCallback* callback,
 }
 
 void b2ParticleSystem::RayCast(b2RayCastCallback* callback,
-							   const b2Vec2& point1,
-							   const b2Vec2& point2) const
+								 const b2Vec2& point1,
+								 const b2Vec2& point2) const
 {
 	if (m_proxyCount == 0)
 	{
