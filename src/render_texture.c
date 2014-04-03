@@ -1,8 +1,8 @@
 #include "render_texture.h"
 
 struct _ev_rtex {
-    GLint fb_id;
-    GLint tex_id;
+    GLuint fb_id;
+    GLuint tex_id;
 };
 
 ev_rtex* ev_rtex_create(int width, int height)

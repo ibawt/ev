@@ -215,7 +215,6 @@ void b2DebugDraw::SetTransform(ev_matrix4 *m)
 
 void b2DebugDraw::DrawParticles(const b2Vec2 *centers, float32 radius, const b2ParticleColor *colors, int32 count)
 {
-    static unsigned particle_texture = 0;
     float currentscale = 2.0f;
 
     //    count = 2048;

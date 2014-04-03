@@ -110,58 +110,58 @@ target_link_libraries( ev_lua
 # this should be cleaner somehow
 add_custom_command(
 	OUTPUT ev_lua.o
-	COMMAND luajit -b "${PROJECT_SOURCE_DIR}/lib/ev.lua" ev_lua.o
+	COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/ev.lua" ev_lua.o
 	DEPENDS lib/ev.lua
 	)
 add_custom_command(
 	OUTPUT lua_app.o
-	COMMAND luajit -b "${PROJECT_SOURCE_DIR}/lib/app.lua" lua_app.o
+	COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/app.lua" lua_app.o
 	DEPENDS lib/app.lua
 	)
 add_custom_command(
 	OUTPUT lua_body.o
-	COMMAND luajit -b "${PROJECT_SOURCE_DIR}/lib/body.lua" lua_body.o
+	COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/body.lua" lua_body.o
 	DEPENDS lib/body.lua
 	)
 add_custom_command(
 	OUTPUT lua_particle.o
-	COMMAND luajit -b "${PROJECT_SOURCE_DIR}/lib/particle.lua" lua_particle.o
+	COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/particle.lua" lua_particle.o
 	DEPENDS lib/particle.lua
 	)
 add_custom_command(
 	OUTPUT lua_render_texture.o
-	COMMAND luajit -b "${PROJECT_SOURCE_DIR}/lib/render_texture.lua" lua_render_texture.o
+	COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/render_texture.lua" lua_render_texture.o
 	DEPENDS lib/render_texture.lua
 	)
 add_custom_command(
 	OUTPUT lua_sbatch.o
-	COMMAND luajit -b "${PROJECT_SOURCE_DIR}/lib/sbatch.lua" lua_sbatch.o
+	COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/sbatch.lua" lua_sbatch.o
 	DEPENDS lib/sbatch.lua
 	)
 add_custom_command(
 	OUTPUT lua_sprite.o
-	COMMAND luajit -b "${PROJECT_SOURCE_DIR}/lib/sprite.lua" lua_sprite.o
+	COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/sprite.lua" lua_sprite.o
 	DEPENDS lib/sprite.lua
 	)
 
 add_custom_command(
 	OUTPUT lua_stage.o
-	COMMAND luajit -b "${PROJECT_SOURCE_DIR}/lib/stage.lua" lua_stage.o
+	COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/stage.lua" lua_stage.o
 	DEPENDS lib/stage.lua
 	)
 add_custom_command(
 	OUTPUT lua_texture.o
-	COMMAND luajit -b "${PROJECT_SOURCE_DIR}/lib/texture.lua" lua_texture.o
+	COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/texture.lua" lua_texture.o
 	DEPENDS lib/texture.lua
 	)
 
 add_custom_command(
 	OUTPUT lua_world.o
-	COMMAND luajit -b "${PROJECT_SOURCE_DIR}/lib/world.lua" lua_world.o
+	COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/world.lua" lua_world.o
 	DEPENDS lib/world.lua
 	)
 add_custom_command(
 	OUTPUT lua_anim.o
-	COMMAND luajit -b "${PROJECT_SOURCE_DIR}/lib/anim.lua" lua_anim.o
+	COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/anim.lua" lua_anim.o
 	DEPENDS lib/anim.lua
 	)
