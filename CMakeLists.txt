@@ -40,6 +40,7 @@ endif()
 
 set(CMAKE_C_FLAGS_RELEASE, "#{CMAKE_C_FLAGS_RELEASE -O3}")
 
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
 add_subdirectory( vendor/jansson)
 add_subdirectory( vendor/Box2D )
@@ -51,11 +52,13 @@ find_package(LuaJIT)
 
 if("${CMAKE_SYSTEM_NAME}" MATCHES "Linux" )
 	set( SDL_MAIN "SDL2main")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+	set(CMAKE_C_FLAGS_DEBUG, "#{CMAKE_C_FLAGS_DEBUG} -g")
+
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
+	#ugh
 		set (SDL_MAIN "c:/SDL2/lib/x86/SDL2main.lib")
 else()
+	set(CMAKE_C_FLAGS_DEBUG, "#{CMAKE_C_FLAGS_DEBUG} -g")
 	set( SDL_MAIN "SDLmain")
 endif()
 
@@ -77,14 +80,14 @@ include_directories(${gtest_SOURCE_DIR}/include
 add_definitions(
 	-D_CRT_SECURE_NO_WARNINGS
 	-DGLEW_STATIC
-	-g
  )
 
-add_library( ev SHARED
-	${SOURCES} )
+add_executable( ev_lua
+	${SOURCES}
+	src/main.c
+	)
 
-
-target_link_libraries( ev
+target_link_libraries( ev_lua
 	${SDL2_LIBRARY}
 	${SDL2_IMAGE_LIBRARY}
 	${OPENGL_LIBRARY}
@@ -94,12 +97,7 @@ target_link_libraries( ev
 	${SDL2_MAIN}
 )
 
-add_executable( ev_lua
-	src/main.c
-	)
-
-target_link_libraries( ev_lua ev)
-
+# this should be cleaner somehow
 add_custom_command(
 	OUTPUT ev_lua.o
 	COMMAND luajit -b "${PROJECT_SOURCE_DIR}/lib/ev.lua" ev_lua.o

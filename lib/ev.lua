@@ -1,5 +1,5 @@
 local ffi = require 'ffi'
-local library = ffi.load("ev")
+local library = ffi.C
 
 local ev = {}
 
