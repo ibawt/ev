@@ -7,8 +7,6 @@
 #include "application.h"
 #include "ev_box2d.h"
 
-#define TRACE_APP
-
 #ifdef TRACE_APP
 #define LOG(...) ev_log(__VA_ARGS__)
 #else
@@ -132,7 +130,7 @@ ev_err_t ev_app_init(ev_app *app)
 				if( !app->world )
 						return EV_FAIL;
 
-				ev_world_set_dimensions(app->world, app->width, app->height);
+				ev_world_set_dimensions(app->world, (float)app->width, (float)app->height);
 
 				return EV_OK;
 		}

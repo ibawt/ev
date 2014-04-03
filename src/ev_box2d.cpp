@@ -292,7 +292,7 @@ void ev_body_set_linear_damping(ev_body *body, float dampening)
 void ev_body_set_fixed_rotation(ev_body *body, ev_bool b)
 {
     if( body ) {
-        body->body->SetFixedRotation(b);
+        body->body->SetFixedRotation(b == EV_TRUE);
     }
 }
 
@@ -389,7 +389,6 @@ ev_vec2 convert_vector(b2Vec2 v)
 
 void ev_particle_system_destroy_particle(ev_particle_system *s, int i)
 {
-    (s->system->GetColorBuffer() + i)->a *= 0.95f;
     s->system->DestroyParticle(i, true);
 }
 

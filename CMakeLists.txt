@@ -3,6 +3,7 @@ Project ( ev )
 SET( ev_SOURCE_DIR src)
 set(
 	SOURCES
+	src/main.c
 	src/application.c
 	src/sprite.c
 	src/sprite_batch.c
@@ -67,7 +68,7 @@ if("${CMAKE_SYSTEM_NAME}" MATCHES "Linux" )
 
 elseif ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
 	#ugh
-		set (SDL_MAIN "c:/SDL2/lib/x86/SDL2main.lib")
+	set (SDL2_MAIN "c:/SDL2/lib/x86/SDL2main.lib")
 else()
 	set(CMAKE_C_FLAGS_DEBUG, "#{CMAKE_C_FLAGS_DEBUG} -g")
 	set( SDL_MAIN "SDLmain")
@@ -94,7 +95,6 @@ add_definitions(
 
 add_executable( ev_lua
 	${SOURCES}
-	src/main.c
 	)
 
 target_link_libraries( ev_lua

@@ -40,18 +40,18 @@ void ev_matrix4_identity(ev_matrix4 *matrix)
     }
 }
 void ev_matrix4_set_ortho(ev_matrix4 *matrix, float left, float right, float bottom, float top,
-                          float near, float far)
+                          float n, float f)
 {
     if( matrix ) {
         float *m = matrix->m;
 
         float x_orth = 2 / ( right - left );
         float y_orth = 2 / ( top - bottom );
-        float z_orth = -2 / (far - near );
+        float z_orth = -2 / (f - n );
 
         float tx = -(right + left) / ( right - left );
         float ty = -(top + bottom) / ( top - bottom );
-        float tz = -(far + near ) / ( far - near );
+        float tz = -(f + n ) / ( f - n );
 
         m[M00] = x_orth;
         m[M10] = 0;
