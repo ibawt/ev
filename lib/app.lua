@@ -1,5 +1,5 @@
 local ffi = require('ffi')
-local C = ffi.load("ev")
+local C
 
 ffi.cdef[[
 typedef enum {
@@ -97,22 +97,25 @@ function App:show()
 				 end
 			end
 
-			local actors = {
-				 'stage','world'
-			}
-
 			if self.onupdate then
 				 self.onupdate(dt)
 			end
 
-			for i,v in ipairs(actors) do
-				 if self[v] then
-						self[v]:update(dt)
-				 end
+			if self.stage then
+				 self.stage:update(dt)
 			end
 
-			self.stage:render()
-			self.world:render(self.stage.transform)
+			if self.world then
+				 self.world:update(dt)
+			end
+
+			if self.stage then
+				 self.stage:render()
+			end
+
+			if self.world then
+				 self.world:render(self.stage.transform)
+			end
 
 			self:swap_buffers()
 
@@ -149,6 +152,11 @@ function App.create(width,height)
 	 app.key_state = {}
 
 	 return app
+end
+
+function App.init(_ev, library)
+	 ev = _ev
+	 C = library
 end
 
 return App

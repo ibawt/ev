@@ -1,5 +1,6 @@
 local ffi = require 'ffi'
-local C = ffi.C
+local C
+local ev
 
 ffi.cdef[[
 typedef struct ev_rtex ev_rtex;
@@ -32,6 +33,11 @@ end
 
 function RenderTexture:unlock()
 	 C.ev_rtex_unbind(self._ev_tex)
+end
+
+function RenderTexture.init(_ev, lib)
+	 C = lib
+	 ev = _ev
 end
 
 return RenderTexture

@@ -1,11 +1,12 @@
 local ffi = require 'ffi'
-local C = ffi.C
+local C
+local ev
 
 ffi.cdef[[
 typedef struct ev_world ev_world;
 typedef struct {
-  void *a;
-  void *b;
+	void *a;
+	void *b;
 } ev_contact;
 
 void      ev_world_set_debug_draw(ev_world*, bool);
@@ -26,59 +27,64 @@ local World = {}
 local collisions = {}
 
 function World.create()
-   local world = {}
-   setmetatable(world, World)
-   world._ev_world = C.ev_world_create()
-   world.num_contacts = 0
-   world.contacts = ffi.new("ev_contact[256]");
-   world.body_keys = {}
-   return world
+	 local world = {}
+	 setmetatable(world, World)
+	 world._ev_world = C.ev_world_create()
+	 world.num_contacts = 0
+	 world.contacts = ffi.new("ev_contact[256]");
+	 world.body_keys = {}
+	 return world
 end
 
 function World:set_dimensions(width,height)
-   C.ev_world_set_dimensions(self._ev_world, width, height)
+	 C.ev_world_set_dimensions(self._ev_world, width, height)
 end
 
 function World:render(transform)
-   C.ev_world_render(self._ev_world, transform)
+	 C.ev_world_render(self._ev_world, transform)
 end
 
 function World:update(dt)
-   C.ev_world_update(self._ev_world, dt)
+	 C.ev_world_update(self._ev_world, dt)
 
-   self.num_contacts = C.ev_world_get_contacts(self._ev_world, self.contacts, 256)
+	 self.num_contacts = C.ev_world_get_contacts(self._ev_world, self.contacts, 256)
 
-   for i=0,self.num_contacts-1 do
-      local c = self.contacts[i]
+	 for i=0,self.num_contacts-1 do
+			local c = self.contacts[i]
 
-      local a = self.body_keys[tonumber(ffi.cast('int',c.a))]
-      local b = self.body_keys[tonumber(ffi.cast('int',c.b))]
-   end
+			local a = self.body_keys[tonumber(ffi.cast('int',c.a))]
+			local b = self.body_keys[tonumber(ffi.cast('int',c.b))]
+	 end
 end
 
 function World:__index(key, val)
-   local props = {
-      gravity = function(val)
-         return C.ev_world_get_gravity(self._ev_world)
-      end
-   }
-   if props[key] then
-      return props[key](val)
-   else
-      return getmetatable(self)[key] or rawget(self, key)
-   end
+	 local props = {
+			gravity = function(val)
+				 return C.ev_world_get_gravity(self._ev_world)
+			end
+	 }
+	 if props[key] then
+			return props[key](val)
+	 else
+			return getmetatable(self)[key] or rawget(self, key)
+	 end
 end
 
 function World:__newindex(key, val)
-   local props = {
-      debug_draw = function(val)
-         C.ev_world_set_debug_draw(self._ev_world, val)
-      end
-   }
-   if props[key] then
-      props[key](val)
-   end
-   rawset(self, key, val)
+	 local props = {
+			debug_draw = function(val)
+				 C.ev_world_set_debug_draw(self._ev_world, val)
+			end
+	 }
+	 if props[key] then
+			props[key](val)
+	 end
+	 rawset(self, key, val)
+end
+
+function World.init(_ev, lib)
+	 C = lib
+	 ev = _ev
 end
 
 return World
