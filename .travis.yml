@@ -4,7 +4,7 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
   - sudo add-apt-repository ppa:zoogie/sdl2-snapshots -y
   - sudo apt-get update -qq -y
-  - sudo apt-get install libsdl2 libsdl2-dev luajit-5.1-dev -y
+  - sudo apt-get install libsdl2 libsdl2-dev luajit luajit-5.1-dev -y
   - wget http://www.libsdl.org/projects/SDL_image/release/SDL2_image-2.0.0.tar.gz
   - tar -xf SDL2_image-2.0.0.tar.gz
   - cd SDL2_image-2.0.0
