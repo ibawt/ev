@@ -66,6 +66,21 @@ static void fill_batch_verts(ev_sframe* frame)
     }
 }
 
+ev_sframe* ev_sframe_create_quad(float w, float h, float left, float top,float right,float bottom)
+{
+    ev_sframe* sframe = ev_malloc(sizeof(ev_sframe));
+    if( sframe ) {
+        sframe->size.w = w;
+        sframe->size.h = h;
+        sframe->texture_rect.origin.x = left;
+        sframe->texture_rect.origin.y = top;
+        sframe->texture_rect.size.w = right;
+        sframe->texture_rect.size.h = bottom;
+        fill_batch_verts(sframe);
+    }
+    return sframe;
+}
+
 static ev_err_t parse_size(json_t *o, const char *key, ev_size *size)
 {
     int w,h;

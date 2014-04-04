@@ -45,6 +45,7 @@ ev_anim*      ev_sprite_get_animation(ev_sprite*);
 void          ev_sprite_update(ev_sprite*, float);
 void          ev_sprite_render(ev_sprite*);
 void          ev_sprite_set_body(ev_sprite *, ev_body *);
+void          ev_sprite_set_quad(ev_sprite *sprite, float left, float top, float right, float bottom);
 ]]
 ffi.metatype("ev_sprite", { __gc = function(self) C.ev_sprite_destroy(self) end})
 
@@ -99,6 +100,10 @@ function Sprite.create()
 
    sprite._ev_sprite = ev_sprite
    return sprite
+end
+
+function Sprite:set_quad(w, h, left, top, right, bottom)
+   C.ev_sprite_set_quad(self._ev_sprite, w, h, left, top, right, bottom)
 end
 
 function Sprite.init(_ev, lib)

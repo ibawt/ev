@@ -2,12 +2,16 @@
 #define RENDER_TEXTURE_H_
 
 #include "evil.h"
+#include "texture.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct _ev_rtex ev_rtex;
+typedef struct {
+    GLuint fb_id;
+    ev_texture texture;
+} ev_rtex;
 
 EV_API ev_rtex* ev_rtex_create(int width, int height);
 EV_API void     ev_rtex_destroy(ev_rtex*);

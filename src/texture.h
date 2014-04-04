@@ -8,6 +8,12 @@
 extern "C" {
 #endif
 
+typedef struct {
+    GLuint   id;
+    uint32_t width;
+    uint32_t height;
+} ev_texture;
+
 EV_API ev_texture* ev_texture_create(void);
 EV_API void        ev_texture_destroy(ev_texture*);
 EV_API void        ev_texture_bind(ev_texture*);

@@ -3,7 +3,10 @@ local C
 local ev
 
 ffi.cdef[[
-typedef struct ev_rtex ev_rtex;
+typedef struct {
+  int fb_id;
+  ev_texture texture;
+} ev_rtex;
 
 ev_rtex* ev_rtex_create(int width, int height);
 void     ev_rtex_destroy(ev_rtex*);

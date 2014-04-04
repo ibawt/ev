@@ -20,6 +20,21 @@ struct _ev_sprite
     ev_body *body;
 };
 
+void ev_sprite_set_quad(ev_sprite *sprite, float w, float h, float left, float top, float right, float bottom)
+{
+    ev_sframe *frame;
+
+    if( sprite->animation ) {
+        ev_anim_destroy(sprite->animation);
+        sprite->animation = NULL;
+    }
+
+    sprite->animation = ev_anim_create();
+    frame = ev_sframe_create_quad(w, h, left, top, right, bottom);
+
+    ev_anim_add_sframe(sprite->animation, frame);
+}
+
 ev_sprite* ev_sprite_create(void)
 {
     ev_sprite *s = ev_malloc(sizeof(ev_sprite));

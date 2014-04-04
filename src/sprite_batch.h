@@ -2,9 +2,9 @@
 #define EV_SPRITE_BATCH_H_
 
 #include <stdlib.h>
-
 #include "ev_lua.h"
 #include "evil.h"
+#include "texture.h"
 #include "matrix4.h"
 
 #ifdef __cplusplus
