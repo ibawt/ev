@@ -4,9 +4,9 @@ local ev
 
 ffi.cdef[[
 typedef struct {
-	int id;
-	uint32_t width;
-	uint32_t height;
+  int id;
+  uint32_t width;
+  uint32_t height;
 } ev_texture;
 
 ev_texture* ev_texture_create(void);
@@ -23,19 +23,19 @@ local Texture = {}
 Texture.__index = Texture
 
 function Texture:load(filename)
-	 return C.ev_texture_load(self._ev_texture, filename)
+   return C.ev_texture_load(self._ev_texture, filename)
 end
 
 function Texture.create()
-	 local texture = {}
-	 setmetatable(texture, Texture)
-	 texture._ev_texture = C.ev_texture_create()
-	 return texture
+   local texture = {}
+   setmetatable(texture, Texture)
+   texture._ev_texture = C.ev_texture_create()
+   return texture
 end
 
 function Texture.init(_ev, lib)
-	 C = lib
-	 ev = _ev
+   C = lib
+   ev = _ev
 end
 
 return Texture

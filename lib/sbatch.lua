@@ -29,59 +29,59 @@ SpriteBatch.__index = SpriteBatch
 local ev
 
 function SpriteBatch:load(filename)
-	 return C.ev_sbatch_load(self._ev_sbatch, filename)
+   return C.ev_sbatch_load(self._ev_sbatch, filename)
 end
 
 function SpriteBatch:get_frame(frame_name)
-	 return C.ev_sbatch_get_sframe(self._ev_sbatch, frame_name)
+   return C.ev_sbatch_get_sframe(self._ev_sbatch, frame_name)
 end
 
 function SpriteBatch:update(dt)
-	 C.ev_sbatch_update(self._ev_sbatch, dt)
+   C.ev_sbatch_update(self._ev_sbatch, dt)
 end
 
 function SpriteBatch:set_texture(texture)
-	 C.ev_sbatch_set_texture(self._ev_sbatch, texture._ev_texture)
+   C.ev_sbatch_set_texture(self._ev_sbatch, texture._ev_texture)
 end
 
 function SpriteBatch:add_sprite(sprite)
-	 return C.ev_sbatch_add_sprite(self._ev_sbatch, sprite._ev_sprite)
+   return C.ev_sbatch_add_sprite(self._ev_sbatch, sprite._ev_sprite)
 end
 
 function SpriteBatch:render(transform)
-	 C.ev_sbatch_render(self._ev_sbatch, transform)
+   C.ev_sbatch_render(self._ev_sbatch, transform)
 end
 
 function SpriteBatch:create_sprite(...)
-	 local sprite = ev.sprite.create()
-	 local anim = ev.anim.create()
-	 for i,v in ipairs({...}) do
-			anim:add_frame(self:get_frame(v))
-	 end
-	 sprite.animation = anim
-	 self:add_sprite(sprite)
-	 return sprite
+   local sprite = ev.sprite.create()
+   local anim = ev.anim.create()
+   for i,v in ipairs({...}) do
+      anim:add_frame(self:get_frame(v))
+   end
+   sprite.animation = anim
+   self:add_sprite(sprite)
+   return sprite
 end
 
 function SpriteBatch:__newindex(k, v)
-	 if k == 'texture' then
-			C.ev_sbatch_set_texture(self._ev_sbatch, v._ev_texture)
-	 else
-			rawset(self, k, v)
-	 end
+   if k == 'texture' then
+      C.ev_sbatch_set_texture(self._ev_sbatch, v._ev_texture)
+   else
+      rawset(self, k, v)
+   end
 end
 
 function SpriteBatch.create()
-	 local sbatch = {}
-	 setmetatable(sbatch, SpriteBatch)
-	 sbatch._ev_sbatch = C.ev_sbatch_create()
-	 return sbatch
+   local sbatch = {}
+   setmetatable(sbatch, SpriteBatch)
+   sbatch._ev_sbatch = C.ev_sbatch_create()
+   return sbatch
 end
 
 function SpriteBatch.init(e, lib)
-	 ev = e
-	 C = lib
-	 return SpriteBatch
+   ev = e
+   C = lib
+   return SpriteBatch
 end
 
 return SpriteBatch

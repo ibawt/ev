@@ -2,10 +2,10 @@ local ffi = require 'ffi'
 
 ffi.cdef[[
 typedef enum {
-		EV_LOOP = 0,
-		EV_ONE_SHOT = 1,
-		EV_REVERSE = 2,
-		EV_PING_PONG = 3
+    EV_LOOP = 0,
+    EV_ONE_SHOT = 1,
+    EV_REVERSE = 2,
+    EV_PING_PONG = 3
 } ev_anim_mode;
 
 typedef struct ev_anim ev_anim;
@@ -26,19 +26,19 @@ local Anim = {}
 Anim.__index = Anim
 
 function Anim:add_frame(sframe)
-	 C.ev_anim_add_sframe(self._ev_anim, sframe)
+   C.ev_anim_add_sframe(self._ev_anim, sframe)
 end
 
 Anim.create = function()
-	 local ev_anim = ffi.C.ev_anim_create()
-	 local anim = {}
-	 setmetatable(anim, Anim)
-	 anim._ev_anim = ev_anim
-	 return anim
+   local ev_anim = ffi.C.ev_anim_create()
+   local anim = {}
+   setmetatable(anim, Anim)
+   anim._ev_anim = ev_anim
+   return anim
 end
 
 function Anim.init(_ev, lib)
-	 C = lib
+   C = lib
 end
 
 return Anim
