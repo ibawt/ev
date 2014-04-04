@@ -6,6 +6,7 @@ ffi.cdef[[
 typedef struct {
   int fb_id;
   ev_texture texture;
+  float viewport[4];
 } ev_rtex;
 
 ev_rtex* ev_rtex_create(int width, int height);
@@ -21,13 +22,30 @@ function RenderTexture.create(width, height)
    local rtex = {}
    setmetatable(rtex, RenderTexture)
    rtex._ev_rtex = C.ev_rtex_create(width, height)
+
+   -- this should be simpler
+   rtex.texture = ev.texture.create()
+   rtex.texture._ev_texture.id = rtex._ev_rtex.texture.id
+   rtex.texture._ev_texture.width = width
+   rtex.texture._ev_texture.height = height
+   rtex.sbatch = ev.sbatch.create()
+   rtex.sbatch.texture = rtex.texture
+
+   rtex.sprite = ev.sprite.create()
+   rtex.sprite:set_quad( width, height, 0,0, 1, 1)
+   rtex.sbatch:add_sprite(rtex.sprite)
+
    return rtex
 end
 
 function RenderTexture:update(dt)
+   self.sbatch:update(dt)
 end
 
-function RenderTexture:render()
+function RenderTexture:render(fn)
+   self:lock()
+   fn()
+   self:unlock()
 end
 
 function RenderTexture:lock()
@@ -35,7 +53,7 @@ function RenderTexture:lock()
 end
 
 function RenderTexture:unlock()
-   C.ev_rtex_unbind(self._ev_tex)
+   C.ev_rtex_unbind(self._ev_rtex)
 end
 
 function RenderTexture.init(_ev, lib)

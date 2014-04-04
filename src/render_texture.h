@@ -11,6 +11,7 @@ extern "C" {
 typedef struct {
     GLuint fb_id;
     ev_texture texture;
+    GLfloat viewport[4];
 } ev_rtex;
 
 EV_API ev_rtex* ev_rtex_create(int width, int height);

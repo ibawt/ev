@@ -183,6 +183,9 @@ GLint ev_program_get_attrib_loc(ev_program* p, const char *name)
 
 GLint ev_program_get_uniform_loc(ev_program *p, const char *name)
 {
+    assert( p != NULL );
+    assert( name != NULL );
+
     int i = glGetUniformLocation(p->id, name);
     if( i < 0 ) {
         ev_error("can't find uniform: %s", name );

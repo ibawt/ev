@@ -40,8 +40,8 @@ function World:set_dimensions(width,height)
    C.ev_world_set_dimensions(self._ev_world, width, height)
 end
 
-function World:render(transform)
-   C.ev_world_render(self._ev_world, transform)
+function World:render(g)
+   C.ev_world_render(self._ev_world, g.transform)
 end
 
 function World:update(dt)

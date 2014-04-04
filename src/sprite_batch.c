@@ -44,17 +44,18 @@ static const char *defaultFragmentShader =
     "uniform sampler2D u_texture;\n"
     "void main()\n"
     "{\n"
-    "gl_FragColor = texture2D(u_texture, v_texCoords) * out_opacity ;\n"
+    "gl_FragColor = texture2D(u_texture, v_texCoords) * vec4(1,1,1,out_opacity) ;\n"
     "}\n";
 
 struct _ev_sbatch {
-    ev_texture* texture;
-    ev_program* program;
-    UT_array   *sprites;
-    size_t      num_filled_sprites;
-    ev_matrix4  matrix;
-    ev_vbuff   *vbuff;
-    ev_ssheet  *sheet;
+    ev_texture   *texture;
+    ev_program   *program;
+    UT_array     *sprites;
+    size_t        num_filled_sprites;
+    ev_matrix4    matrix;
+    ev_blend_func blend_func;
+    ev_vbuff     *vbuff;
+    ev_ssheet    *sheet;
 };
 
 static ev_err_t set_default_shader_program(ev_sbatch *b)
@@ -130,6 +131,10 @@ ev_sbatch* ev_sbatch_create(void)
 {
     ev_sbatch* s = ev_malloc(sizeof(ev_sbatch));
 
+    if( !s ) {
+        return NULL;
+    }
+
     memset(s, 0, sizeof(ev_sbatch));
 
     utarray_new(s->sprites, &icd);
@@ -138,7 +143,28 @@ ev_sbatch* ev_sbatch_create(void)
         ev_error("can't create sbatch");
     }
 
+    if( set_default_shader_program(s) ) {
+        ev_error("error in compiling default shader");
+        ev_sbatch_destroy(s);
+        s = NULL;
+    }
+
+    s->blend_func.src = GL_ONE;
+    s->blend_func.dst = GL_ONE_MINUS_SRC_ALPHA;
+
     return s;
+}
+
+void ev_sbatch_blend_func(ev_sbatch *s, ev_blend_func func)
+{
+    if( s ) {
+        s->blend_func = func;
+    }
+}
+
+int ev_sbatch_num_filled_sprites(ev_sbatch *s)
+{
+    return s->num_filled_sprites;
 }
 
 ev_err_t ev_sbatch_add_sprite(ev_sbatch *batch, ev_sprite *s)
@@ -201,12 +227,6 @@ ev_err_t ev_sbatch_load(ev_sbatch *batch, const char *file)
             return EV_FAIL;
         }
 
-        if( set_default_shader_program(batch) ) {
-            ev_error("error in shader compilation");
-            ev_ssheet_destroy(batch->sheet);
-            return EV_FAIL;
-        }
-
         return EV_OK;
     }
     return EV_FAIL;
@@ -245,12 +265,12 @@ void ev_sbatch_render(ev_sbatch *batch, ev_matrix4 *t)
 
     glUniformMatrix4fv( ev_program_get_uniform_loc(batch->program ,"u_projTrans" ), 1, GL_FALSE, t ? t->m : batch->matrix.m );
 
-
     pos = ev_program_get_attrib_loc(batch->program, "a_position");
     tex = ev_program_get_attrib_loc(batch->program, "a_texCoord0");
     transform = ev_program_get_attrib_loc(batch->program, "transform");
     translation = ev_program_get_attrib_loc(batch->program, "translation");
     opacity = ev_program_get_attrib_loc(batch->program, "opacity");
+
     glEnableVertexAttribArray(pos);
     glEnableVertexAttribArray(tex);
     glEnableVertexAttribArray(transform);
@@ -262,6 +282,8 @@ void ev_sbatch_render(ev_sbatch *batch, ev_matrix4 *t)
     glVertexAttribPointer(transform, 2, GL_FLOAT, GL_TRUE, sizeof(ev_bvertex), (void*)offsetof(ev_bvertex,rotation));
     glVertexAttribPointer(translation, 2, GL_FLOAT, GL_TRUE, sizeof(ev_bvertex), (void*)offsetof(ev_bvertex, tx));
     glVertexAttribPointer(opacity, 1, GL_FLOAT, GL_TRUE, sizeof(ev_bvertex), (void*)offsetof(ev_bvertex, opacity));
+    glEnable(GL_BLEND);
+    glBlendFunc(batch->blend_func.src, batch->blend_func.dst);
 
     glDrawArrays(GL_TRIANGLES, 0, batch->num_filled_sprites*EV_SPRITE_NUM_VERTS);
 
@@ -271,6 +293,26 @@ void ev_sbatch_render(ev_sbatch *batch, ev_matrix4 *t)
     glDisableVertexAttribArray(tex);
     glDisableVertexAttribArray(pos);
 }
+
+void ev_sbatch_destroy_sprite(ev_sbatch *s, int index)
+{
+    if( s ) {
+        utarray_erase(s->sprites, index, 1);
+    }
+}
+
+
+void ev_sbatch_set_blend_func(ev_sbatch *s, int dst, int src)
+{
+    if( s ) {
+        if( src == GL_ONE_MINUS_SRC_ALPHA ) {
+            ev_log("yup");
+        }
+        s->blend_func.dst = dst;
+        s->blend_func.src = src;
+    }
+}
+
 
 void ev_sbatch_set_matrix4(ev_sbatch *batch, ev_matrix4 *matrix)
 {

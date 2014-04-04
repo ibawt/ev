@@ -42,7 +42,6 @@ EV_API void     ev_app_set_update(ev_app*, ev_app_update);
 EV_API void     ev_app_set_key_event(ev_app*, ev_app_key_event);
 EV_API void     ev_app_set_mouse_event(ev_app*, ev_app_mouse_event);
 EV_API ev_err_t ev_app_start(ev_app*);
-EV_API void     ev_app_set_stage(ev_app *app, ev_stage *s);
 EV_API int      ev_app_get_ticks(ev_app *app);
 EV_API void     ev_app_swap_buffers(ev_app*);
 EV_API ev_bool  ev_app_poll_event(ev_app *, ev_event *);

@@ -23,10 +23,8 @@ typedef enum {
 } ev_err_t;
 
 typedef struct ev_app ev_app;
-typedef struct ev_stage ev_stage;
 
 ev_app* ev_app_create(uint32_t w, uint32_t h);
-void ev_app_set_stage(ev_app *app, ev_stage *s);
 void     ev_app_destroy(ev_app*);
 uint32_t ev_app_get_height(ev_app*);
 uint32_t ev_app_get_width(ev_app*);
@@ -101,20 +99,8 @@ function App:show()
          self.onupdate(dt)
       end
 
-      if self.stage then
-         self.stage:update(dt)
-      end
-
-      if self.world then
-         self.world:update(dt)
-      end
-
-      if self.stage then
-         self.stage:render()
-      end
-
-      if self.world then
-         self.world:render(self.stage.transform)
+      if self.onrender then
+         self.onrender(self.graphics)
       end
 
       self:swap_buffers()
@@ -148,6 +134,8 @@ function App.create(width,height)
    app._ev_app = ev_app
    app.width = width
    app.height = height
+
+   app.graphics = ev.graphics.create()
 
    app.key_state = {}
 

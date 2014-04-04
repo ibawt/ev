@@ -16,7 +16,7 @@ class ContactFilter : public b2ContactFilter
 public:
 
     virtual bool ShouldCollide(b2Fixture* fixture,
-                                   b2ParticleSystem* particleSystem,
+                               b2ParticleSystem* particleSystem,
                                int32 particleIndex) {
 
         return true;

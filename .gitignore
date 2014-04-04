@@ -3,9 +3,11 @@ CMakeFiles
 Makefile
 cmake_install.cmake
 install_manifest.txt
-cavebound
 build
 /lib/libglew.a
 /GPATH
 /GRTAGS
 /GTAGS
+*~
+/.DS_Store
+/xcodebuild/

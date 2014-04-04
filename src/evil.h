@@ -47,6 +47,11 @@ EV_API void *ev_realloc(void *, size_t);
 EV_API void  ev_free(void *);
 EV_API char *ev_strdup(const char*);
 
+typedef struct {
+    GLenum src;
+    GLenum dst;
+} ev_blend_func;
+
 typedef enum {
     EV_OK = 0,
     EV_FAIL,
@@ -115,7 +120,6 @@ typedef struct _ev_shader ev_shader;
 typedef struct _ev_sframe ev_sframe;
 typedef struct _ev_ssheet ev_ssheet;
 typedef struct _ev_tilemap ev_tilemap;
-typedef struct _ev_stage ev_stage;
 
 /* physics */
 typedef struct ev_world ev_world;

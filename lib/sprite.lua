@@ -45,7 +45,7 @@ ev_anim*      ev_sprite_get_animation(ev_sprite*);
 void          ev_sprite_update(ev_sprite*, float);
 void          ev_sprite_render(ev_sprite*);
 void          ev_sprite_set_body(ev_sprite *, ev_body *);
-void          ev_sprite_set_quad(ev_sprite *sprite, float left, float top, float right, float bottom);
+void          ev_sprite_set_quad(ev_sprite *sprite, float w, float h, float left, float top, float right, float bottom);
 ]]
 ffi.metatype("ev_sprite", { __gc = function(self) C.ev_sprite_destroy(self) end})
 

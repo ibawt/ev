@@ -138,7 +138,6 @@ int ev_sprite_fill(ev_sprite* s, ev_bvertex* b)
 
         src = ev_sframe_get_bvertex(ev_anim_get_current_sframe(s->animation));
         if( src ) {
-
             for( i = 0 ; i < EV_SPRITE_NUM_VERTS ; ++i,b++,src++ ) {
                 *b = *src;
                 b->scale = s->scale;

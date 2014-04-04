@@ -26,6 +26,16 @@ function Texture:load(filename)
    return C.ev_texture_load(self._ev_texture, filename)
 end
 
+function Texture:__index(key)
+   if key == 'width' then
+      return self._ev_texture.width
+   elseif key == 'height' then
+      return self._ev_texture.height
+   else
+      return getmetatable(self)[key] or rawget(self, key)
+   end
+end
+
 function Texture.create()
    local texture = {}
    setmetatable(texture, Texture)

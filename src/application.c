@@ -2,7 +2,6 @@
 #include <assert.h>
 
 #include "ev_lua.h"
-#include "stage.h"
 #include "evil.h"
 #include "application.h"
 #include "ev_box2d.h"
@@ -31,8 +30,6 @@ struct _ev_app {
     ev_app_update      update;
     ev_app_key_event   key_event;
     ev_app_mouse_event mouse_event;
-
-    ev_stage *stage;
 
     ev_app_state state;
 
@@ -269,11 +266,4 @@ ev_bool ev_app_poll_event(ev_app *app, ev_event *event)
         }
     }
     return EV_FALSE;
-}
-
-void ev_app_set_stage(ev_app *app, ev_stage *s)
-{
-    if( app ) {
-        app->stage = s;
-    }
 }

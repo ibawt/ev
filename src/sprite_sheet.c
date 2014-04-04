@@ -63,13 +63,16 @@ static void fill_batch_verts(ev_sframe* frame)
         bv[i].rotation = 0.0f;
         bv[i].tx = 0.0f;
         bv[i].ty = 0.0f;
+        bv[i].opacity = 1.0f;
     }
 }
 
 ev_sframe* ev_sframe_create_quad(float w, float h, float left, float top,float right,float bottom)
 {
     ev_sframe* sframe = ev_malloc(sizeof(ev_sframe));
+
     if( sframe ) {
+        memset(sframe, 0, sizeof(ev_sframe));
         sframe->size.w = w;
         sframe->size.h = h;
         sframe->texture_rect.origin.x = left;
