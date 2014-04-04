@@ -30,6 +30,7 @@ typedef struct {
 	float    rotation;
 	float    scale;
 	int      visible;
+	float    opacity;
 	ev_anim *animation;
 	ev_body *body;
 } ev_sprite;
@@ -63,12 +64,17 @@ local setters = {
 	 end,
 	 scale = function(self, val)
 			self._ev_sprite.scale = val
+	 end,
+	 opacity = function(self, val)
+			self._ev_sprite.opacity = val
 	 end
 }
 
 function Sprite:__index(key)
 	 if key == 'position' then
 			return C.ev_sprite_get_position(self._ev_sprite)
+	 elseif key == 'opacity' then
+			return self._ev_sprite.opacity
 	 else
 			return getmetatable(self)[key] or rawget(self, key)
 	 end

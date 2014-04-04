@@ -48,21 +48,21 @@ EV_API void  ev_free(void *);
 EV_API char *ev_strdup(const char*);
 
 typedef enum {
-    EV_OK = 0,
-    EV_FAIL,
-    EV_NOMEM
+		EV_OK = 0,
+		EV_FAIL,
+		EV_NOMEM
 } ev_err_t;
 
 typedef enum {
-    EV_LOG   = 0,
-    EV_WARN  = 1,
-    EV_ERROR = 2,
-    EV_DEBUG = 3
+		EV_LOG   = 0,
+		EV_WARN  = 1,
+		EV_ERROR = 2,
+		EV_DEBUG = 3
 } ev_log_level;
 
 typedef enum {
-    EV_FALSE = 0,
-    EV_TRUE
+		EV_FALSE = 0,
+		EV_TRUE
 } ev_bool;
 
 #define ev_log(fmt, ...) ev_logger(EV_LOG, "[LOG]%s:%d " fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__)
@@ -72,37 +72,38 @@ EV_API void ev_error(const char *fmt, ...);
 EV_API void ev_logger(ev_log_level, const char *fmt, ...);
 
 typedef struct {
-    float w;
-    float h;
+		float w;
+		float h;
 } ev_size;
 
 typedef struct {
-    float x,y;
+		float x,y;
 } ev_vec2;
 
 typedef struct {
-    ev_vec2 origin;
-    ev_size size;
+		ev_vec2 origin;
+		ev_size size;
 } ev_rect;
 
 typedef struct {
-    void *opaque;
+		void *opaque;
 } ev_key_event;
 
 typedef struct {
-    void *opaque;
+		void *opaque;
 } ev_mouse_event;
 
 
 typedef struct {
-    float x;
-    float y;
-    float u;
-    float v;
-    float rotation;
-    float scale;
-    float tx;
-    float ty;
+		float x;
+		float y;
+		float u;
+		float v;
+		float rotation;
+		float scale;
+		float tx;
+		float ty;
+		float opacity;
 } ev_bvertex;
 
 typedef struct _ev_sbatch ev_sbatch;
