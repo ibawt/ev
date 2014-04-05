@@ -103,6 +103,8 @@ function App:show()
          self.onrender(self.graphics)
       end
 
+      ev.wait.update(dt)
+
       self:swap_buffers()
 
       dt = (self:get_ticks() - t1) / 1000

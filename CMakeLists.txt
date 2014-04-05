@@ -32,6 +32,7 @@ set(
   lua_texture.o
   lua_world.o
   lua_graphics.o
+  lua_wait.o
   lib/ev.lua
   lib/anim.lua
   lib/app.lua
@@ -43,6 +44,7 @@ set(
   lib/world.lua
   lib/body.lua
   lib/graphics.lua
+  lib/wait.lua
   vendor/glew/src/glew.c
 )
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_GENERATOR STREQUAL "Ninja")
@@ -164,4 +166,9 @@ add_custom_command(
   OUTPUT lua_graphics.o
   COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/graphics.lua" lua_graphics.o
   DEPENDS lib/graphics.lua
+  )
+add_custom_command(
+  OUTPUT lua_wait.o
+  COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/wait.lua" lua_wait.o
+  DEPENDS lib/wait.lua
   )
