@@ -9,6 +9,10 @@ local time = 0
 function Wait.wait_for(seconds)
    local co = coroutine.running()
 
+   if not co then
+      assert('not a coroutine!')
+   end
+
    waiting[co] = time + seconds
 
    co.yield()
@@ -26,6 +30,11 @@ function Wait.wait_for_signal(signal)
    slot[#slot+1] = co
 
    co.yield()
+end
+
+function Wait.wrap(fn)
+   local co = courtine.create(fn)
+   return coroutine.resume(co)
 end
 
 function Wait.signal(signal)

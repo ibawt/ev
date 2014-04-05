@@ -34,7 +34,7 @@ function RenderTexture.create(width, height)
    rtex.sprite = ev.sprite.create()
    rtex.sprite:set_quad( width, height, 0,0, 1, 1)
    rtex.sbatch:add_sprite(rtex.sprite)
-
+   rtex.sprite:set_position(width/2, height/2)
    return rtex
 end
 

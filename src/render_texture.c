@@ -65,7 +65,6 @@ void ev_rtex_bind(ev_rtex* rtex)
     if( rtex ) {
         glGetFloatv(GL_VIEWPORT, rtex->viewport);
         glBindFramebuffer(GL_FRAMEBUFFER, rtex->fb_id);
-        glDisable(GL_DEPTH_TEST);
         glViewport(0, 0, rtex->texture.width, rtex->texture.height);
     }
 }
