@@ -94,7 +94,7 @@ add_definitions(
   -D_CRT_SECURE_NO_WARNINGS
   -DGLEW_STATIC
  )
-
+MESSAGE(${LUA_INCLUDE_DIR})
 add_executable( ev_lua
   ${SOURCES}
   )
