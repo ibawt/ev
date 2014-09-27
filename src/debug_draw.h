@@ -7,6 +7,7 @@
 #include "shader.h"
 #include "vertex_buffer.h"
 
+#ifdef __cplusplus
 class b2DebugDraw : public b2Draw
 {
  public:
@@ -36,6 +37,6 @@ private:
     ev_vbuff  *color_buff;
     ev_program *particle_shader;
 };
-
+#endif
 
 #endif
