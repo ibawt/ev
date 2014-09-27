@@ -56,6 +56,7 @@ set(CMAKE_C_FLAGS_RELEASE, "#{CMAKE_C_FLAGS_RELEASE -O3}")
 
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
+
 add_subdirectory( vendor/jansson)
 add_subdirectory( vendor/Box2D )
 
@@ -80,16 +81,28 @@ if("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pagezero_size 10000 -image_base 100000000")
 endif()
 
+SET(EV_INCLUDES
+  ${SDL2_INCLUDE_DIR}
+  ${SDL2_IMAGE_INCLUDE_DIRS}
+  ${jansson_BINARY_DIR}/include
+  "${CMAKE_CURRENT_SOURCE_DIR}/vendor/glew/include"
+  ${LUA_INCLUDE_DIR}
+  "${CMAKE_CURRENT_SOURCE_DIR}/vendor/uthash"
+  "${CMAKE_CURRENT_SOURCE_DIR}/vendor"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src" PARENT_SCOPE)
+
+MESSAGE("INCLUDES ${EV_INCLUDES}")
 
 include_directories(
   ${SDL2_INCLUDE_DIR}
   ${SDL2_IMAGE_INCLUDE_DIRS}
   ${jansson_BINARY_DIR}/include
-  vendor/glew/include
+  "${CMAKE_CURRENT_SOURCE_DIR}/vendor/glew/include"
   ${LUA_INCLUDE_DIR}
-  vendor/uthash
-  vendor
-  src)
+  "${CMAKE_CURRENT_SOURCE_DIR}/vendor/uthash"
+  "${CMAKE_CURRENT_SOURCE_DIR}/vendor"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src"
+  )
 add_definitions(
   -D_CRT_SECURE_NO_WARNINGS
   -DGLEW_STATIC
@@ -98,6 +111,10 @@ MESSAGE(${LUA_INCLUDE_DIR})
 add_executable( ev_lua
   ${SOURCES}
   )
+
+add_library(ev STATIC
+  ${SOURCES}
+)
 
 target_link_libraries( ev_lua
   ${SDL2_LIBRARY}
