@@ -9,6 +9,14 @@ extern "C" {
 #endif
 
 typedef struct {
+    uint64_t cnt;
+    float    ms;
+} ev_timer;
+
+void ev_timer_start(ev_timer*);
+void ev_timer_end(ev_timer*);
+
+typedef struct {
     void   *elems;
     size_t  cnt;
     size_t  size;

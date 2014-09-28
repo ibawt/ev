@@ -15,6 +15,21 @@
 #define uthash_malloc(sz) ev_malloc(sz)
 #define uthash_free(ptr,sz) ev_free(ptr)
 
+
+void ev_timer_start(ev_timer *t)
+{
+    t->cnt = SDL_GetPerformanceCounter();
+    t->ms = 0;
+}
+
+void ev_timer_end(ev_timer *t)
+{
+    t->cnt = SDL_GetPerformanceCounter() - t->cnt;
+    t->ms = (t->cnt / (double)SDL_GetPerformanceFrequency());
+}
+
+void ev_timer_end(ev_timer*);
+
 typedef struct {
     char          *key;
     void          *value;

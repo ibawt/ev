@@ -18,7 +18,7 @@ typedef enum {
 
 typedef struct {
     ev_event_type type;
-    const char* key;
+    uint32_t      key;
     int x;
     int y;
 } ev_event;

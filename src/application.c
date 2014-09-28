@@ -247,15 +247,15 @@ ev_bool ev_app_poll_event(ev_app *app, ev_event *event)
 
     event->type = EV_NO_EVENT;
 
-    while( SDL_PollEvent(&e) ) {
+    if( SDL_PollEvent(&e) ) {
         switch( e.type ) {
         case SDL_KEYDOWN:
             event->type = EV_KEYDOWN;
-            event->key = SDL_GetKeyName(e.key.keysym.sym);
+            event->key = e.key.keysym.sym;
             break;
         case SDL_KEYUP:
             event->type = EV_KEYUP;
-            event->key = SDL_GetKeyName(e.key.keysym.sym);
+            event->key = e.key.keysym.sym;
             break;
         case SDL_QUIT:
             event->type = EV_QUIT;

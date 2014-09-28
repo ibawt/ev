@@ -14,7 +14,7 @@
 #include "sprite_batch.h"
 #include "sprite_sheet.h"
 #include "tile_map.h"
-#include "util.h"
+#include "utils.h"
 #include "vector2.h"
 #include "vertex_buffer.h"
 

@@ -124,7 +124,15 @@ target_link_libraries( ev_lua
   jansson
   ${LUA_LIBRARY}
   ${SDL2_MAIN}
-)
+  )
+
+target_link_libraries(ev
+  ${SDL2_LIBRARY}
+  ${SDL2_IMAGE_LIBRARY}
+  Box2D
+  jansson
+  )
+
 
 # this should be cleaner somehow
 add_custom_command(

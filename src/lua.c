@@ -55,8 +55,6 @@ void ev_lua_destroy(void)
 
 lua_State *ev_lua_get_state(void)
 {
-    assert( lua_state != NULL );
-
     return lua_state;
 }
 
