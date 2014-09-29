@@ -25,6 +25,8 @@ EV_API void       ev_sbatch_update(ev_sbatch *, float);
 EV_API int        ev_sbatch_num_filled_sprites(ev_sbatch*);
 EV_API void       ev_sbatch_set_blend_func(ev_sbatch *s, int dst, int src);
 EV_API void       ev_sbatch_destroy_sprite(ev_sbatch *s, int );
+EV_API ev_anim  * ev_sbatch_create_anim(ev_sbatch *batch, ...);
+
 #ifdef __cplusplus
 }
 #endif

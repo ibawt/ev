@@ -10,6 +10,7 @@
 #include "sprite_sheet.h"
 #include "application.h"
 #include "ev_lua.h"
+#include "animation.h"
 
 #define SPRITE_BATCH_MAX 1024*10
 #define GROW_FAC 128
@@ -319,6 +320,31 @@ void ev_sbatch_set_matrix4(ev_sbatch *batch, ev_matrix4 *matrix)
     if( batch && matrix ) {
         memcpy(&batch->matrix, matrix, sizeof(ev_matrix4));
     }
+}
+
+
+ev_anim* ev_sbatch_create_anim(ev_sbatch *batch, ...)
+{
+    ev_anim *a = ev_anim_create();
+    const char *frame;
+    va_list args;
+    ev_sframe *sframe;
+
+    va_start(args, batch);
+
+    for(;;) {
+        frame = va_arg(args, const char *);
+        if( !frame )
+            break;
+
+        sframe = ev_sbatch_get_sframe(batch, frame);
+        assert(sframe != NULL);
+
+        ev_anim_add_sframe(a, sframe);
+    }
+    va_end(args);
+
+    return a;
 }
 
 void ev_sbatch_set_texture(ev_sbatch *s, ev_texture *t)
