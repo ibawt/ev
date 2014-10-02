@@ -6,6 +6,10 @@
 #include <search.h>
 #include "uthash.h"
 
+#ifndef PTM_RATIO
+#define PTM_RATIO 32.0f
+#endif
+
 typedef struct {
     b2Contact *contact;
     UT_hash_handle hh;
@@ -97,6 +101,24 @@ struct ev_particle_group {
 struct ev_particle_system {
     b2ParticleSystem *system;
 };
+
+
+static b2Vec2 vec2_to_box2d(ev_vec2 v)
+{
+    return b2Vec2(v.x/ PTM_RATIO, v.y / PTM_RATIO);
+}
+
+static ev_vec2 box2d_to_vec2(b2Vec2 v)
+{
+    ev_vec2 vv = { v.x * PTM_RATIO, v.y * PTM_RATIO};
+    return vv;
+}
+
+ev_vec2 convert_vector(b2Vec2 v)
+{
+    ev_vec2 vv = { v.x, v.y };
+    return vv;
+}
 
 ev_world* ev_world_create(void)
 {
@@ -204,9 +226,7 @@ ev_body* ev_body_create(ev_world *world, void *opaque)
     ev_body *b;
     b2BodyDef bodyDef;
 
-    if(!world) {
-        return NULL;
-    }
+    assert( world != NULL );
 
     b = (ev_body*)ev_malloc(sizeof(ev_body));
     memset(b, 0, sizeof(ev_body));
@@ -381,11 +401,6 @@ int ev_particle_system_body_contact_count(ev_particle_system *sys)
     return sys->system->GetBodyContactCount();
 }
 
-ev_vec2 convert_vector(b2Vec2 v)
-{
-    ev_vec2 vv = { v.x, v.y };
-    return vv;
-}
 
 void ev_particle_system_destroy_particle(ev_particle_system *s, int i)
 {
@@ -404,4 +419,11 @@ int ev_particle_system_body_contact_at(ev_particle_system *s, int index, ev_part
     bc->mass = c->mass;
     bc->position = convert_vector( *(s->system->GetPositionBuffer() + c->index));
     return 0;
+}
+
+void ev_body_apply_linear_impluse(ev_body *b, ev_vec2 v)
+{
+    assert( b != NULL );
+
+    b->body->ApplyLinearImpulse(vec2_to_box2d(v), b2Vec2(0,0), true);
 }

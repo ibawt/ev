@@ -147,7 +147,7 @@ ev_sbatch* ev_sbatch_create(void)
     if( set_default_shader_program(s) ) {
         ev_error("error in compiling default shader");
         ev_sbatch_destroy(s);
-        s = NULL;
+        return NULL;
     }
 
     s->blend_func.src = GL_ONE;
@@ -168,11 +168,12 @@ int ev_sbatch_num_filled_sprites(ev_sbatch *s)
     return s->num_filled_sprites;
 }
 
-ev_err_t ev_sbatch_add_sprite(ev_sbatch *batch, ev_sprite *s)
+int ev_sbatch_add_sprite(ev_sbatch *batch, ev_sprite *s)
 {
     assert( batch != NULL );
     assert( s != NULL );
     assert( batch->vbuff != NULL );
+    int len = -1;
 
     if( batch && s ) {
         size_t capacity = ev_vbuff_get_capacity(batch->vbuff);
@@ -182,14 +183,14 @@ ev_err_t ev_sbatch_add_sprite(ev_sbatch *batch, ev_sprite *s)
 
             if( capacity >= VBUFF_SIZE(SPRITE_BATCH_MAX) ) {
                 ev_error("out of capacity for this sprite batch!");
-                return EV_FAIL;
+                return -1;
             }
             ev_vbuff_set_capacity(batch->vbuff, capacity);
         }
-
+        len = utarray_len( batch->sprites);
         utarray_push_back( batch->sprites, &s);
     }
-    return EV_OK;
+    return len;
 }
 
 void ev_sbatch_destroy(ev_sbatch* s)

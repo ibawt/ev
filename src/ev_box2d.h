@@ -56,7 +56,7 @@ EV_API void      ev_body_set_fixed_rotation(ev_body*, ev_bool);
 EV_API void      ev_body_set_linear_velocity(ev_body*, ev_vec2);
 EV_API ev_vec2   ev_body_get_linear_velocity(ev_body*);
 EV_API void      ev_body_set_rotation(ev_body*, float);
-
+EV_API void      ev_body_apply_linear_impluse(ev_body *, ev_vec2);
 
 typedef struct {
     int     index;

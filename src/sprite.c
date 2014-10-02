@@ -14,10 +14,10 @@ struct _ev_sprite
     ev_vec2  position;
     float    rotation;
     float    scale;
-    int      visible;
+    ev_bool  visible;
     float    opacity;
-    ev_anim *animation;
-    ev_body *body;
+    ev_anim *animation; /* not owned */
+    ev_body *body; /* not owned */
 };
 
 void ev_sprite_set_quad(ev_sprite *sprite, float w, float h, float left, float top, float right, float bottom)
@@ -116,12 +116,20 @@ void ev_sprite_render(ev_sprite* s)
     UNUSED(s);
 }
 
-int ev_sprite_get_visiblity(ev_sprite *s)
+ev_bool ev_sprite_get_visiblity(ev_sprite *s)
 {
     assert( s != NULL );
 
     return s->visible;
 }
+
+void ev_sprite_set_visibilty(ev_sprite *s, ev_bool v)
+{
+    assert( s != NULL );
+
+    s->visible = v;
+}
+
 
 int ev_sprite_fill(ev_sprite* s, ev_bvertex* b)
 {
