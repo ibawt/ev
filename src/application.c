@@ -23,9 +23,10 @@ struct _ev_app {
     uint32_t      width;
     uint32_t      height;
     SDL_Window   *window;
-    float         fps;
+    float         fps; /* TODO remove */
     SDL_GLContext context;
 
+    /* TODO remove */
     ev_app_render      render;
     ev_app_update      update;
     ev_app_key_event   key_event;

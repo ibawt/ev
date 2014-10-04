@@ -113,7 +113,9 @@ ev_err_t ev_sbatch_set_vbuff_capacity(ev_sbatch *batch, size_t size)
     if(!batch)
         return EV_FAIL;
 
-    batch->vbuff = ev_vbuff_create();
+    if(!batch->vbuff) {
+        batch->vbuff = ev_vbuff_create();
+    }
 
     if(!batch->vbuff) {
         ev_error("failed to create vertex buffer");
@@ -232,6 +234,18 @@ ev_err_t ev_sbatch_load(ev_sbatch *batch, const char *file)
         return EV_OK;
     }
     return EV_FAIL;
+}
+
+ev_bvertex* ev_sbatch_lock(ev_sbatch *batch)
+{
+    batch->num_filled_sprites = 0;
+    return ev_vbuff_map(batch->vbuff);
+}
+
+void ev_sbatch_unlock(ev_sbatch *batch, int num_filled)
+{
+    ev_vbuff_unmap(batch->vbuff);
+    batch->num_filled_sprites = num_filled;
 }
 
 void ev_sbatch_update(ev_sbatch* batch, float dt)

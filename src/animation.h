@@ -14,6 +14,16 @@ typedef enum {
     EV_REVERSE = 2,
     EV_PING_PONG = 3
 } ev_anim_mode;
+    
+typedef struct {
+    float        time;
+    ev_anim_mode mode;
+    uint32_t     index;
+    float        delay;
+    ev_sframe  **frames;
+    uint32_t     frame_cnt;
+    size_t       frame_size;
+} ev_anim;
 
 EV_API ev_anim*     ev_anim_create(void);
 EV_API void         ev_anim_destroy(ev_anim *);

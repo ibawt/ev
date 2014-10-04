@@ -6,13 +6,24 @@
 #include "ev_lua.h"
 #include "evil.h"
 #include "ev_box2d.h"
+#include "animation.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-EV_API ev_sprite*    ev_sprite_create(void);
-EV_API void          ev_sprite_destroy(ev_sprite*);
+typedef struct
+{
+    ev_vec2  position;
+    float    rotation;
+    float    scale;
+    ev_bool  visible;
+    float    opacity;
+    ev_anim *animation; /* not owned */
+    ev_body *body;      /* not owned */
+} ev_sprite;
+
+EV_API void          ev_sprite_init(ev_sprite*);
 EV_API ev_vec2*      ev_sprite_get_position(ev_sprite*);
 EV_API void          ev_sprite_set_position(ev_sprite*, float x, float y);
 EV_API float         ev_sprite_get_rotation(ev_sprite*);
@@ -29,7 +40,5 @@ EV_API ev_bool       ev_sprite_get_visiblity(ev_sprite *s);
 #ifdef __cplusplus
 }
 #endif
-
-
 
 #endif

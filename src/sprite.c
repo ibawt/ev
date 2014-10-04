@@ -9,105 +9,68 @@
 #include "application.h"
 #include "vector2.h"
 
-struct _ev_sprite
-{
-    ev_vec2  position;
-    float    rotation;
-    float    scale;
-    ev_bool  visible;
-    float    opacity;
-    ev_anim *animation; /* not owned */
-    ev_body *body; /* not owned */
-};
-
 void ev_sprite_set_quad(ev_sprite *sprite, float w, float h, float left, float top, float right, float bottom)
 {
     ev_sframe *frame;
 
-    if( sprite->animation ) {
-        ev_anim_destroy(sprite->animation);
-        sprite->animation = NULL;
-    }
-
-    sprite->animation = ev_anim_create();
     frame = ev_sframe_create_quad(w, h, left, top, right, bottom);
 
     ev_anim_add_sframe(sprite->animation, frame);
 }
 
-ev_sprite* ev_sprite_create(void)
+void ev_sprite_init(ev_sprite *s)
 {
-    ev_sprite *s = ev_malloc(sizeof(ev_sprite));
-    if( s ) {
-        memset(s, 0, sizeof(ev_sprite));
-        s->visible = 1;
-        s->scale = 1.0f;
-        s->opacity = 1.0f;
-    }
-    return s;
-}
+    assert( s != NULL );
+    
+    memset(s, 0, sizeof(ev_sprite));
 
-void ev_sprite_destroy(ev_sprite* s)
-{
-    if( s ) {
-        ev_free(s);
-    }
+    s->visible = EV_TRUE;
+    s->scale = 1.0f;
+    s->opacity = 1.0f;
 }
 
 ev_vec2* ev_sprite_get_position(ev_sprite* s)
 {
-    if( s ) {
-        if( s->body ) {
-            s->position = ev_body_get_position(s->body);
-        }
-        return &s->position;
+    if( s->body ) {
+        s->position = ev_body_get_position(s->body);
     }
-    return NULL;
+    return &s->position;
 }
 
 void ev_sprite_set_position(ev_sprite *s, float x, float y)
 {
-    if( s ) {
-        s->position.x = x;
-        s->position.y = y;
-
-        if( s->body ) {
-            ev_vec2 v = { x, y };
-            ev_body_set_position(s->body, v);
-        }
+    s->position.x = x;
+    s->position.y = y;
+    
+    if( s->body ) {
+        ev_body_set_position(s->body, s->position);
     }
 }
 
 float ev_sprite_get_rotation(ev_sprite* s)
 {
-    return s ? s->rotation : 0.0f;
+    return s->rotation;
 }
 
 void ev_sprite_set_rotation(ev_sprite* s, float r)
 {
-    if( s ) {
-        s->rotation = r;
-    }
+    s->rotation = r;
 }
 
 void ev_sprite_set_animation(ev_sprite* s, ev_anim* a)
 {
-    if( s ) {
-        s->animation = a;
-    }
+    s->animation = a;
 }
 
 ev_anim* ev_sprite_get_animation(ev_sprite* s)
 {
-    return s ? s->animation : NULL;
+    return s->animation;
 }
 
 void ev_sprite_update(ev_sprite* s, float dt)
 {
-    if( s ) {
-        if( s->animation ) {
-            ev_anim_update(s->animation, dt);
-        }
+    if( s->animation ) {
+        ev_anim_update(s->animation, dt);
     }
 }
 
@@ -137,7 +100,10 @@ int ev_sprite_fill(ev_sprite* s, ev_bvertex* b)
     ev_bvertex *src;
     ev_vec2 pos;
 
-    if( s && b && s->visible) {
+    assert( s != NULL );
+    assert( b != NULL );
+    
+    if(s->visible) {
         if( s->body ) {
             pos = ev_body_get_position(s->body);
         } else {
@@ -145,25 +111,21 @@ int ev_sprite_fill(ev_sprite* s, ev_bvertex* b)
         }
 
         src = ev_sframe_get_bvertex(ev_anim_get_current_sframe(s->animation));
-        if( src ) {
-            for( i = 0 ; i < EV_SPRITE_NUM_VERTS ; ++i,b++,src++ ) {
-                *b = *src;
-                b->scale = s->scale;
-                b->rotation = s->rotation;
-                b->tx = pos.x;
-                b->ty = pos.y;
-                b->opacity = s->opacity;
-            }
+        assert( src != NULL );
+        for( i = 0 ; i < EV_SPRITE_NUM_VERTS ; ++i,b++,src++ ) {
+            *b = *src;
+            b->scale = s->scale;
+            b->rotation = s->rotation;
+            b->tx = pos.x;
+            b->ty = pos.y;
+            b->opacity = s->opacity;
         }
-        return 1;
+        return EV_SPRITE_NUM_VERTS;
     }
     return 0;
 }
 
 void ev_sprite_set_body(ev_sprite *s, ev_body *body)
 {
-    if( !(s && body) )
-        return;
-
     s->body = body;
 }

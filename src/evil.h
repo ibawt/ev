@@ -112,9 +112,7 @@ typedef struct {
 } ev_bvertex;
 
 typedef struct _ev_sbatch ev_sbatch;
-typedef struct _ev_anim ev_anim;
 typedef struct _ev_program ev_program;
-typedef struct _ev_sprite  ev_sprite;
 typedef struct _ev_vbuff   ev_vbuff;
 typedef struct _ev_shader ev_shader;
 typedef struct _ev_sframe ev_sframe;

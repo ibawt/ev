@@ -4,17 +4,6 @@
 
 #define FRAME_GROW_FAC 16
 
-struct _ev_anim
-{
-    float        time;
-    ev_anim_mode mode;
-    uint32_t     index;
-    float        delay;
-    ev_sframe  **frames;
-    uint32_t     frame_cnt;
-    size_t       frame_size;
-};
-
 static void grow_array(ev_anim *a)
 {
     void *p;
