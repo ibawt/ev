@@ -12,48 +12,12 @@
 #define LOG(...)
 #endif
 
-static ev_app *lua_app = NULL;
-
-ev_app* ev_app_get_lua_instance(void)
-{
-    return lua_app;
-}
-
 struct _ev_app {
     uint32_t      width;
     uint32_t      height;
     SDL_Window   *window;
-    float         fps; /* TODO remove */
     SDL_GLContext context;
-
-    /* TODO remove */
-    ev_app_render      render;
-    ev_app_update      update;
-    ev_app_key_event   key_event;
-    ev_app_mouse_event mouse_event;
-
-    ev_app_state state;
-
-    ev_world *world;
-
-    ev_bool done;
-
-    char key_states[256];
 };
-
-ev_app_state ev_app_get_state(ev_app *a)
-{
-    if( a ) {
-        return a->state;
-    }
-    return EV_APP_INVALID;
-}
-
-ev_world* ev_app_get_world()
-{
-    ev_app *app = ev_app_get_lua_instance();
-    return app ? app->world : NULL;
-}
 
 static int initGL(ev_app *app)
 {
@@ -118,64 +82,24 @@ static ev_err_t initSDL(ev_app *app)
 
 ev_err_t ev_app_init(ev_app *app)
 {
-    if( app ) {
-        if( initSDL(app)  )
-            return EV_FAIL;
-        if( initGL(app) )
-            return EV_FAIL;
+    assert( app != NULL );
 
-        app->world = ev_world_create();
-        if( !app->world )
-            return EV_FAIL;
+    if( initSDL(app)  )
+        return EV_FAIL;
+    if( initGL(app) )
+        return EV_FAIL;
 
-        ev_world_set_dimensions(app->world, (float)app->width, (float)app->height);
-
-        return EV_OK;
-    }
-    return EV_FAIL;
+    return EV_OK;
 }
 
 uint32_t ev_app_get_height(ev_app *app)
 {
-    return app ? app->height : 0;
+    return app->height;
 }
 
 uint32_t ev_app_get_width(ev_app *app)
 {
-    return app ? app->width : 0;
-}
-
-float ev_app_get_fps(ev_app *app)
-{
-    return app ? app->fps : 0.0f;
-}
-
-void ev_app_set_render(ev_app *app, ev_app_render fn)
-{
-    if( app ) {
-        app->render = fn;
-    }
-}
-
-void ev_app_set_update(ev_app *app, ev_app_update fn)
-{
-    if( app ) {
-        app->update = fn;
-    }
-}
-
-void ev_app_set_key_event(ev_app *app, ev_app_key_event fn)
-{
-    if( app ) {
-        app->key_event = fn;
-    }
-}
-
-void ev_app_set_mouse_event(ev_app *app, ev_app_mouse_event fn)
-{
-    if( app ) {
-        app->mouse_event = fn;
-    }
+    return app->width;
 }
 
 ev_app* ev_app_create(uint32_t width, uint32_t height)
@@ -203,11 +127,6 @@ void ev_app_quit(ev_app *app)
         if( app->window ) {
             SDL_DestroyWindow(app->window);
             app->window = NULL;
-        }
-
-        if( app->world ) {
-            ev_world_destroy(app->world);
-            app->world = NULL;
         }
 
         IMG_Quit();

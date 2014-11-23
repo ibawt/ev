@@ -5,22 +5,41 @@ set(
   SOURCES
   src/main.c
   src/application.c
+  src/application.h
   src/sprite.c
+  src/sprite.h
   src/sprite_batch.c
+  src/sprite_batch.h
   src/texture.c
+  src/texture.h
   src/animation.c
+  src/animation.h
   src/shader.c
+  src/shader.h
   src/vector2.c
+  src/vector2.h
   src/matrix4.c
-  src/sprite_sheet.c
-  src/vertex_buffer.c
-  src/utils.c
+  src/matrix4.h
+  src/tile_map.h
   src/tile_map.c
+  src/sprite_sheet.c
+  src/sprite_sheet.h
+  src/vertex_buffer.c
+  src/vertex_buffer.h
+  src/utils.c
+  src/utils.h
+  src/tile_map.c
+  src/tile_map.h
   src/lua.c
+  src/ev_lua.h
   src/ev_box2d.cpp
+  src/ev_box2d.h
   src/debug_draw.cpp
+  src/debug_draw.h
   src/render_texture.c
+  src/render_texture.h
   src/graphics.c
+  src/graphics.h
   ev_lua.o
   lua_app.o
   lua_body.o

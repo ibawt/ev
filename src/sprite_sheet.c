@@ -270,7 +270,9 @@ static ev_smap* parse_frames(json_t *json,  ev_size *tex_size)
 ev_ssheet* ev_ssheet_create(void)
 {
     ev_ssheet *s = ev_malloc(sizeof(ev_ssheet));
-    memset( s, 0, sizeof(ev_ssheet));
+    if( s ) {
+        memset( s, 0, sizeof(ev_ssheet));
+    }
     return s;
 }
 

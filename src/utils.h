@@ -46,6 +46,24 @@ const char* ev_smap_iter_key(ev_smap_iter *k);
 int         ev_smap_iter_next(ev_smap_iter *i);
 void ev_log_bvertex(ev_bvertex *b);
 
+
+typedef struct {
+    void    *buff;
+    void    *current;
+#ifndef NDEBUG
+    uint32_t size;
+    uint32_t count;
+#endif
+} ev_pool;
+
+void  ev_pool_init(ev_pool *p, void *buff, size_t bytes, uint32_t length);
+void *ev_pool_alloc(ev_pool *p);
+void  ev_pool_free(ev_pool *p, void *t);
+
+int     ev_rand(void);
+float   ev_random_number(float min, float max);
+ev_vec2 ev_random_point(ev_rect *bounds);
+
 #ifdef __cplusplus
 }
 #endif

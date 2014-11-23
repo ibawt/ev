@@ -19,6 +19,7 @@ EV_API ev_vec2*    ev_tilemap_get_position(ev_tilemap*);
 EV_API void        ev_tilemap_set_position(ev_tilemap *, float x, float y);
 EV_API void        ev_tilemap_render(ev_tilemap*);
 EV_API void        ev_tilemap_update(ev_tilemap*, float);
+EV_API ev_err_t    ev_tilemap_load(ev_tilemap *t, const char *file);
 
 #ifdef __cplusplus
 }

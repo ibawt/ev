@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "uthash.h"
 #include "evil.h"
+#include "rect.h"
 
 #define MAX_STR_LEN 1024*16
 
@@ -25,7 +26,7 @@ void ev_timer_start(ev_timer *t)
 void ev_timer_end(ev_timer *t)
 {
     t->cnt = SDL_GetPerformanceCounter() - t->cnt;
-    t->ms = (t->cnt / (double)SDL_GetPerformanceFrequency());
+    t->ms = (float)(t->cnt / (double)SDL_GetPerformanceFrequency());
 }
 
 void ev_timer_end(ev_timer*);
@@ -202,4 +203,85 @@ void ev_log_bvertex(ev_bvertex *b)
 
     ev_log("[x: %.2f, y: %.2f, u: %.2f, v: %.2f]", b->x, b->y, b->u, b->v );
     ev_log("[scale: %.2f, rotation: %.2f, tx: %.2f, ty: %.2f]", b->scale, b->rotation, b->tx, b->ty );
+}
+
+/**
+ * O(n) watchout
+ */
+void  ev_pool_init(ev_pool *p, void *buff, size_t bytes, uint32_t length)
+{
+    uint32_t i;
+
+    assert( p != NULL );
+    assert( buff != NULL );
+
+    p->buff = buff;
+
+    *((void**)buff) = NULL;
+    for( i = bytes ; i < (length * bytes) ; i += bytes) {
+        void *pp = ((char *)buff) + i;
+        *((void **)pp) = ((char*)buff) + (i - bytes);
+    }
+
+    p->buff = buff;
+    p->current = ((char *)buff) + (length-1)*bytes;
+
+#ifndef NDEBUG
+    p->size = length;
+    p->count = length;
+#endif
+}
+
+void *ev_pool_alloc(ev_pool *p)
+{
+    void *pp;
+
+    assert( p != NULL );
+    assert( p->current != NULL );
+    assert( p->count > 0 );
+
+    pp = p->current;
+    p->current = *((void **)pp);
+
+#ifndef NDEBUG
+    p->count--;
+#endif
+
+    return pp;
+}
+
+void  ev_pool_free(ev_pool *p, void *t)
+{
+    assert( p != NULL );
+    assert( t != NULL );
+    assert( p->count < p->size );
+
+    *((void **)t) = p->current;
+    p->current = t;
+
+#ifndef NDEBUG
+    p->count++;
+#endif
+}
+
+int ev_rand(void)
+{
+    return rand();
+}
+
+float ev_random_number(float min, float max)
+{
+    return min + ev_rand() / (RAND_MAX / (max - min + 1) + 1);
+}
+
+ev_vec2 ev_random_point(ev_rect *bounds)
+{
+    ev_vec2 p;
+
+    assert( bounds != NULL );
+
+    p.x = ev_random_number(EV_RECT_X1(bounds), EV_RECT_X2(bounds));
+    p.y = ev_random_number(EV_RECT_Y1(bounds), EV_RECT_Y2(bounds));
+
+    return p;
 }

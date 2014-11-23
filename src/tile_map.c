@@ -5,8 +5,6 @@
 #include "jansson.h"
 #include "utarray.h"
 
-
-
 static ev_err_t get_json_int(json_t *dict, const char *key, uint32_t *i)
 {
     json_t *value;

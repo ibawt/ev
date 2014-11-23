@@ -99,7 +99,6 @@ typedef struct {
     void *opaque;
 } ev_mouse_event;
 
-
 typedef struct {
     float x;
     float y;

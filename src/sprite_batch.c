@@ -115,11 +115,11 @@ ev_err_t ev_sbatch_set_vbuff_capacity(ev_sbatch *batch, size_t size)
 
     if(!batch->vbuff) {
         batch->vbuff = ev_vbuff_create();
-    }
-
-    if(!batch->vbuff) {
-        ev_error("failed to create vertex buffer");
-        return EV_FAIL;
+    
+        if(!batch->vbuff) {
+            ev_error("failed to create vertex buffer");
+            return EV_FAIL;
+        }
     }
 
     if( ev_vbuff_set_capacity(batch->vbuff, VBUFF_SIZE(size))) {
@@ -197,24 +197,24 @@ int ev_sbatch_add_sprite(ev_sbatch *batch, ev_sprite *s)
 
 void ev_sbatch_destroy(ev_sbatch* s)
 {
-    if( s ) {
-        if( s->program ) {
-            ev_program_destroy(s->program);
-            s->program = NULL;
-        }
-
-        if( s->sprites ) {
-            utarray_free(s->sprites);
-            s->sprites = NULL;
-        }
-
-        if( s->vbuff ) {
-            ev_vbuff_destroy(s->vbuff);
-            s->vbuff = NULL;
-        }
-
-        ev_free(s);
+    assert( s != NULL );
+    
+    if( s->program ) {
+        ev_program_destroy(s->program);
+        s->program = NULL;
     }
+    
+    if( s->sprites ) {
+        utarray_free(s->sprites);
+        s->sprites = NULL;
+    }
+    
+    if( s->vbuff ) {
+        ev_vbuff_destroy(s->vbuff);
+        s->vbuff = NULL;
+    }
+    
+    ev_free(s);
 }
 
 ev_err_t ev_sbatch_load(ev_sbatch *batch, const char *file)
@@ -270,9 +270,6 @@ void ev_sbatch_update(ev_sbatch* batch, float dt)
 void ev_sbatch_render(ev_sbatch *batch, ev_matrix4 *t)
 {
     int pos,tex,transform,translation,opacity;
-
-    if(!batch)
-        return;
 
     ev_vbuff_bind( batch->vbuff );
     glEnable(GL_TEXTURE_2D);

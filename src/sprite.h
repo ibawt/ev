@@ -36,6 +36,7 @@ EV_API int           ev_sprite_fill(ev_sprite*, ev_bvertex*);
 EV_API void          ev_sprite_set_body(ev_sprite *, ev_body *);
 EV_API void          ev_sprite_set_visibilty(ev_sprite *s, ev_bool);
 EV_API ev_bool       ev_sprite_get_visiblity(ev_sprite *s);
+EV_API void          ev_sprite_set_quad(ev_sprite *sprite, float w, float h, float left, float top, float right, float bottom);
 
 #ifdef __cplusplus
 }
