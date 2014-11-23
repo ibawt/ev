@@ -20,6 +20,7 @@
 typedef SSIZE_T ssize_t;
 #define strdup _strdup
 #define snprintf _snprintf
+#undef main
 #endif
 
 #ifdef __cplusplus

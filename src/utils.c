@@ -70,7 +70,7 @@ void *ev_realloc(void *p, size_t size)
 void* ev_malloc(size_t size)
 {
     void *p = malloc(size);
-
+    assert(p != NULL);
 #ifndef NDEBUG
     memset(p, 0, size);
 #endif

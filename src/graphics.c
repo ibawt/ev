@@ -2,6 +2,9 @@
 
 
 struct _ev_graphics {
+#ifdef WIN32
+    int _unused;
+#endif
 };
 
 ev_graphics* ev_graphics_create(void)
