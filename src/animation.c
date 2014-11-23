@@ -86,6 +86,8 @@ void ev_anim_update(ev_anim *a, float dt)
 
 void ev_anim_add_sframe(ev_anim* a, ev_sframe *s)
 {
+    assert(a != NULL);
+
     if( a && s ) {
         if( a->frame_cnt >= a->frame_size ) {
             grow_array(a);
