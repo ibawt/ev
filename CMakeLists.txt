@@ -40,6 +40,8 @@ set(
   src/render_texture.h
   src/graphics.c
   src/graphics.h
+  src/quad_tree.c
+  src/quad_tree.h
   ev_lua.o
   lua_app.o
   lua_body.o

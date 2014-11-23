@@ -6,8 +6,8 @@
 
 static int quadrant_of_point(ev_vec2 *center, ev_vec2 *p)
 {
-    float dx = center->x - p->x;
-    float dy = center->y - p->y;
+    float dx = p->x - center->x;
+    float dy = p->y - center->y;
 
     if( dx < 0 && dy < 0 ) {
         return UPPER_LEFT;
