@@ -2,141 +2,208 @@
 
 #include "quad_tree.h"
 
-#define MAX_WIDTH 4096
-
 static int quadrant_of_point(ev_vec2 *center, ev_vec2 *p)
 {
     float dx = p->x - center->x;
     float dy = p->y - center->y;
 
     if( dx < 0 && dy < 0 ) {
-        return UPPER_LEFT;
+        return EV_UL;
     } else if( dx > 0 && dy < 0 ) {
-        return UPPER_RIGHT;
+        return EV_UR;
     } else if( dx > 0 && dy > 0 ) {
-        return LOWER_RIGHT;
+        return EV_LR;
     } else {
-        return LOWER_LEFT;
+        return EV_LL;
     }
 }
 
-void ev_quad_tree_init(ev_quad_tree *t, float dim, uint32_t leaves_per_node)
+ev_qtree* ev_qtree_create(int leaves_per_node, float dim)
 {
-    assert( t != NULL );
+    ev_qtree *qtree = ev_malloc(sizeof(ev_qtree));
 
-    memset(t, 0, sizeof(ev_quad_tree));
-}
+    if( qtree ) {
+        memset(qtree, 0, sizeof(ev_qtree));
 
-static int in_viewport(ev_quad_tree *b, ev_rect *viewport)
-{
-    ev_rect r;
-
-    r.origin.x = b->pos.x - b->dim/2;
-    r.origin.y = b->pos.y - b->dim/2;
-    r.size.w = b->dim;
-    r.size.h = b->dim;
-
-    return ev_rect_intersects(&r, viewport);
-}
-
-ev_quad_tree *ev_quad_at_point(ev_quad_tree* tree, ev_vec2 *v)
-{
-    int q;
-
-    assert( v != NULL );
-
-    for(;;) {
-        if(!tree)
+        qtree->head.bounds.size.w = dim;
+        qtree->head.bounds.size.h = dim;
+        qtree->head.leaves = ev_malloc(sizeof(ev_qleaf)*leaves_per_node);
+        if( !qtree->head.leaves) {
+            ev_free(qtree);
             return NULL;
+        }
+        memset(qtree->head.leaves, 0, sizeof(ev_qleaf)*leaves_per_node);
 
-        if(!tree->nodes)
-            return tree;
-
-        q = quadrant_of_point(&tree->pos, v);
-
-        assert( q < 4 );
-
-        tree = &tree->nodes[q];
+        qtree->dim = dim;
+        qtree->leaves_per_node = leaves_per_node;
     }
+    return qtree;
 }
 
-static void split_tree(ev_quad_tree *tree)
+/** TODO make this not recursive */
+static void destroy_node(ev_qtree *tree, ev_qnode* node, ev_qtree_fn fn)
 {
-    float target_dim;
-    unsigned i;
+    int i;
 
     assert( tree != NULL );
+    assert( node != NULL );
 
-    tree->nodes = ev_malloc(sizeof(ev_quad_tree)*4);
-    memset(tree->nodes, 0, sizeof(ev_quad_tree)*4);
-
-    target_dim = tree->dim / 2;
-
-    for( i = 0 ; i < 4 ; ++i ) {
-        tree->nodes[i].dim = target_dim;
+    if( fn ) {
+        fn(tree, node);
     }
 
-    tree->nodes[UPPER_LEFT].pos.x = tree->pos.x - target_dim;
-    tree->nodes[UPPER_LEFT].pos.y = tree->pos.y - target_dim;
+    if( node->leaves ) {
+        if(!fn) {
+            /* default delete function if nothing specified */
+            for(i = 0 ; i < node->leaf_cnt ; ++i) {
+                ev_free(node->leaves[i]);
+            }
+        }
+        ev_free(node->leaves);
+    }
 
-    tree->nodes[UPPER_RIGHT].pos.x = tree->pos.x + target_dim;
-    tree->nodes[UPPER_RIGHT].pos.y = tree->pos.y - target_dim;
-
-    tree->nodes[LOWER_RIGHT].pos.x = tree->pos.x + target_dim;
-    tree->nodes[LOWER_RIGHT].pos.y = tree->pos.y + target_dim;
-
-    tree->nodes[LOWER_LEFT].pos.x = tree->pos.x - target_dim;
-    tree->nodes[LOWER_LEFT].pos.y = tree->pos.y + target_dim;
-
-    for( i = 0 ; i < tree->leaf_cnt ; ++i ) {
-        int qq = quadrant_of_point(&tree->pos, &tree->leaves[i]->pos);
-        ev_quad_tree_add(tree->nodes + qq, tree->leaves[i]);
-        tree->leaves[i] = NULL;
+    for(i = 0 ; i < 4 ; ++i) {
+        if( node->children[i] ) {
+            destroy_node(tree, node->children[i], fn);
+            ev_free(node->children[i]);
+        }
     }
 }
 
-ev_quad_tree* ev_quad_tree_add(ev_quad_tree *blob, ev_quad_leaf *t)
+void ev_qtree_destroy(ev_qtree *tree, ev_qtree_fn fn)
 {
+    assert(tree != NULL);
+
+    destroy_node(tree, &tree->head, fn);
+    ev_free(tree);
+}
+
+static int in_viewport(ev_qnode *b, ev_rect *viewport)
+{
+    return ev_rect_intersects(&b->bounds, viewport);
+}
+
+static ev_err_t split_node(ev_qtree *tree, ev_qnode *node)
+{
+    float target_dim;
+    int i;
+
+    assert(node!= NULL );
+
+    target_dim = node->bounds.size.w / 2;
+
+    assert(target_dim >= 1.0f );
+
+    for(i = 0 ; i < 4 ; ++i ) {
+        ev_qnode *n = ev_malloc(sizeof(ev_qnode));
+        memset(n, 0, sizeof(ev_qnode));
+        node->children[i] = n;
+
+        n->leaves = ev_malloc(sizeof(ev_qleaf*)*tree->leaves_per_node);
+        if(!n->leaves) {
+            return EV_NOMEM;
+        }
+        memset(n->leaves, 0, sizeof(ev_qleaf*)*tree->leaves_per_node);
+
+        n->bounds.size.w = target_dim;
+        n->bounds.size.h = target_dim;
+    }
+
+    node->children[EV_UL]->bounds.origin.x = node->bounds.origin.x - target_dim;
+    node->children[EV_UL]->bounds.origin.y = node->bounds.origin.y - target_dim;
+
+    node->children[EV_UR]->bounds.origin.x = node->bounds.origin.x + target_dim;
+    node->children[EV_UR]->bounds.origin.y = node->bounds.origin.y - target_dim;
+
+    node->children[EV_LR]->bounds.origin.x = node->bounds.origin.x + target_dim;
+    node->children[EV_LR]->bounds.origin.y = node->bounds.origin.y + target_dim;
+
+    node->children[EV_LL]->bounds.origin.x = node->bounds.origin.x - target_dim;
+    node->children[EV_LL]->bounds.origin.y = node->bounds.origin.y + target_dim;
+
+    for(i = 0 ; i < node->leaf_cnt ; ++i ) {
+        int qq = quadrant_of_point(&node->bounds.origin, &node->leaves[i]->pos);
+
+        node->children[qq]->leaves[node->children[qq]->leaf_cnt++] = node->leaves[i];
+    }
+    ev_free(node->leaves);
+
+    node->leaves = NULL;
+    node->leaf_cnt = 0;
+
+    return EV_OK;
+}
+
+ev_err_t ev_qtree_remove_leaf(ev_qtree *tree, ev_qleaf *t)
+{
+    return EV_FAIL;
+}
+
+ev_err_t ev_qtree_add_leaf(ev_qtree *tree, ev_qleaf *t)
+{
+    ev_qnode *node;
+
+    assert( tree != NULL );
     assert( t != NULL );
 
-    for(;;) {
-        assert( blob != NULL );
+    node = &tree->head;
 
-        int q = quadrant_of_point(&blob->pos, &t->pos);
+    while(node) {
+        int q = quadrant_of_point(&node->bounds.origin, &t->pos);
 
-        if( !blob->nodes ) {
+        if( node->leaves ) {
+            ev_err_t err;
             /* node hasn't been split yet */
-            if( blob->leaf_cnt < MAX_PER_NODE ) {
-                blob->leaves[blob->leaf_cnt++] = t;
-                return blob;
-            } else {
-                split_tree(blob);
-
-                return ev_quad_tree_add(blob->nodes + q, t);
+            if( node->leaf_cnt < tree->leaves_per_node ) {
+                node->leaves[node->leaf_cnt++] = t;
+                return EV_OK;
             }
-        } else {
-            /* not in this one so look again in the subdivide */
-            blob = &blob->nodes[q];
+
+            if( node->bounds.size.w < 1.0f) {
+                return EV_FAIL;
+            }
+
+            if( (err = split_node(tree, node)) ) {
+                return err;
+            }
         }
+
+        node = node->children[q];
     }
+
+    return EV_FAIL;
 }
-int ev_quad_foreach_in_viewport(ev_quad_tree *t, ev_rect *v, ev_quad_fn fn)
+
+static int node_in_viewport(ev_qnode *node, ev_rect *bounds)
 {
-    uint32_t cnt = 0;
-
-    if(!t) {
-        return 0;
+    if(!bounds) {
+        return 1;
     }
+    return ev_rect_intersects(&node->bounds, bounds);
+}
 
-    if( t->nodes ) {
-        if( in_viewport(t, v ) ) {
-            for( int i = 0 ; i < 4 ; ++i ) {
-                cnt += ev_quad_foreach_in_viewport(&t->nodes[i], v, fn);
-            }
+static int node_walk(ev_qtree *tree, ev_qnode *node, ev_rect *bounds, ev_qtree_fn fn)
+{
+    int items = 0;
+
+    if(node && node_in_viewport(node, bounds)) {
+        int i;
+
+        if( node->leaves ) {
+            fn(tree, node);
+            items += node->leaf_cnt;
         }
-    } else {
-        fn(t, t->leaves, t->leaf_cnt);
-        cnt += t->leaf_cnt;
+        for( i = 0 ; i < 4 ; ++i ) {
+            items += node_walk(tree, node->children[i], bounds, fn);
+        }
     }
-    return cnt;
+    return items;
+}
+
+int ev_qtree_walk(ev_qtree *tree, ev_rect *bounds, ev_qtree_fn fn)
+{
+    assert( tree != NULL );
+    assert( fn != NULL );
+
+    return node_walk(tree, &tree->head, bounds, fn);
 }

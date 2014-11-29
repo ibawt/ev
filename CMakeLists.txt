@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 Project ( ev )
 SET( ev_SOURCE_DIR src)
+enable_testing()
 set(
   SOURCES
   src/main.c
@@ -42,6 +43,8 @@ set(
   src/graphics.h
   src/quad_tree.c
   src/quad_tree.h
+  src/rect.c
+  src/rect.h
   ev_lua.o
   lua_app.o
   lua_body.o
@@ -154,6 +157,7 @@ target_link_libraries(ev
   jansson
   )
 
+add_subdirectory(test)
 
 # this should be cleaner somehow
 add_custom_command(
