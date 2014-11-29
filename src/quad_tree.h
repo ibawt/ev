@@ -9,35 +9,41 @@ extern "C" {
 
 typedef struct {
     ev_vec2 pos;
-    void   *data;
-} ev_quad_leaf;
+    void   *data; /* user data */
+} ev_qleaf;
 
-#define MAX_PER_NODE 4
+typedef struct _ev_qnode {
+    ev_qleaf  **leaves; /* if it has children this will be NULL */
+    int         leaf_cnt;
+    ev_rect     bounds;
 
-typedef struct _ev_quad_tree {
-    ev_quad_leaf *leaves[MAX_PER_NODE];
-    uint32_t      leaf_cnt;
-    uint32_t      leaves_per_node;
+    struct _ev_qnode *children[4];
+} ev_qnode;
 
-    float   dim;
-    ev_vec2 pos;
-    struct _ev_quad_tree *nodes;
-} ev_quad_tree;
+typedef struct {
+    int       leaves_per_node;
+    float     dim;
+    ev_qnode  head;
+    int       count;
+} ev_qtree;
 
+/* The 4 quardrants  UL == Upper Left */
 enum {
-    UPPER_LEFT  = 0,
-    UPPER_RIGHT = 2,
-    LOWER_RIGHT = 4,
-    LOWER_LEFT  = 8
+    EV_UL  = 0,
+    EV_UR,
+    EV_LR,
+    EV_LL
 };
 
-typedef void (*ev_quad_fn)(ev_quad_tree *this, ev_quad_leaf **l, int num_leaves);
+typedef void (*ev_qtree_fn)(ev_qtree *tree, ev_qnode *node);
 
-void          ev_quad_tree_init(ev_quad_tree *t, float dim, uint32_t leaves_per_node);
-void          ev_quad_tree_destroy(ev_quad_tree *t);
-ev_quad_tree *ev_quad_tree_add(ev_quad_tree *t, ev_quad_leaf *l);
-int           ev_quad_foreach_in_viewport(ev_quad_tree *t, ev_rect *v, ev_quad_fn fn);
-ev_quad_tree *ev_quad_at_point(ev_quad_tree *t, ev_vec2 *p);
+ev_qtree* ev_qtree_create(int leaves_per_node, float dim);
+void      ev_qtree_destroy(ev_qtree *tree, ev_qtree_fn fn);
+
+ev_err_t ev_qtree_add_leaf(ev_qtree *qtree, ev_qleaf *leaf);
+ev_err_t ev_qtree_remove_leaf(ev_qtree *qtree, ev_qleaf *leaf);
+
+int      ev_qtree_walk(ev_qtree *qtree, ev_rect *bounds, ev_qtree_fn fn);
 
 #ifdef __cplusplus
 }

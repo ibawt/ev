@@ -3,11 +3,7 @@
 #include "texture.h"
 #include "ev_lua.h"
 
-#ifdef WIN32
 #define COLOR_FMT GL_RGBA
-#else
-#define COLOR_FMT GL_BGRA
-#endif
 
 struct _ev_texture
 {
