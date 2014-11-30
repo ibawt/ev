@@ -18,3 +18,11 @@ build
 /vendor/Box2D/CTestTestfile.cmake
 /vendor/jansson/CTestTestfile.cmake
 /vendor/jansson/include/
+/.ninja_deps
+/.ninja_log
+/ev_lua
+*.a
+*.o
+/test/test_animation
+/test/test_matrix4
+/test/test_qtree
