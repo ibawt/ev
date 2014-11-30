@@ -11,3 +11,10 @@ build
 *~
 /.DS_Store
 /xcodebuild/
+/CTestTestfile.cmake
+/build.ninja
+/rules.ninja
+/test/CTestTestfile.cmake
+/vendor/Box2D/CTestTestfile.cmake
+/vendor/jansson/CTestTestfile.cmake
+/vendor/jansson/include/
