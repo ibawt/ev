@@ -28,8 +28,8 @@ ev_err_t ev_arraylist_push_ex(ev_arraylist *al, void *d);
 
 #define ev_arraylist_pop(_p) ( (_p)->top ? (_p)->buff[(_p)->top-- - 1] : NULL )
 
-void     ev_arraylist_insert(ev_arraylist *al, int index, void *d);
-void     ev_arraylist_remove(ev_arraylist *al, int elem);
+void     ev_arraylist_insert(ev_arraylist *al, size_t index, void *d);
+void     ev_arraylist_remove(ev_arraylist *al, size_t index);
 
 #define ev_arraylist_clear(_p) (_p)->top = 0
 

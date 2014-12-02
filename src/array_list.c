@@ -58,7 +58,7 @@ ev_err_t ev_arraylist_push_ex(ev_arraylist *al, void *d)
 
 void ev_arraylist_insert(ev_arraylist *al, size_t index, void *d)
 {
-    assert(index < al->top);
+    assert(index < (al->top+1));
 
     if( al->top >= al->len ) {
         grow_list(al);
@@ -70,7 +70,7 @@ void ev_arraylist_insert(ev_arraylist *al, size_t index, void *d)
     al->top++;
 }
 
-void ev_arraylist_remove(ev_arraylist *al, int index)
+void ev_arraylist_remove(ev_arraylist *al, size_t index)
 {
     memmove(al->buff + index, al->buff + index + 1, (al->top - index - 1)*sizeof(void*));
     al->top--;
