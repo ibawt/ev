@@ -14,3 +14,7 @@ add_test(animationtest test_animation)
 add_executable(test_qtree qtree_test.c)
 target_link_libraries(test_qtree cmocka ev)
 add_test(qtreetest test_qtree)
+
+add_executable(test_arraylist arraylist_test.c)
+target_link_libraries(test_arraylist cmocka)
+add_test(arraylisttest test_arraylist)

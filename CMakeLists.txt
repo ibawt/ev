@@ -45,6 +45,8 @@ set(
   src/quad_tree.h
   src/rect.c
   src/rect.h
+  src/array_list.h
+  src/array_list.c
   ev_lua.o
   lua_app.o
   lua_body.o

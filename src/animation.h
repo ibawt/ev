@@ -14,7 +14,7 @@ typedef enum {
     EV_REVERSE = 2,
     EV_PING_PONG = 3
 } ev_anim_mode;
-    
+
 typedef struct {
     float        time;
     ev_anim_mode mode;

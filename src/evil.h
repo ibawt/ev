@@ -54,6 +54,7 @@ typedef struct {
 typedef enum {
     EV_OK = 0,
     EV_FAIL,
+    EV_INVALID_PARAM,
     EV_NOMEM
 } ev_err_t;
 
