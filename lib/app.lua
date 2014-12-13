@@ -11,7 +11,8 @@ typedef enum {
 
 typedef struct {
     ev_event_type type;
-    const char* key;
+    uint32_t key;
+    const char *key_name;
     int x;
     int y;
 } ev_event;
@@ -58,7 +59,8 @@ function App:__index(key)
 end
 
 function App:keyup(event)
-   local key = ffi.string(event.key)
+   assert(event.key_name, "key_name is NULL")
+   local key = ffi.string(event.key_name)
    self.key_state[key] = false
 
    if self.onkeyup then
@@ -67,7 +69,8 @@ function App:keyup(event)
 end
 
 function App:keydown(event)
-   local key = ffi.string(event.key)
+   assert(event.key_name, "key_name is NULL")
+   local key = ffi.string(event.key_name)
    self.key_state[key] = true
    if self.onkeydown then
       self.onkeydown(key)

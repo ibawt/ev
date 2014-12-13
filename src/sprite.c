@@ -14,7 +14,9 @@ void ev_sprite_set_quad(ev_sprite *sprite, float w, float h, float left, float t
     ev_sframe *frame;
 
     frame = ev_sframe_create_quad(w, h, left, top, right, bottom);
-
+    if(!sprite->animation) {
+        sprite->animation = ev_anim_create();
+    }
     ev_anim_add_sframe(sprite->animation, frame);
 }
 

@@ -161,6 +161,11 @@ void ev_app_swap_buffers(ev_app *app)
     }
 }
 
+static void fill_keyname(ev_event *event)
+{
+    event->key_name = SDL_GetKeyName(event->key);
+}
+
 ev_bool ev_app_poll_event(ev_app *app, ev_event *event)
 {
     SDL_Event e;
@@ -172,10 +177,12 @@ ev_bool ev_app_poll_event(ev_app *app, ev_event *event)
         case SDL_KEYDOWN:
             event->type = EV_KEYDOWN;
             event->key = e.key.keysym.sym;
+            fill_keyname(event);
             break;
         case SDL_KEYUP:
             event->type = EV_KEYUP;
             event->key = e.key.keysym.sym;
+            fill_keyname(event);
             break;
         case SDL_QUIT:
             event->type = EV_QUIT;
