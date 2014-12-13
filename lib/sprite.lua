@@ -35,7 +35,7 @@ typedef struct {
   ev_body *body;
 } ev_sprite;
 
-ev_sprite*    ev_sprite_create(void);
+void          ev_sprite_init(ev_sprite *);
 ev_vec2*      ev_sprite_get_position(ev_sprite*);
 void          ev_sprite_set_position(ev_sprite*, float x, float y);
 float         ev_sprite_get_rotation(ev_sprite*);
@@ -47,7 +47,7 @@ void          ev_sprite_render(ev_sprite*);
 void          ev_sprite_set_body(ev_sprite *, ev_body *);
 void          ev_sprite_set_quad(ev_sprite *sprite, float w, float h, float left, float top, float right, float bottom);
 ]]
-ffi.metatype("ev_sprite", { __gc = function(self) C.ev_sprite_destroy(self) end})
+local ev_sprite = ffi.metatype("ev_sprite", { __gc = function(self) C.ev_sprite_destroy(self) end})
 
 local Sprite = {}
 Sprite.__index = Sprite
@@ -94,7 +94,8 @@ function Sprite:__newindex(key, val)
 end
 
 function Sprite.create()
-   local ev_sprite = C.ev_sprite_create()
+   local ev_sprite = ev_sprite()
+   C.ev_sprite_init(ev_sprite)
    local sprite = {}
    setmetatable(sprite, Sprite)
 

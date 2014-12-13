@@ -316,13 +316,10 @@ void ev_sbatch_destroy_sprite(ev_sbatch *s, int index)
 
 void ev_sbatch_set_blend_func(ev_sbatch *s, int dst, int src)
 {
-    if( s ) {
-        if( src == GL_ONE_MINUS_SRC_ALPHA ) {
-            ev_log("yup");
-        }
-        s->blend_func.dst = dst;
-        s->blend_func.src = src;
-    }
+    assert(s);
+
+    s->blend_func.dst = dst;
+    s->blend_func.src = src;
 }
 
 
