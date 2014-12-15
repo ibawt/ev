@@ -77,14 +77,18 @@ function App:keydown(event)
    end
 end
 
+function App:quit()
+   self.keep_running = false
+end
+
 function App:show()
-   local keep_running = true
+   self.keep_running = true
    local num_frames = 0
    local start_time = self:get_ticks()
    local dt = 0
    local event = ffi.new("ev_event")
 
-   while keep_running do
+   while self.keep_running do
       local t1 = self:get_ticks()
 
       while self:poll_event(event) do
@@ -115,6 +119,7 @@ function App:show()
 
       self.fps = num_frames / (( self:get_ticks() - start_time) / 1000)
    end
+   C.ev_app_quit(self._ev_app)
 end
 
 function App:__newindex(key, val)

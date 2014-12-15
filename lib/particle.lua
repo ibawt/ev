@@ -48,7 +48,7 @@ function System:destroy_particle(index)
 end
 
 function System:get_body_contacts()
-   local n = C.ev_particle_system_body_contact_count(self._ev_system)
+   local n = C.ev_particle_system_body_contact_count(self._ev_system)   
    local contacts = {}
    for i=0,n-1 do
       local bc = ffi.new("ev_particle_body_contact")
@@ -58,6 +58,8 @@ function System:get_body_contacts()
 
    return contacts
 end
+
+
 function System:spawn_particle(options)
    return C.ev_particle_create(self._ev_system,
                                options.group._ev_group,

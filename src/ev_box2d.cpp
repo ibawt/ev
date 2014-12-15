@@ -22,7 +22,6 @@ public:
     virtual bool ShouldCollide(b2Fixture* fixture,
                                b2ParticleSystem* particleSystem,
                                int32 particleIndex) {
-
         return true;
     }
     virtual bool ShouldCollide(b2ParticleSystem* particleSystem, int32 particleIndexA, int32 particleIndexB) {
@@ -65,7 +64,6 @@ public:
         void *key = b;
         contact *c;
         HASH_FIND_PTR(head, &key, c);
-
         if( c ) {
             HASH_DEL( head, c);
             ev_free(c);
@@ -114,9 +112,13 @@ static ev_vec2 box2d_to_vec2(b2Vec2 v)
     return vv;
 }
 
-ev_vec2 convert_vector(b2Vec2 v)
+static ev_vec2 convert_vector(const b2Vec2& v)
 {
-    ev_vec2 vv = { v.x, v.y };
+    ev_vec2 vv;
+
+    vv.x = v.x * PTM_RATIO;
+    vv.y = v.y * PTM_RATIO;
+    
     return vv;
 }
 
@@ -154,8 +156,10 @@ int ev_world_get_contacts(ev_world *world, ev_contact *contacts, int max)
 
 void ev_world_render(ev_world *world, ev_matrix4 *t)
 {
-    world->debug_draw->SetTransform(t);
-    world->world.DrawDebugData();
+    if( world->debug_draw) {
+        world->debug_draw->SetTransform(t);
+        world->world.DrawDebugData();
+    }
 }
 
 void ev_world_set_debug_draw(ev_world* world, ev_bool b)
@@ -418,6 +422,7 @@ int ev_particle_system_body_contact_at(ev_particle_system *s, int index, ev_part
     bc->normal = convert_vector(c->normal);
     bc->mass = c->mass;
     bc->position = convert_vector( *(s->system->GetPositionBuffer() + c->index));
+    
     return 0;
 }
 

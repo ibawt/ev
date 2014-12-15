@@ -15,7 +15,7 @@ void      ev_world_destroy(ev_world*);
 ev_vec2   ev_world_get_gravity(ev_world*);
 void      ev_world_set_gravity(ev_vec2);
 void      ev_world_set_dimensions(ev_world*, float w, float h);
-bool   ev_world_intersects(ev_world *, ev_vec2 point, ev_size size);
+bool      ev_world_intersects(ev_world *, ev_vec2 point, ev_size size);
 void      ev_world_update(ev_world *, float);
 void      ev_world_render(ev_world *, ev_matrix4*);
 int       ev_world_get_contacts(ev_world*, ev_contact*, int);
@@ -47,6 +47,7 @@ end
 function World:update(dt)
    C.ev_world_update(self._ev_world, dt)
 
+   -- this is shitty
    self.num_contacts = C.ev_world_get_contacts(self._ev_world, self.contacts, 256)
 
    for i=0,self.num_contacts-1 do

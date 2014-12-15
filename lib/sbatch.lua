@@ -36,12 +36,16 @@ ev_err_t   ev_sbatch_load(ev_sbatch*, const char*);
 ev_sframe* ev_sbatch_get_sframe(ev_sbatch*, const char* );
 void       ev_sbatch_set_texture(ev_sbatch*, ev_texture*);
 ev_err_t   ev_sbatch_add_sprite(ev_sbatch*, ev_sprite*);
+void       ev_sbatch_destroy_sprite(ev_sbatch *s, int );
 void       ev_sbatch_set_program(ev_sbatch*, ev_program* );
 void       ev_sbatch_set_matrix4(ev_sbatch*, ev_matrix4 *);
 ev_err_t   ev_sbatch_set_vbuff_capacity(ev_sbatch*, size_t);
+int        ev_sbatch_get_vbuff_capacity(ev_sbatch*);
 void       ev_sbatch_update(ev_sbatch *, float);
 int        ev_sbatch_num_filled_sprites(ev_sbatch *s);
 void       ev_sbatch_set_blend_func(ev_sbatch *s, blend dst, blend src);
+ev_bvertex* ev_sbatch_lock(ev_sbatch *batch);
+void       ev_sbatch_unlock(ev_sbatch*, int);
 ]]
 ffi.metatype("ev_sbatch", { __gc = function(self) C.ev_sbatch_destroy(self) end })
 
@@ -62,7 +66,9 @@ function SpriteBatch:set_blend_func(dst, src)
 end
 
 function SpriteBatch:update(dt)
-   C.ev_sbatch_update(self._ev_sbatch, dt)
+   for _, sprite in ipairs(self.sprites) do
+      sprite:update(dt)
+   end
 end
 
 function SpriteBatch:set_texture(texture)
@@ -70,14 +76,27 @@ function SpriteBatch:set_texture(texture)
 end
 
 function SpriteBatch:destroy_sprite(index)
-   C.ev_sbatch_destroy_sprite(self_.ev_sbatch, index)
+   table.remove(self.sprites, index)
 end
 
 function SpriteBatch:add_sprite(sprite)
-   return C.ev_sbatch_add_sprite(self._ev_sbatch, sprite._ev_sprite)
+   local cap = C.ev_sbatch_get_vbuff_capacity(self._ev_sbatch)
+   if cap <= #self.sprites + 1 then
+      C.ev_sbatch_set_vbuff_capacity(self._ev_sbatch, cap * 3 / 2)
+   end
+   self.sprites[#self.sprites+1] = sprite
 end
 
 function SpriteBatch:render(g)
+   local verts = C.ev_sbatch_lock(self._ev_sbatch)
+   local n = 0
+   for i, sprite in ipairs(self.sprites) do
+      if sprite.visible then
+         n = n + sprite:fill(verts + n)
+      end
+   end
+   C.ev_sbatch_unlock(self._ev_sbatch, n/6)
+   
    C.ev_sbatch_render(self._ev_sbatch, g.transform)
 end
 
@@ -109,7 +128,7 @@ function SpriteBatch.create()
    local sbatch = {}
    setmetatable(sbatch, SpriteBatch)
    sbatch._ev_sbatch = C.ev_sbatch_create()
-
+   sbatch.sprites = {}
    sbatch.name = "Sprite Batch"
    return sbatch
 end

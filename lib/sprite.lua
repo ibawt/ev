@@ -4,6 +4,18 @@ local ev
 
 ffi.cdef[[
 typedef struct {
+    float x;
+    float y;
+    float u;
+    float v;
+    float rotation;
+    float scale;
+    float tx;
+    float ty;
+    float opacity;
+} ev_bvertex;
+
+typedef struct {
    float x;
    float y;
 } ev_vec2;
@@ -46,8 +58,9 @@ void          ev_sprite_update(ev_sprite*, float);
 void          ev_sprite_render(ev_sprite*);
 void          ev_sprite_set_body(ev_sprite *, ev_body *);
 void          ev_sprite_set_quad(ev_sprite *sprite, float w, float h, float left, float top, float right, float bottom);
+int           ev_sprite_fill(ev_sprite*, ev_bvertex*);
 ]]
-local ev_sprite = ffi.metatype("ev_sprite", { __gc = function(self) C.ev_sprite_destroy(self) end})
+local ev_sprite = ffi.metatype("ev_sprite", {})
 
 local Sprite = {}
 Sprite.__index = Sprite
@@ -70,6 +83,14 @@ local setters = {
       self._ev_sprite.opacity = val
    end
 }
+
+function Sprite:fill(verts)
+   return C.ev_sprite_fill(self._ev_sprite, verts)
+end
+
+function Sprite:update(dt)
+   C.ev_sprite_update(self._ev_sprite, dt)
+end
 
 function Sprite:__index(key)
    if key == 'position' then
@@ -94,11 +115,11 @@ function Sprite:__newindex(key, val)
 end
 
 function Sprite.create()
-   local ev_sprite = ev_sprite()
+   local ev_sprite = ffi.new('ev_sprite')
    C.ev_sprite_init(ev_sprite)
    local sprite = {}
    setmetatable(sprite, Sprite)
-
+   sprite.visible = true
    sprite._ev_sprite = ev_sprite
    return sprite
 end

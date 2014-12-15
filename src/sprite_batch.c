@@ -129,6 +129,13 @@ ev_err_t ev_sbatch_set_vbuff_capacity(ev_sbatch *batch, size_t size)
     return EV_OK;
 }
 
+int ev_sbatch_get_vbuff_capacity(ev_sbatch* s)
+{
+    assert( s );
+    size_t cap = ev_vbuff_get_capacity(s->vbuff);
+    return cap / VBUFF_SIZE(1);
+}
+
 ev_sbatch* ev_sbatch_create(void)
 {
     ev_sbatch* s = ev_malloc(sizeof(ev_sbatch));

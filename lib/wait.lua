@@ -33,7 +33,7 @@ function Wait.wait_for_signal(signal)
 end
 
 function Wait.wrap(fn)
-   local co = courtine.create(fn)
+   local co = coroutine.create(fn)
    return coroutine.resume(co)
 end
 
