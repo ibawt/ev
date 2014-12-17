@@ -13,7 +13,7 @@
 #include "animation.h"
 
 #define SPRITE_BATCH_MAX 1024*10
-#define GROW_FAC 128
+#define GROW_FAC 4
 
 #define VBUFF_SIZE(n) ((n)*sizeof(ev_bvertex)*EV_SPRITE_NUM_VERTS)
 
@@ -301,9 +301,9 @@ void ev_sbatch_render(ev_sbatch *batch, ev_matrix4 *t)
     glVertexAttribPointer(opacity, 1, GL_FLOAT, GL_TRUE, sizeof(ev_bvertex), (void*)offsetof(ev_bvertex, opacity));
     glEnable(GL_BLEND);
     glBlendFunc(batch->blend_func.src, batch->blend_func.dst);
-
-    glDrawArrays(GL_TRIANGLES, 0, batch->num_filled_sprites*EV_SPRITE_NUM_VERTS);
-
+    
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, batch->num_filled_sprites*EV_SPRITE_NUM_VERTS);
+    
     glDisableVertexAttribArray(opacity);
     glDisableVertexAttribArray(translation);
     glDisableVertexAttribArray(transform);
