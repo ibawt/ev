@@ -10,7 +10,6 @@
 #define sscanf sscanf_s
 #endif
 
-
 static void fill_batch_verts(ev_sframe* frame)
 {
     int i;
