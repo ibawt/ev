@@ -82,7 +82,7 @@ end
 function SpriteBatch:add_sprite(sprite)
    local cap = C.ev_sbatch_get_vbuff_capacity(self._ev_sbatch)
    if cap <= #self.sprites + 1 then
-      C.ev_sbatch_set_vbuff_capacity(self._ev_sbatch, cap * 3 / 2)
+      C.ev_sbatch_set_vbuff_capacity(self._ev_sbatch, math.floor(cap * 3 / 2))
    end
    self.sprites[#self.sprites+1] = sprite
 end
@@ -95,7 +95,7 @@ function SpriteBatch:render(g)
          n = n + sprite:fill(verts + n)
       end
    end
-   C.ev_sbatch_unlock(self._ev_sbatch, n/6)
+   C.ev_sbatch_unlock(self._ev_sbatch, n/4)
    
    C.ev_sbatch_render(self._ev_sbatch, g.transform)
 end

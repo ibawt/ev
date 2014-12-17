@@ -34,29 +34,31 @@ static void fill_batch_verts(ev_sframe* frame)
     int i;
     ev_bvertex* bv = frame->batch_verts;
 
+    assert(bv);
+    
+    /* top left */
     bv[0].x = -frame->size.w/2;
     bv[0].y = -frame->size.h/2;
     bv[0].u = frame->texture_rect.origin.x;
     bv[0].v = frame->texture_rect.origin.y;
 
-    bv[1].x = frame->size.w/2;
-    bv[1].y = -frame->size.h/2;
-    bv[1].u = frame->texture_rect.origin.x + frame->texture_rect.size.w;
-    bv[1].v = frame->texture_rect.origin.y;
+    /* bottom left */
+    bv[1].x = -frame->size.w/2;
+    bv[1].y = frame->size.h/2;
+    bv[1].u = frame->texture_rect.origin.x;
+    bv[1].v = frame->texture_rect.origin.y + frame->texture_rect.size.h;
 
+    /* top right */
     bv[2].x = frame->size.w/2;
-    bv[2].y = frame->size.h/2;
+    bv[2].y = -frame->size.h/2;
     bv[2].u = frame->texture_rect.origin.x + frame->texture_rect.size.w;
-    bv[2].v = frame->texture_rect.origin.y + frame->texture_rect.size.h;
+    bv[2].v = frame->texture_rect.origin.y;
 
-    //bv[3] = bv[2];
-
-    bv[3].x = -frame->size.w/2;
+    /* bottom right */
+    bv[3].x = frame->size.w/2;
     bv[3].y = frame->size.h/2;
-    bv[3].u = frame->texture_rect.origin.x;
+    bv[3].u = frame->texture_rect.origin.x + frame->texture_rect.size.w;
     bv[3].v = frame->texture_rect.origin.y + frame->texture_rect.size.h;
-
-    //bv[5] = bv[0];
 
     for( i = 0 ; i < EV_SPRITE_NUM_VERTS ; ++i ) {
         bv[i].scale = 1.0f;
