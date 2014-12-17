@@ -41,6 +41,8 @@ extern "C" {
 #define EV_API __attribute__((visibility ("default")))
 #endif
 
+#define EV_SPRITE_NUM_VERTS 4
+
 EV_API void *ev_malloc(size_t);
 EV_API void *ev_realloc(void *, size_t);
 EV_API void  ev_free(void *);
@@ -90,6 +92,7 @@ typedef struct {
     ev_size size;
 } ev_rect;
 
+/* TODO are these event structs being used anymore? */
 typedef struct {
     void *opaque;
 } ev_key_event;
@@ -114,8 +117,6 @@ typedef struct _ev_sbatch ev_sbatch;
 typedef struct _ev_program ev_program;
 typedef struct _ev_vbuff   ev_vbuff;
 typedef struct _ev_shader ev_shader;
-typedef struct _ev_sframe ev_sframe;
-typedef struct _ev_ssheet ev_ssheet;
 typedef struct _ev_tilemap ev_tilemap;
 
 /* physics */

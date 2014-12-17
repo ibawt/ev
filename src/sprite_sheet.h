@@ -2,10 +2,30 @@
 #define EV_SPRITE_SHEET_H_
 
 #include "evil.h"
+#include "utils.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef struct _ev_sframe
+{
+    const char *key;
+    ev_size     source_size;
+    ev_size     size;
+    int         trimmed;
+    ev_rect     texture_rect;
+    ev_vec2     offset;
+    ev_bool     rotated;
+    ev_rect     color_rect;
+    ev_bvertex  batch_verts[EV_SPRITE_NUM_VERTS];
+} ev_sframe;
+
+typedef struct _ev_ssheet
+{
+    ev_smap *frames;
+    ev_smap *metadata;
+} ev_ssheet;
 
 EV_API ev_sframe* ev_sframe_create_quad(float w, float h, float left, float top,float right,float bottom);
 EV_API ev_sframe*  ev_sframe_create(const char *);

@@ -3,6 +3,8 @@ local C
 local ev
 
 ffi.cdef[[
+typedef int ev_bool;
+      
 typedef struct {
     float x;
     float y;
@@ -37,6 +39,19 @@ typedef struct {
 
 typedef struct ev_body ev_body;
 
+typedef struct _ev_sframe
+{
+    const char *key;
+    ev_size     source_size;
+    ev_size     size;
+    int         trimmed;
+    ev_rect     texture_rect;
+    ev_vec2     offset;
+    ev_bool     rotated;
+    ev_rect     color_rect;
+    ev_bvertex  batch_verts[4];
+} ev_sframe;
+
 typedef struct {
   ev_vec2  position;
   float    rotation;
@@ -45,8 +60,9 @@ typedef struct {
   float    opacity;
   ev_anim *animation;
   ev_body *body;
-} ev_sprite;
+               } ev_sprite;
 
+ev_sframe *   ev_sframe_create_quad(float w, float h, float left,float  top,float right,float  bottom);
 void          ev_sprite_init(ev_sprite *);
 ev_vec2*      ev_sprite_get_position(ev_sprite*);
 void          ev_sprite_set_position(ev_sprite*, float x, float y);
@@ -66,37 +82,50 @@ local Sprite = {}
 Sprite.__index = Sprite
 
 local setters = {
-   animation = function(self, val)
-      C.ev_sprite_set_animation(self._ev_sprite, val._ev_anim)
-   end,
-   rotation = function(self, val)
-      C.ev_sprite_set_rotation(self._ev_sprite, val)
-   end,
    body = function(self, val)
     C.ev_sprite_set_body(self._ev_sprite, val._ev_body)
     rawset(self, 'body', val)
    end,
-   scale = function(self, val)
-      self._ev_sprite.scale = val
-   end,
-   opacity = function(self, val)
-      self._ev_sprite.opacity = val
-   end
 }
 
-function Sprite:fill(verts)
-   return C.ev_sprite_fill(self._ev_sprite, verts)
+function Sprite:fill(dst)
+   -- need to force it to a pointer
+   local src = self.animation:current_frame().batch_verts + 0
+   
+   local r = self.rotation or 0
+   local s = self.scale or 1
+   local p = self.position
+   local o = self.opacity or 1
+   
+   for i=0,3 do
+      dst.x = src.x
+      dst.y = src.y
+      dst.u = src.u
+      dst.v = src.v
+      dst.rotation = r
+      dst.scale = s
+      dst.tx = p.x
+      dst.ty = p.y
+      dst.opacity = o
+
+      dst = dst + 1
+      src = src + 1
+   end
+
+   return 4
 end
 
 function Sprite:update(dt)
    C.ev_sprite_update(self._ev_sprite, dt)
+
+   if self.animation then
+      self.animation:update(dt)
+   end
 end
 
 function Sprite:__index(key)
    if key == 'position' then
       return C.ev_sprite_get_position(self._ev_sprite)
-   elseif key == 'opacity' then
-      return self._ev_sprite.opacity
    else
       return getmetatable(self)[key] or rawget(self, key)
    end
@@ -120,12 +149,18 @@ function Sprite.create()
    local sprite = {}
    setmetatable(sprite, Sprite)
    sprite.visible = true
+   sprite.opacity = 1
+   sprite.rotation = 0
+   sprite.scale = 1
    sprite._ev_sprite = ev_sprite
    return sprite
 end
 
 function Sprite:set_quad(w, h, left, top, right, bottom)
-   C.ev_sprite_set_quad(self._ev_sprite, w, h, left, top, right, bottom)
+   if not self.animation then
+      self.animation = ev.anim.create()
+   end
+   self.animation:add_frame(C.ev_sframe_create_quad(w,h,left,top,right,bottom))
 end
 
 function Sprite.init(_ev, lib)
@@ -134,3 +169,4 @@ function Sprite.init(_ev, lib)
 end
 
 return Sprite
+

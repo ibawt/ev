@@ -10,24 +10,6 @@
 #define sscanf sscanf_s
 #endif
 
-struct _ev_sframe
-{
-    const char *key;
-    ev_size     source_size;
-    ev_size     size;
-    int         trimmed;
-    ev_rect     texture_rect;
-    ev_vec2     offset;
-    ev_bool     rotated;
-    ev_rect     color_rect;
-    ev_bvertex  batch_verts[EV_SPRITE_NUM_VERTS];
-};
-
-struct _ev_ssheet
-{
-    ev_smap *frames;
-    ev_smap *metadata;
-};
 
 static void fill_batch_verts(ev_sframe* frame)
 {

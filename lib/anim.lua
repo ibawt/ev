@@ -1,44 +1,60 @@
-local ffi = require 'ffi'
-
-ffi.cdef[[
-typedef enum {
-    EV_LOOP = 0,
-    EV_ONE_SHOT = 1,
-    EV_REVERSE = 2,
-    EV_PING_PONG = 3
-} ev_anim_mode;
-
-typedef struct ev_anim ev_anim;
-typedef struct ev_sframe ev_sframe;
-
-ev_anim*     ev_anim_create(void);
-void         ev_anim_destroy(ev_anim *);
-void         ev_anim_add_sframe(ev_anim*, ev_sframe*);
-ev_sframe   *ev_anim_get_current_sframe(ev_anim*);
-void         ev_anim_set_mode(ev_anim *, ev_anim_mode);
-ev_anim_mode ev_anim_get_mode(ev_anim *);
-]]
-
-ffi.metatype("ev_anim", { __gc = function(self) C.ev_anim_destroy(self) end })
-local C
-
 local Anim = {}
 Anim.__index = Anim
 
+Anim.LOOP      = 0
+Anim.ONE_SHOT  = 1
+Anim.REVERSE   = 2
+Anim.PING_PONG = 3
+
 function Anim:add_frame(sframe)
-   C.ev_anim_add_sframe(self._ev_anim, sframe)
+   self.frames[#self.frames+1] = sframe
 end
 
-Anim.create = function()
-   local ev_anim = ffi.C.ev_anim_create()
+function Anim:update(dt)
+   if self.delay <= 0 then
+      return
+   end
+
+   self.time = self.time + dt
+
+   while self.time >= self.delay do
+      self.time = self.time - self.delay
+
+      if self.mode == Anim.LOOP then
+         self.index = self.index + 1
+         if self.index >= #self.frames then
+            self.index = 1
+         end
+      elseif self.mode == Anim.ONE_SHOT then
+         if (self.index + 1) < #self.frames then
+            self.index = self.index + 1
+         end
+      elseif self.mode == Anim.REVERSE then
+         if self.index > 1 then
+            self.index = self.index - 1
+         end
+      end
+   end
+end
+
+function Anim:current_frame()
+   assert(#self.frames > 0)
+   return self.frames[self.index]
+end
+
+function Anim.create()
    local anim = {}
    setmetatable(anim, Anim)
-   anim._ev_anim = ev_anim
+   anim.frames = {}
+   anim.time = 0
+   anim.index = 1
+   anim.delay = 0.3
+   anim.mode = Anim.LOOP
+   
    return anim
 end
 
 function Anim.init(_ev, lib)
-   C = lib
 end
 
 return Anim
