@@ -90,7 +90,7 @@ end
 function SpriteBatch:render(g)
    local verts = C.ev_sbatch_lock(self._ev_sbatch)
    local n = 0
-   for i, sprite in ipairs(self.sprites) do
+   for _, sprite in ipairs(self.sprites) do
       if sprite.visible then
          n = n + sprite:fill(verts + n)
       end

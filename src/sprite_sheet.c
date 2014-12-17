@@ -49,16 +49,16 @@ static void fill_batch_verts(ev_sframe* frame)
     bv[2].u = frame->texture_rect.origin.x + frame->texture_rect.size.w;
     bv[2].v = frame->texture_rect.origin.y + frame->texture_rect.size.h;
 
-    bv[3] = bv[2];
+    //bv[3] = bv[2];
 
-    bv[4].x = -frame->size.w/2;
-    bv[4].y = frame->size.h/2;
-    bv[4].u = frame->texture_rect.origin.x;
-    bv[4].v = frame->texture_rect.origin.y + frame->texture_rect.size.h;
+    bv[3].x = -frame->size.w/2;
+    bv[3].y = frame->size.h/2;
+    bv[3].u = frame->texture_rect.origin.x;
+    bv[3].v = frame->texture_rect.origin.y + frame->texture_rect.size.h;
 
-    bv[5] = bv[0];
+    //bv[5] = bv[0];
 
-    for( i = 0 ; i < 6 ; ++i ) {
+    for( i = 0 ; i < EV_SPRITE_NUM_VERTS ; ++i ) {
         bv[i].scale = 1.0f;
         bv[i].rotation = 0.0f;
         bv[i].tx = 0.0f;

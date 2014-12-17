@@ -1,7 +1,7 @@
 #ifndef EV_SPRITE_H_
 #define EV_SPRITE_H_
 
-#define EV_SPRITE_NUM_VERTS 6
+#define EV_SPRITE_NUM_VERTS 4
 
 #include "ev_lua.h"
 #include "evil.h"

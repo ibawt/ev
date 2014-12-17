@@ -302,7 +302,7 @@ void ev_sbatch_render(ev_sbatch *batch, ev_matrix4 *t)
     glEnable(GL_BLEND);
     glBlendFunc(batch->blend_func.src, batch->blend_func.dst);
 
-    glDrawArrays(GL_TRIANGLES, 0, batch->num_filled_sprites*EV_SPRITE_NUM_VERTS);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, batch->num_filled_sprites*EV_SPRITE_NUM_VERTS);
 
     glDisableVertexAttribArray(opacity);
     glDisableVertexAttribArray(translation);
