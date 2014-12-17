@@ -3,42 +3,7 @@ local C
 local ev
 
 ffi.cdef[[
-typedef int ev_bool;
-      
-typedef struct {
-    float x;
-    float y;
-    float u;
-    float v;
-    float rotation;
-    float scale;
-    float tx;
-    float ty;
-    float opacity;
-} ev_bvertex;
-
-typedef struct {
-   float x;
-   float y;
-} ev_vec2;
-
-typedef struct ev_anim ev_anim;
-typedef struct {
-    float w;
-    float h;
-} ev_size;
-
-typedef struct {
-    float x,y;
-} ev_vec2;
-
-typedef struct {
-    ev_vec2 origin;
-    ev_size size;
-} ev_rect;
-
 typedef struct ev_body ev_body;
-
 typedef struct _ev_sframe
 {
     const char *key;
@@ -76,6 +41,7 @@ void          ev_sprite_set_body(ev_sprite *, ev_body *);
 void          ev_sprite_set_quad(ev_sprite *sprite, float w, float h, float left, float top, float right, float bottom);
 int           ev_sprite_fill(ev_sprite*, ev_bvertex*);
 ]]
+
 local ev_sprite = ffi.metatype("ev_sprite", {})
 
 local Sprite = {}
