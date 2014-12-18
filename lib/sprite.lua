@@ -18,7 +18,6 @@ typedef struct _ev_sframe
 } ev_sframe;
 ]]
 
-local ev_vec2 = ffi.metatype("ev_vec2", {})
 local Sprite = {}
 Sprite.__index = Sprite
 
@@ -78,7 +77,7 @@ function Sprite.create()
    sprite.opacity = 1
    sprite.rotation = 0
    sprite.scale = 1
-   sprite.position = ev_vec2()
+   sprite.position = ev.vec2.create()
    return sprite
 end
 

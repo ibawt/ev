@@ -59,6 +59,8 @@ set(
   lua_world.o
   lua_graphics.o
   lua_wait.o
+  lua_vec2.o
+  lua_matrix4.o
   lib/ev.lua
   lib/anim.lua
   lib/app.lua
@@ -71,6 +73,8 @@ set(
   lib/body.lua
   lib/graphics.lua
   lib/wait.lua
+  lib/vec2.lua
+  lib/matrix4.lua
   vendor/glew/src/glew.c
 )
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_GENERATOR STREQUAL "Ninja")
@@ -224,3 +228,14 @@ add_custom_command(
   COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/wait.lua" lua_wait.o
   DEPENDS lib/wait.lua
   )
+add_custom_command(
+  OUTPUT lua_vec2.o
+  COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/vec2.lua" lua_vec2.o
+  DEPENDS lib/vec2.lua
+  )
+add_custom_command(
+  OUTPUT lua_matrix4.o
+  COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/matrix4.lua" lua_matrix4.o
+  DEPENDS lib/matrix4.lua
+  )
+

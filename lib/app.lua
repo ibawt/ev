@@ -132,7 +132,7 @@ function App:show()
 
       dt = dt / 1000
    end
-   
+   ev.wait.clear()
    C.ev_app_quit(self._ev_app)
 end
 
