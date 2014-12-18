@@ -27,7 +27,6 @@ typedef struct {
    float y;
 } ev_vec2;
 
-typedef struct ev_anim ev_anim;
 typedef struct {
     float w;
     float h;
@@ -42,8 +41,8 @@ typedef struct {
     ev_size size;
 } ev_rect;
 ]]
-
 local ev = {}
+ev.__index = ev
 
 local modules = {
    'app',

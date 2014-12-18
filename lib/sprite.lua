@@ -115,7 +115,15 @@ function Sprite:set_quad(w, h, left, top, right, bottom)
       self.animation = ev.anim.create()
    end
 
-   local sframe = ffi.new("ev_sframe")
+   local sframe
+
+   if #self.animation.frames > 0 then
+      sframe = self.animation.frames[1]
+   else
+      sframe = ffi.new('ev_sframe')
+      self.animation:add_frame(sframe)
+   end
+
    sframe.size.w = w
    sframe.size.h = h
    sframe.texture_rect.origin.x = left
@@ -124,8 +132,6 @@ function Sprite:set_quad(w, h, left, top, right, bottom)
    sframe.texture_rect.size.h = bottom
 
    fill_batch_verts(sframe)
-
-   self.animation:add_frame(sframe)
 end
 
 function Sprite.init(_ev, lib)
