@@ -1,7 +1,6 @@
 local ffi = require 'ffi'
 
 ffi.cdef[[
-
 typedef int ev_bool;
 typedef struct {
    float m[16];
@@ -34,6 +33,7 @@ typedef struct {
     ev_size size;
 } ev_rect;
 ]]
+
 local ev = {}
 ev.__index = ev
 
