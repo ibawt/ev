@@ -3,8 +3,6 @@
 #include "texture.h"
 #include "ev_lua.h"
 
-#define COLOR_FMT GL_RGBA
-
 struct _ev_texture
 {
     GLuint   id;
@@ -55,7 +53,7 @@ ev_err_t ev_texture_load(ev_texture* t, const char *filename)
     glBindTexture(GL_TEXTURE_2D, t->id);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, COLOR_FMT, GL_UNSIGNED_BYTE, s->pixels);
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, s->pixels);
 
     t->width = s->w;
     t->height = s->h;
