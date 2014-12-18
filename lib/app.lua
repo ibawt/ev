@@ -117,22 +117,10 @@ function App:show()
       dt = (self:get_ticks() - t1) / 1000
       num_frames = num_frames + 1
 
+      -- TODO: this is a terrible way to calculate fps
       self.fps = num_frames / (( self:get_ticks() - start_time) / 1000)
    end
    C.ev_app_quit(self._ev_app)
-end
-
-function App:__newindex(key, val)
-   local props = {
-      stage = function(val)
-         C.ev_app_set_stage(self._ev_app, val._ev_stage)
-      end
-   }
-   if props[key] then
-      props[key](val)
-   end
-
-   rawset(self, key, val)
 end
 
 function App.create(width,height)
