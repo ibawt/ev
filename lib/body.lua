@@ -1,5 +1,5 @@
 local ffi = require 'ffi'
-local C
+local C = ffi.C
 local ev
 
 ffi.cdef[[
@@ -42,12 +42,13 @@ typedef struct {
   void      ev_body_set_linear_velocity(ev_body*, ev_vec2);
   ev_vec2   ev_body_get_linear_velocity(ev_body*);
   void      ev_body_set_rotation(ev_body*, float);
- ]]
+]]
 ffi.metatype("ev_body", { __gc = function(self) C.ev_body_destroy(self) end })
 
 local Body = {}
 Body.__index = Body
 
+-- TODO: refactor this
 Body.__gc = function(self)
    self.world.body_keys[self.key] = nil
 end
@@ -123,9 +124,8 @@ function Body:__newindex(key, val)
    end
 end
 
-function Body.init(_ev, lib)
+function Body.init(_ev)
    ev = _ev
-   C = lib
 end
 
 return Body

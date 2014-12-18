@@ -1,5 +1,5 @@
 local ffi = require('ffi')
-local C
+local C = ffi.C
 
 ffi.cdef[[
 typedef enum {
@@ -52,10 +52,6 @@ end
 
 function App:swap_buffers()
    C.ev_app_swap_buffers(self._ev_app)
-end
-
-function App:__index(key)
-   return getmetatable(self)[key] or rawget(self, key)
 end
 
 function App:keyup(event)
@@ -140,9 +136,8 @@ function App.create(width,height)
    return app
 end
 
-function App.init(_ev, library)
+function App.init(_ev)
    ev = _ev
-   C = library
 end
 
 return App

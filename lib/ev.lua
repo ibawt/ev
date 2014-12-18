@@ -1,5 +1,4 @@
 local ffi = require 'ffi'
-local library = ffi.C
 
 ffi.cdef[[
 typedef struct {
@@ -61,7 +60,7 @@ local modules = {
 for i,v in ipairs(modules) do
    ev[v] = require(v)
    if ev[v].init then
-      ev[v].init(ev, library)
+      ev[v].init(ev)
    end
 end
 

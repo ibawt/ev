@@ -25,7 +25,4 @@ function Graphics.create()
    return g
 end
 
-function Graphics.init(_ev, lib)
-end
-
 return Graphics

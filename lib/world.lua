@@ -1,5 +1,5 @@
 local ffi = require 'ffi'
-local C
+local C = ffi.C
 local ev
 
 ffi.cdef[[
@@ -47,7 +47,7 @@ end
 function World:update(dt)
    C.ev_world_update(self._ev_world, dt)
 
-   -- this is shitty
+   -- TODO: this is shitty
    self.num_contacts = C.ev_world_get_contacts(self._ev_world, self.contacts, 256)
 
    for i=0,self.num_contacts-1 do
@@ -83,8 +83,7 @@ function World:__newindex(key, val)
    rawset(self, key, val)
 end
 
-function World.init(_ev, lib)
-   C = lib
+function World.init(_ev)
    ev = _ev
 end
 

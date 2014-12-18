@@ -1,5 +1,5 @@
 local ffi = require 'ffi'
-local C
+local C = ffi.C
 local ev
 
 ffi.cdef[[
@@ -134,9 +134,8 @@ function Sprite:set_quad(w, h, left, top, right, bottom)
    fill_batch_verts(sframe)
 end
 
-function Sprite.init(_ev, lib)
+function Sprite.init(_ev)
    ev = _ev
-   C = lib
 end
 
 return Sprite

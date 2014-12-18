@@ -1,5 +1,5 @@
 local ffi = require 'ffi'
-local C
+local C = ffi.C
 local ev
 
 ffi.cdef[[
@@ -26,8 +26,8 @@ void ev_particle_system_update(ev_particle_system* sys, float);
 int ev_particle_system_body_contact_count(ev_particle_system *sys);
 int ev_particle_system_body_contact_at(ev_particle_system *s, int index, ev_particle_body_contact *bc);
 void ev_particle_system_destroy_particle(ev_particle_system *s, int i);
-
 ]]
+
 local M = {}
 M.__index = M
 
@@ -93,9 +93,8 @@ end
 
 M.group = Group
 
-function M.init(_ev, lib)
+function M.init(_ev)
    ev = _ev
-   C = lib
 end
 
 return M

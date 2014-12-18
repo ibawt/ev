@@ -1,5 +1,5 @@
 local ffi = require 'ffi'
-local C
+local C = ffi.C
 local ev
 
 ffi.cdef[[
@@ -56,8 +56,7 @@ function RenderTexture:unlock()
    C.ev_rtex_unbind(self._ev_rtex)
 end
 
-function RenderTexture.init(_ev, lib)
-   C = lib
+function RenderTexture.init(_ev)
    ev = _ev
 end
 

@@ -54,7 +54,4 @@ function Anim.create()
    return anim
 end
 
-function Anim.init(_ev, lib)
-end
-
 return Anim

@@ -1,5 +1,5 @@
 local ffi = require 'ffi'
-local C
+local C = ffi.C
 local ev
 
 ffi.cdef[[
@@ -134,10 +134,8 @@ function SpriteBatch.create()
    return sbatch
 end
 
-function SpriteBatch.init(e, lib)
+function SpriteBatch.init(e)
    ev = e
-   C = lib
-   return SpriteBatch
 end
 
 return SpriteBatch
