@@ -23,6 +23,7 @@ int       ev_world_get_contacts(ev_world*, ev_contact*, int);
 ffi.metatype("ev_world", { __gc = function(self) C.ev_world_destroy(self._ev_world) end })
 
 local World = {}
+World.__index = World
 
 local collisions = {}
 
