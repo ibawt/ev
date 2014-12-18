@@ -3,6 +3,7 @@
 
 #include "evil.h"
 #include "ev_lua.h"
+#include "sprite_sheet.h"
 
 #ifdef __cplusplus
 extern "C" {

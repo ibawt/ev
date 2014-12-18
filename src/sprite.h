@@ -1,8 +1,6 @@
 #ifndef EV_SPRITE_H_
 #define EV_SPRITE_H_
 
-#define EV_SPRITE_NUM_VERTS 4
-
 #include "ev_lua.h"
 #include "evil.h"
 #include "ev_box2d.h"
