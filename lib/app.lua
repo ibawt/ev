@@ -83,7 +83,14 @@ function App:show()
    local start_time = self:get_ticks()
    local dt = 0
    local event = ffi.new("ev_event")
-
+   
+   local tick_list = {}
+   for i=1,101 do
+      tick_list[i] = 0
+   end
+   local tick_index = 1
+   local tick_sum = 0
+   
    while self.keep_running do
       local t1 = self:get_ticks()
 
@@ -110,12 +117,22 @@ function App:show()
 
       self:swap_buffers()
 
-      dt = (self:get_ticks() - t1) / 1000
+      dt = (self:get_ticks() - t1)
       num_frames = num_frames + 1
 
-      -- TODO: this is a terrible way to calculate fps
-      self.fps = num_frames / (( self:get_ticks() - start_time) / 1000)
+      -- dt ms per frame
+      tick_sum = tick_sum - tick_list[tick_index] + dt
+      tick_list[tick_index] = dt
+      tick_index = (tick_index + 1)
+      if tick_index > 101 then
+         tick_index = 1
+      end
+
+      self.fps = (1 / (tick_sum / 101)) * 1000
+
+      dt = dt / 1000
    end
+   
    C.ev_app_quit(self._ev_app)
 end
 

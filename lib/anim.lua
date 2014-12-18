@@ -38,7 +38,6 @@ function Anim:update(dt)
 end
 
 function Anim:current_frame()
-   assert(#self.frames > 0)
    return self.frames[self.index]
 end
 

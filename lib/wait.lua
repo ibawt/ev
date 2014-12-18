@@ -9,13 +9,11 @@ local time = 0
 function Wait.wait_for(seconds)
    local co = coroutine.running()
 
-   if not co then
-      assert('not a coroutine!')
-   end
+   assert(co, 'not a coroutine!')
 
    waiting[co] = time + seconds
 
-   co.yield()
+   coroutine.yield()
 end
 
 function Wait.wait_for_signal(signal)
@@ -29,7 +27,7 @@ function Wait.wait_for_signal(signal)
 
    slot[#slot+1] = co
 
-   co.yield()
+   coroutine.yield()
 end
 
 function Wait.wrap(fn)
@@ -48,13 +46,44 @@ function Wait.signal(signal)
    signals[slot] = nil
 end
 
+-- calls fn after to seconds
+function Wait.set_timeout(fn, to)
+   local to_fn = function()
+      Wait.wait_for(to)
+      fn()
+   end
+   Wait.wrap(to_fn)
+end
+
+-- calls fn every interval seconds
+-- return: a function to close the interval
+-- as well if fn returns false then close the interval
+function Wait.set_interval(fn, interval)
+   local keep_running = true
+   local to_fn = function()
+      while keep_running do
+         Wait.wait_for(interval)
+         local r = fn()
+         if r == false then
+            keep_running = false
+         end
+      end
+   end
+
+   Wait.wrap(to_fn)
+
+   return function()
+      keep_running = false
+   end
+end
+
 function Wait.update(dt)
    time  = time + dt
 
    for co,t in pairs(waiting) do
-      if t >= time then
+      if time >= t then
          waiting[co] = nil
-         co.resume()
+         coroutine.resume(co)
       end
    end
 end
