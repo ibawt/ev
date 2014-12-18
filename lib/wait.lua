@@ -47,7 +47,7 @@ function Wait.signal(signal)
 end
 
 -- calls fn after to seconds
-function Wait.set_timeout(fn, to)
+function Wait.set_timeout(to, fn)
    local to_fn = function()
       Wait.wait_for(to)
       fn()
@@ -58,7 +58,7 @@ end
 -- calls fn every interval seconds
 -- return: a function to close the interval
 -- as well if fn returns false then close the interval
-function Wait.set_interval(fn, interval)
+function Wait.set_interval(interval, fn)
    local keep_running = true
    local to_fn = function()
       while keep_running do
@@ -86,6 +86,12 @@ function Wait.update(dt)
          coroutine.resume(co)
       end
    end
+end
+
+function Wait.clear()
+   time = 0
+   waiting = {}
+   signals = {}
 end
 
 return Wait
