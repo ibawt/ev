@@ -45,20 +45,20 @@ typedef struct {
 ]]
 ffi.metatype("ev_body", { __gc = function(self) C.ev_body_destroy(self) end })
 
-local Body = {}
-Body.__index = Body
+local _M = {}
+_M.__index = _M
 
 -- TODO: refactor this
-Body.__gc = function(self)
+_M.__gc = function(self)
    self.world.body_keys[self.key] = nil
 end
-function Body:get_position(x, y)
+function _M:get_position(x, y)
    return C.ev_body_get_position(self._ev_body)
 end
 
-function Body.create(world)
+function _M.create(world)
    local body = {}
-   setmetatable(body, Body)
+   setmetatable(body, _M)
    body._ev_body = C.ev_body_create(world._ev_world, nil)
    body.key = tonumber(ffi.cast("int", body.ev_body))
    body.world= world
@@ -66,7 +66,7 @@ function Body.create(world)
    return body
 end
 
-function Body:__index(key)
+function _M:__index(key)
    local props = {
       velocity = function()
          return C.ev_body_get_linear_velocity(self._ev_body)
@@ -92,7 +92,7 @@ local function body_shape_default()
    return bs
 end
 
-function Body:__newindex(key, val)
+function _M:__newindex(key, val)
    local props = {
       position = function(val)
          C.ev_body_set_position(self._ev_body, val)
@@ -124,8 +124,8 @@ function Body:__newindex(key, val)
    end
 end
 
-function Body.init(_ev)
+function _M.init(_ev)
    ev = _ev
 end
 
-return Body
+return _M

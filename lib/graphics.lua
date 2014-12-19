@@ -9,20 +9,20 @@ void ev_graphics_destroy(ev_graphics*);
 void ev_graphics_clear(ev_graphics*, float, float, float, float);
 ]]
 
-local Graphics = {}
-Graphics.__index = Graphics
+local _M = {}
+_M.__index = _M
 
-function Graphics:clear(r, g, b, a)
+function _M:clear(r, g, b, a)
    C.ev_graphics_clear(self._ev_graphics, r, g, b, a)
 end
 
-function Graphics.create()
+function _M.create()
    local g = {}
-   setmetatable(g, Graphics)
+   setmetatable(g, _M)
 
    g._ev_graphics = C.ev_graphics_create()
 
    return g
 end
 
-return Graphics
+return _M

@@ -18,14 +18,14 @@ uint32_t    ev_texture_get_height(ev_texture*);
 ]]
 ffi.metatype("ev_texture", { __gc = function(self) C.ev_texture_destroy(self._ev_texture) end })
 
-local Texture = {}
-Texture.__index = Texture
+local _M = {}
+_M.__index = _M
 
-function Texture:load(filename)
+function _M:load(filename)
    return C.ev_texture_load(self._ev_texture, filename)
 end
 
-function Texture:__index(key)
+function _M:__index(key)
    if key == 'width' then
       return self._ev_texture.width
    elseif key == 'height' then
@@ -35,15 +35,15 @@ function Texture:__index(key)
    end
 end
 
-function Texture.create()
+function _M.create()
    local texture = {}
-   setmetatable(texture, Texture)
+   setmetatable(texture, _M)
    texture._ev_texture = C.ev_texture_create()
    return texture
 end
 
-function Texture.init(_ev)
+function _M.init(_ev)
    ev = _ev
 end
 
-return Texture
+return _M

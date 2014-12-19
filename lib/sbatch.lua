@@ -49,37 +49,37 @@ void       ev_sbatch_unlock(ev_sbatch*, int);
 ]]
 ffi.metatype("ev_sbatch", { __gc = function(self) C.ev_sbatch_destroy(self) end })
 
-local SpriteBatch = {}
-SpriteBatch.__index = SpriteBatch
+local _M = {}
+_M.__index = _M
 local ev
 
-function SpriteBatch:load(filename)
+function _M:load(filename)
    return C.ev_sbatch_load(self._ev_sbatch, filename)
 end
 
-function SpriteBatch:get_frame(frame_name)
+function _M:get_frame(frame_name)
    return C.ev_sbatch_get_sframe(self._ev_sbatch, frame_name)
 end
 
-function SpriteBatch:set_blend_func(dst, src)
+function _M:set_blend_func(dst, src)
    C.ev_sbatch_set_blend_func(self._ev_sbatch, dst, src)
 end
 
-function SpriteBatch:update(dt)
+function _M:update(dt)
    for _, sprite in ipairs(self.sprites) do
       sprite:update(dt)
    end
 end
 
-function SpriteBatch:set_texture(texture)
+function _M:set_texture(texture)
    C.ev_sbatch_set_texture(self._ev_sbatch, texture._ev_texture)
 end
 
-function SpriteBatch:destroy_sprite(index)
+function _M:destroy_sprite(index)
    table.remove(self.sprites, index)
 end
 
-function SpriteBatch:add_sprite(sprite)
+function _M:add_sprite(sprite)
    local cap = C.ev_sbatch_get_vbuff_capacity(self._ev_sbatch)
    if cap <= #self.sprites + 1 then
       local err = C.ev_sbatch_set_vbuff_capacity(self._ev_sbatch, math.floor(cap * 3 / 2))
@@ -90,19 +90,19 @@ function SpriteBatch:add_sprite(sprite)
    self.sprites[#self.sprites+1] = sprite
 end
 
-function SpriteBatch:set_capacity(num_sprites)
+function _M:set_capacity(num_sprites)
    C.ev_sbatch_set_vbuff_capacity(self._ev_sbatch, num_sprites)
 end
 
-function SpriteBatch:lock()
+function _M:lock()
    return C.ev_sbatch_lock(self._ev_sbatch)
 end
 
-function SpriteBatch:unlock(n)
+function _M:unlock(n)
    C.ev_sbatch_unlock(self._ev_sbatch, n/6)
 end
 
-function SpriteBatch:render(g)
+function _M:render(g)
    local verts = self:lock()
    local n = 0
    for _, sprite in ipairs(self.sprites) do
@@ -114,7 +114,7 @@ function SpriteBatch:render(g)
    self:draw(g)
 end
 
-function SpriteBatch:render_iter(g, iter)
+function _M:render_iter(g, iter)
    local verts = self:lock()
    local n = 0
    for sprite in iter() do
@@ -125,15 +125,15 @@ function SpriteBatch:render_iter(g, iter)
    self:draw(g)
 end
 
-function SpriteBatch:draw(g)
+function _M:draw(g)
    C.ev_sbatch_render(self._ev_sbatch, g.transform)
 end
 
-function SpriteBatch:filled_sprites()
+function _M:filled_sprites()
    return C.ev_sbatch_num_filled_sprites(self._ev_sbatch)
 end
 
-function SpriteBatch:create_sprite(...)
+function _M:create_sprite(...)
    local sprite = ev.sprite.create()
    local anim = ev.anim.create()
    for i,v in ipairs({...}) do
@@ -144,7 +144,7 @@ function SpriteBatch:create_sprite(...)
    return sprite
 end
 
-function SpriteBatch:__newindex(k, v)
+function _M:__newindex(k, v)
    if k == 'texture' then
       C.ev_sbatch_set_texture(self._ev_sbatch, v._ev_texture)
    else
@@ -152,17 +152,17 @@ function SpriteBatch:__newindex(k, v)
    end
 end
 
-function SpriteBatch.create()
+function _M.create()
    local sbatch = {}
-   setmetatable(sbatch, SpriteBatch)
+   setmetatable(sbatch, _M)
    sbatch._ev_sbatch = C.ev_sbatch_create()
    sbatch.sprites = {}
    sbatch.name = "Sprite Batch"
    return sbatch
 end
 
-function SpriteBatch.init(e)
+function _M.init(e)
    ev = e
 end
 
-return SpriteBatch
+return _M

@@ -1,12 +1,12 @@
-local Wait = {}
-Wait.__index = Wait
+local _M = {}
+_M.__index = _M
 
 local waiting = {}
 local signals = {}
 
 local time = 0
 
-function Wait.wait_for(seconds)
+function _M.wait_for(seconds)
    local co = coroutine.running()
 
    assert(co, 'not a coroutine!')
@@ -16,7 +16,7 @@ function Wait.wait_for(seconds)
    coroutine.yield()
 end
 
-function Wait.wait_for_signal(signal)
+function _M.wait_for_signal(signal)
    local co = coroutine.running()
 
    if not signals[signal] then
@@ -30,12 +30,12 @@ function Wait.wait_for_signal(signal)
    coroutine.yield()
 end
 
-function Wait.wrap(fn)
+function _M.wrap(fn)
    local co = coroutine.create(fn)
    return coroutine.resume(co)
 end
 
-function Wait.signal(signal)
+function _M.signal(signal)
    local slot = signals[signal]
 
    if slot then
@@ -47,22 +47,22 @@ function Wait.signal(signal)
 end
 
 -- calls fn after to seconds
-function Wait.set_timeout(to, fn)
+function _M.set_timeout(to, fn)
    local to_fn = function()
-      Wait.wait_for(to)
+      _M.wait_for(to)
       fn()
    end
-   Wait.wrap(to_fn)
+   _M.wrap(to_fn)
 end
 
 -- calls fn every interval seconds
 -- return: a function to close the interval
 -- as well if fn returns false then close the interval
-function Wait.set_interval(interval, fn)
+function _M.set_interval(interval, fn)
    local keep_running = true
    local to_fn = function()
       while keep_running do
-         Wait.wait_for(interval)
+         _M.wait_for(interval)
          local r = fn()
          if r == false then
             keep_running = false
@@ -70,14 +70,14 @@ function Wait.set_interval(interval, fn)
       end
    end
 
-   Wait.wrap(to_fn)
+   _M.wrap(to_fn)
 
    return function()
       keep_running = false
    end
 end
 
-function Wait.update(dt)
+function _M.update(dt)
    time = time + dt
 
    for co,t in pairs(waiting) do
@@ -88,10 +88,10 @@ function Wait.update(dt)
    end
 end
 
-function Wait.clear()
+function _M.clear()
    time = 0
    waiting = {}
    signals = {}
 end
 
-return Wait
+return _M

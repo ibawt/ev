@@ -1,16 +1,16 @@
-local Anim = {}
-Anim.__index = Anim
+local _M = {}
+_M.__index = _M
 
-Anim.LOOP      = 0
-Anim.ONE_SHOT  = 1
-Anim.REVERSE   = 2
-Anim.PING_PONG = 3
+_M.LOOP      = 0
+_M.ONE_SHOT  = 1
+_M.REVERSE   = 2
+_M.PING_PONG = 3
 
-function Anim:add_frame(sframe)
+function _M:add_frame(sframe)
    self.frames[#self.frames+1] = sframe
 end
 
-function Anim:update(dt)
+function _M:update(dt)
    if self.delay <= 0 then
       return
    end
@@ -20,16 +20,16 @@ function Anim:update(dt)
    while self.time >= self.delay do
       self.time = self.time - self.delay
 
-      if self.mode == Anim.LOOP then
+      if self.mode == _M.LOOP then
          self.index = self.index + 1
          if self.index > #self.frames then
             self.index = 1
          end
-      elseif self.mode == Anim.ONE_SHOT then
+      elseif self.mode == _M.ONE_SHOT then
          if (self.index + 1) < #self.frames then
             self.index = self.index + 1
          end
-      elseif self.mode == Anim.REVERSE then
+      elseif self.mode == _M.REVERSE then
          if self.index > 1 then
             self.index = self.index - 1
          end
@@ -37,20 +37,20 @@ function Anim:update(dt)
    end
 end
 
-function Anim:current_frame()
+function _M:current_frame()
    return self.frames[self.index]
 end
 
-function Anim.create()
+function _M.create()
    local anim = {}
-   setmetatable(anim, Anim)
+   setmetatable(anim, _M)
    anim.frames = {}
    anim.time = 0
    anim.index = 1
    anim.delay = 0.3
-   anim.mode = Anim.LOOP
+   anim.mode = _M.LOOP
    
    return anim
 end
 
-return Anim
+return _M

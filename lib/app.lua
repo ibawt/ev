@@ -39,22 +39,22 @@ bool     ev_app_poll_event(ev_app*, ev_event *);
 ]]
 ffi.metatype("ev_app", { __gc = function(self) C.ev_app_destroy(self) end })
 
-local App = {}
-App.__index = App
+local _M = {}
+_M.__index = _M
 
-function App:get_ticks()
+function _M:get_ticks()
    return C.ev_app_get_ticks(self._ev_app)
 end
 
-function App:poll_event(event)
+function _M:poll_event(event)
    return C.ev_app_poll_event(self._ev_app, event)
 end
 
-function App:swap_buffers()
+function _M:swap_buffers()
    C.ev_app_swap_buffers(self._ev_app)
 end
 
-function App:keyup(event)
+function _M:keyup(event)
    assert(event.key_name, "key_name is NULL")
    local key = ffi.string(event.key_name)
    self.key_state[key] = false
@@ -64,7 +64,7 @@ function App:keyup(event)
    end
 end
 
-function App:keydown(event)
+function _M:keydown(event)
    assert(event.key_name, "key_name is NULL")
    local key = ffi.string(event.key_name)
    self.key_state[key] = true
@@ -73,11 +73,11 @@ function App:keydown(event)
    end
 end
 
-function App:quit()
+function _M:quit()
    self.keep_running = false
 end
 
-function App:show()
+function _M:show()
    self.keep_running = true
    local num_frames = 0
    local start_time = self:get_ticks()
@@ -136,12 +136,12 @@ function App:show()
    C.ev_app_quit(self._ev_app)
 end
 
-function App.create(width,height)
+function _M.create(width,height)
    local ev_app = C.ev_app_create(width, height)
    C.ev_app_init(ev_app)
 
    local app = {}
-   setmetatable(app, App)
+   setmetatable(app, _M)
    app._ev_app = ev_app
    app.width = width
    app.height = height
@@ -153,8 +153,8 @@ function App.create(width,height)
    return app
 end
 
-function App.init(_ev)
+function _M.init(_ev)
    ev = _ev
 end
 
-return App
+return _M

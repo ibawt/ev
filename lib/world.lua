@@ -22,14 +22,14 @@ int       ev_world_get_contacts(ev_world*, ev_contact*, int);
 ]]
 ffi.metatype("ev_world", { __gc = function(self) C.ev_world_destroy(self._ev_world) end })
 
-local World = {}
-World.__index = World
+local _M = {}
+_M.__index = _M
 
 local collisions = {}
 
-function World.create()
+function _M.create()
    local world = {}
-   setmetatable(world, World)
+   setmetatable(world, _M)
    world._ev_world = C.ev_world_create()
    world.num_contacts = 0
    world.contacts = ffi.new("ev_contact[256]");
@@ -37,15 +37,15 @@ function World.create()
    return world
 end
 
-function World:set_dimensions(width,height)
+function _M:set_dimensions(width,height)
    C.ev_world_set_dimensions(self._ev_world, width, height)
 end
 
-function World:render(g)
+function _M:render(g)
    C.ev_world_render(self._ev_world, g.transform)
 end
 
-function World:update(dt)
+function _M:update(dt)
    C.ev_world_update(self._ev_world, dt)
 
    -- TODO: this is shitty
@@ -59,7 +59,7 @@ function World:update(dt)
    end
 end
 
-function World:__index(key, val)
+function _M:__index(key, val)
    local props = {
       gravity = function(val)
          return C.ev_world_get_gravity(self._ev_world)
@@ -72,7 +72,7 @@ function World:__index(key, val)
    end
 end
 
-function World:__newindex(key, val)
+function _M:__newindex(key, val)
    local props = {
       debug_draw = function(val)
          C.ev_world_set_debug_draw(self._ev_world, val)
@@ -84,8 +84,8 @@ function World:__newindex(key, val)
    rawset(self, key, val)
 end
 
-function World.init(_ev)
+function _M.init(_ev)
    ev = _ev
 end
 
-return World
+return _M

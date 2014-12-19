@@ -18,10 +18,10 @@ typedef struct _ev_sframe
 } ev_sframe;
 ]]
 
-local Sprite = {}
-Sprite.__index = Sprite
+local _M = {}
+_M.__index = _M
 
-function Sprite:fill(dst)
+function _M:fill(dst)
    if self.opacity <= 0 or not self.visible then
       return 0
    end
@@ -51,7 +51,7 @@ function Sprite:fill(dst)
    return 6
 end
 
-function Sprite:update(dt)
+function _M:update(dt)
    if self.animation then
       self.animation:update(dt)
    end
@@ -61,7 +61,7 @@ function Sprite:update(dt)
    end
 end
 
-function Sprite:set_position(x,y)
+function _M:set_position(x,y)
    self.position.x = x
    self.position.y = y
 
@@ -70,9 +70,9 @@ function Sprite:set_position(x,y)
    end
 end
 
-function Sprite.create()
+function _M.create()
    local sprite = {}
-   setmetatable(sprite, Sprite)
+   setmetatable(sprite, _M)
    sprite.visible = true
    sprite.opacity = 1
    sprite.rotation = 0
@@ -119,7 +119,7 @@ local function fill_batch_verts(frame)
    bv[5].v = frame.texture_rect.origin.y
 end
 
-function Sprite:set_quad(w, h, left, top, right, bottom)
+function _M:set_quad(w, h, left, top, right, bottom)
    if not self.animation then
       self.animation = ev.anim.create()
    end
@@ -143,8 +143,8 @@ function Sprite:set_quad(w, h, left, top, right, bottom)
    fill_batch_verts(sframe)
 end
 
-function Sprite.init(_ev)
+function _M.init(_ev)
    ev = _ev
 end
 
-return Sprite
+return _M
