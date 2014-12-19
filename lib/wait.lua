@@ -78,7 +78,7 @@ function Wait.set_interval(interval, fn)
 end
 
 function Wait.update(dt)
-   time  = time + dt
+   time = time + dt
 
    for co,t in pairs(waiting) do
       if time >= t then
