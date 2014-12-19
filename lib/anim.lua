@@ -22,7 +22,7 @@ function Anim:update(dt)
 
       if self.mode == Anim.LOOP then
          self.index = self.index + 1
-         if self.index >= #self.frames then
+         if self.index > #self.frames then
             self.index = 1
          end
       elseif self.mode == Anim.ONE_SHOT then

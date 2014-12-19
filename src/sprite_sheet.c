@@ -10,38 +10,55 @@
 #define sscanf sscanf_s
 #endif
 
+struct _ev_sframe
+{
+    const char *key;
+    ev_size     source_size;
+    ev_size     size;
+    int         trimmed;
+    ev_rect     texture_rect;
+    ev_vec2     offset;
+    ev_bool     rotated;
+    ev_rect     color_rect;
+    ev_bvertex  batch_verts[EV_SPRITE_NUM_VERTS];
+};
+
+struct _ev_ssheet
+{
+    ev_smap *frames;
+    ev_smap *metadata;
+};
+
 static void fill_batch_verts(ev_sframe* frame)
 {
     int i;
     ev_bvertex* bv = frame->batch_verts;
 
-    assert(bv);
-    
-    /* top left */
     bv[0].x = -frame->size.w/2;
     bv[0].y = -frame->size.h/2;
     bv[0].u = frame->texture_rect.origin.x;
     bv[0].v = frame->texture_rect.origin.y;
 
-    /* bottom left */
-    bv[1].x = -frame->size.w/2;
-    bv[1].y = frame->size.h/2;
-    bv[1].u = frame->texture_rect.origin.x;
-    bv[1].v = frame->texture_rect.origin.y + frame->texture_rect.size.h;
+    bv[1].x = frame->size.w/2;
+    bv[1].y = -frame->size.h/2;
+    bv[1].u = frame->texture_rect.origin.x + frame->texture_rect.size.w;
+    bv[1].v = frame->texture_rect.origin.y;
 
-    /* top right */
     bv[2].x = frame->size.w/2;
-    bv[2].y = -frame->size.h/2;
+    bv[2].y = frame->size.h/2;
     bv[2].u = frame->texture_rect.origin.x + frame->texture_rect.size.w;
-    bv[2].v = frame->texture_rect.origin.y;
+    bv[2].v = frame->texture_rect.origin.y + frame->texture_rect.size.h;
 
-    /* bottom right */
-    bv[3].x = frame->size.w/2;
-    bv[3].y = frame->size.h/2;
-    bv[3].u = frame->texture_rect.origin.x + frame->texture_rect.size.w;
-    bv[3].v = frame->texture_rect.origin.y + frame->texture_rect.size.h;
+    bv[3] = bv[2];
 
-    for( i = 0 ; i < EV_SPRITE_NUM_VERTS ; ++i ) {
+    bv[4].x = -frame->size.w/2;
+    bv[4].y = frame->size.h/2;
+    bv[4].u = frame->texture_rect.origin.x;
+    bv[4].v = frame->texture_rect.origin.y + frame->texture_rect.size.h;
+
+    bv[5] = bv[0];
+
+    for( i = 0 ; i < 6 ; ++i ) {
         bv[i].scale = 1.0f;
         bv[i].rotation = 0.0f;
         bv[i].tx = 0.0f;
