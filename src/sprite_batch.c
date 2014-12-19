@@ -275,6 +275,9 @@ void ev_sbatch_update(ev_sbatch* batch, float dt)
 void ev_sbatch_render(ev_sbatch *batch, ev_matrix4 *t)
 {
     int pos,tex,transform,translation,opacity;
+
+    assert(batch);
+    
     ev_vbuff_bind( batch->vbuff );
     glEnable(GL_TEXTURE_2D);
     ev_texture_bind( batch->texture );

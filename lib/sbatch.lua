@@ -90,14 +90,41 @@ function SpriteBatch:add_sprite(sprite)
    self.sprites[#self.sprites+1] = sprite
 end
 
+function SpriteBatch:set_capacity(num_sprites)
+   C.ev_sbatch_set_vbuff_capacity(self._ev_sbatch, num_sprites)
+end
+
+function SpriteBatch:lock()
+   return C.ev_sbatch_lock(self._ev_sbatch)
+end
+
+function SpriteBatch:unlock(n)
+   C.ev_sbatch_unlock(self._ev_sbatch, n/4)
+end
+
 function SpriteBatch:render(g)
-   local verts = C.ev_sbatch_lock(self._ev_sbatch)
+   local verts = self:lock()
    local n = 0
    for _, sprite in ipairs(self.sprites) do
       n = n + sprite:fill(verts + n)
    end
-   C.ev_sbatch_unlock(self._ev_sbatch, n/4)
+   self:unlock(n)
    
+   self:draw(g)
+end
+
+function SpriteBatch:render_iter(g, iter)
+   local verts = self:lock()
+   local n = 0
+   for sprite in iter() do
+      n = n + sprite:fill(verts + n)
+   end
+   self:unlock(n)
+
+   self:draw(g)
+end
+
+function SpriteBatch:draw(g)
    C.ev_sbatch_render(self._ev_sbatch, g.transform)
 end
 
@@ -112,7 +139,6 @@ function SpriteBatch:create_sprite(...)
       anim:add_frame(self:get_frame(v))
    end
    sprite.animation = anim
-   self:add_sprite(sprite)
 
    return sprite
 end

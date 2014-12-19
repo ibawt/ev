@@ -128,7 +128,7 @@ function App:show()
          tick_index = 1
       end
 
-      self.fps = (1 / (tick_sum / 101)) * 1000
+      self.fps = 101 * 1000 / tick_sum
 
       dt = dt / 1000
    end
