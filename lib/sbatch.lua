@@ -99,7 +99,7 @@ function SpriteBatch:lock()
 end
 
 function SpriteBatch:unlock(n)
-   C.ev_sbatch_unlock(self._ev_sbatch, n/4)
+   C.ev_sbatch_unlock(self._ev_sbatch, n/6)
 end
 
 function SpriteBatch:render(g)
@@ -108,6 +108,7 @@ function SpriteBatch:render(g)
    for _, sprite in ipairs(self.sprites) do
       n = n + sprite:fill(verts + n)
    end
+   
    self:unlock(n)
    
    self:draw(g)

@@ -14,7 +14,7 @@ typedef struct _ev_sframe
     ev_vec2     offset;
     ev_bool     rotated;
     ev_rect     color_rect;
-    ev_bvertex  batch_verts[4];
+    ev_bvertex  batch_verts[6];
 } ev_sframe;
 ]]
 
@@ -33,7 +33,7 @@ function Sprite:fill(dst)
    local p = self.position
    local o = self.opacity
 
-   for i=0,3 do
+   for i=1,6 do
       dst.x = src.x
       dst.y = src.y
       dst.u = src.u
@@ -48,7 +48,7 @@ function Sprite:fill(dst)
       src = src + 1
    end
 
-   return 4
+   return 6
 end
 
 function Sprite:update(dt)
@@ -83,30 +83,40 @@ end
 
 local function fill_batch_verts(frame)
    local bv = frame.batch_verts + 0
-   -- ordered for a triangle strip
    -- top left
    bv[0].x = -frame.size.w/2
    bv[0].y = -frame.size.h/2
    bv[0].u = frame.texture_rect.origin.x
    bv[0].v = frame.texture_rect.origin.y
 
-   -- bottom left
-   bv[1].x = -frame.size.w/2;
-   bv[1].y = frame.size.h/2;
-   bv[1].u = frame.texture_rect.origin.x;
-   bv[1].v = frame.texture_rect.origin.y + frame.texture_rect.size.h;
-
    -- top right
-   bv[2].x = frame.size.w/2;
-   bv[2].y = -frame.size.h/2;
-   bv[2].u = frame.texture_rect.origin.x + frame.texture_rect.size.w;
-   bv[2].v = frame.texture_rect.origin.y;
+   bv[1].x = frame.size.w/2
+   bv[1].y = -frame.size.h/2
+   bv[1].u = frame.texture_rect.origin.x + frame.texture_rect.size.w
+   bv[1].v = frame.texture_rect.origin.y
 
    -- bottom right
-   bv[3].x = frame.size.w/2;
-   bv[3].y = frame.size.h/2;
-   bv[3].u = frame.texture_rect.origin.x + frame.texture_rect.size.w;
-   bv[3].v = frame.texture_rect.origin.y + frame.texture_rect.size.h;
+   bv[2].x = frame.size.w/2
+   bv[2].y = frame.size.h/2
+   bv[2].u = frame.texture_rect.origin.x + frame.texture_rect.size.w
+   bv[2].v = frame.texture_rect.origin.y + frame.texture_rect.size.h
+
+   
+   bv[3].x = frame.size.w/2
+   bv[3].y = frame.size.h/2
+   bv[3].u = frame.texture_rect.origin.x + frame.texture_rect.size.w
+   bv[3].v = frame.texture_rect.origin.y + frame.texture_rect.size.h
+   
+   -- bottom left
+   bv[4].x = -frame.size.w/2
+   bv[4].y = frame.size.h/2
+   bv[4].u = frame.texture_rect.origin.x
+   bv[4].v = frame.texture_rect.origin.y + frame.texture_rect.size.h
+   
+   bv[5].x = -frame.size.w/2
+   bv[5].y = -frame.size.h/2
+   bv[5].u = frame.texture_rect.origin.x
+   bv[5].v = frame.texture_rect.origin.y
 end
 
 function Sprite:set_quad(w, h, left, top, right, bottom)

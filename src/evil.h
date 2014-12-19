@@ -41,7 +41,7 @@ extern "C" {
 #define EV_API __attribute__((visibility ("default")))
 #endif
 
-#define EV_SPRITE_NUM_VERTS 4
+#define EV_SPRITE_NUM_VERTS 6
 
 EV_API void *ev_malloc(size_t);
 EV_API void *ev_realloc(void *, size_t);
