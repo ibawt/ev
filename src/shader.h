@@ -12,6 +12,7 @@ EV_API ev_err_t   ev_shader_compile(ev_shader *, GLenum type, const char *);
 EV_API void       ev_shader_destroy(ev_shader*);
 
 EV_API ev_program* ev_program_create(void);
+EV_API ev_program* ev_program_create_with_shaders(const char *vertex_shader, const char *fragment_shader);
 EV_API void        ev_program_use(ev_program*);
 EV_API ev_err_t    ev_program_compile(ev_program*);
 EV_API void        ev_program_set_shader(ev_program*, ev_shader*, GLenum type);

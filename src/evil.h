@@ -74,8 +74,7 @@ typedef enum {
 
 #define ev_log(fmt, ...) ev_logger(EV_LOG, "[LOG]%s:%d " fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 
-EV_API void ev_error(const char *fmt, ...);
-
+EV_API void ev_error(const char* fmt, ...);
 EV_API void ev_logger(ev_log_level, const char *fmt, ...);
 
 typedef struct {

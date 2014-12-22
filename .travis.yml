@@ -6,7 +6,7 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
   - sudo add-apt-repository ppa:zoogie/sdl2-snapshots -y
   - sudo apt-get update -qq -y
-  - sudo apt-get install libsdl2 libsdl2-dev -y
+  - sudo apt-get install libsdl2 libsdl2-dev libfreetype6-dev libglew-dev -y
   - wget http://luajit.org/download/LuaJIT-2.0.3.tar.gz
   - tar -xf LuaJIT-2.0.3.tar.gz
   - cd LuaJIT-2.0.3
