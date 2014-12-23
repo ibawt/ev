@@ -24,16 +24,15 @@ typedef struct {
 
 typedef struct _ev_app ev_app;
 
-EV_API ev_app*  ev_app_create(uint32_t width, uint32_t height);
-EV_API void     ev_app_destroy(ev_app*);
-EV_API uint32_t ev_app_get_height(ev_app*);
-EV_API uint32_t ev_app_get_width(ev_app*);
-EV_API ev_err_t ev_app_init(ev_app* );
-EV_API void     ev_app_quit(ev_app*);
-EV_API int      ev_app_get_ticks(ev_app *app);
-EV_API void     ev_app_swap_buffers(ev_app*);
-EV_API ev_bool  ev_app_poll_event(ev_app *, ev_event *);
-
+EV_API ev_app*         ev_app_create(uint32_t width, uint32_t height);
+EV_API void            ev_app_destroy(ev_app*);
+EV_API uint32_t        ev_app_get_height(ev_app*);
+EV_API uint32_t        ev_app_get_width(ev_app*);
+EV_API ev_err_t        ev_app_init(ev_app* );
+EV_API void            ev_app_quit(ev_app*);
+EV_API int             ev_app_get_ticks(ev_app *app);
+EV_API void            ev_app_swap_buffers(ev_app*);
+EV_API ev_bool         ev_app_poll_event(ev_app *, ev_event *);
 #ifdef __cplusplus
 }
 #endif

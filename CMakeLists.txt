@@ -32,6 +32,8 @@ set(
   src/tile_map.c
   src/tile_map.h
   src/lua.c
+  src/font.c
+  src/font.h
   src/ev_lua.h
   src/ev_box2d.cpp
   src/ev_box2d.h
@@ -61,6 +63,7 @@ set(
   lua_wait.o
   lua_vec2.o
   lua_matrix4.o
+  lua_font.o
   lib/ev.lua
   lib/anim.lua
   lib/app.lua
@@ -75,6 +78,7 @@ set(
   lib/wait.lua
   lib/vec2.lua
   lib/matrix4.lua
+  lib/font.lua
   vendor/glew/src/glew.c
 )
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_GENERATOR STREQUAL "Ninja")
@@ -86,14 +90,17 @@ set(CMAKE_C_FLAGS_RELEASE, "#{CMAKE_C_FLAGS_RELEASE -O3}")
 
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
-
+#set(GLEW_ROOT_DIR "${CMAKE_SOURCE_DIR}/vendor/glew")
+set(freetype-gl_BUILD_DEMOS 0)
 add_subdirectory( vendor/jansson)
 add_subdirectory( vendor/Box2D )
+add_subdirectory( vendor/freetype-gl)
 
-find_package(OpenGL)
-find_package(SDL2)
-find_package(SDL2_image)
-find_package(LuaJIT)
+find_package(OpenGL REQUIRED)
+find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
+find_package(LuaJIT REQUIRED)
+find_package(Freetype REQUIRED)
 
 if("${CMAKE_SYSTEM_NAME}" MATCHES "Linux" )
   set( SDL_MAIN "SDL2main")
@@ -127,6 +134,7 @@ include_directories(
   ${SDL2_INCLUDE_DIR}
   ${SDL2_IMAGE_INCLUDE_DIRS}
   ${jansson_BINARY_DIR}/include
+  "${CMAKE_CURRENT_SOURCE_DIR}/vendor/freetype-gl"
   "${CMAKE_CURRENT_SOURCE_DIR}/vendor/glew/include"
   ${LUA_INCLUDE_DIR}
   "${CMAKE_CURRENT_SOURCE_DIR}/vendor/uthash"
@@ -136,7 +144,8 @@ include_directories(
 add_definitions(
   -D_CRT_SECURE_NO_WARNINGS
   -DGLEW_STATIC
- )
+  )
+
 MESSAGE(${LUA_INCLUDE_DIR})
 add_executable( ev_lua
   ${SOURCES}
@@ -150,6 +159,8 @@ target_link_libraries( ev_lua
   ${SDL2_LIBRARY}
   ${SDL2_IMAGE_LIBRARY}
   ${OPENGL_LIBRARY}
+  ${FREETYPE_LIBRARY}
+  freetype-gl
   Box2D
   jansson
   ${LUA_LIBRARY}
@@ -168,74 +179,81 @@ add_subdirectory(test)
 # this should be cleaner somehow
 add_custom_command(
   OUTPUT ev_lua.o
-  COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/ev.lua" ev_lua.o
+  COMMAND ${LUAJIT_BINARY} -bg "${PROJECT_SOURCE_DIR}/lib/ev.lua" ev_lua.o
   DEPENDS lib/ev.lua
   )
 add_custom_command(
   OUTPUT lua_app.o
-  COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/app.lua" lua_app.o
+  COMMAND ${LUAJIT_BINARY} -bg "${PROJECT_SOURCE_DIR}/lib/app.lua" lua_app.o
   DEPENDS lib/app.lua
   )
 add_custom_command(
   OUTPUT lua_body.o
-  COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/body.lua" lua_body.o
+  COMMAND ${LUAJIT_BINARY} -bg "${PROJECT_SOURCE_DIR}/lib/body.lua" lua_body.o
   DEPENDS lib/body.lua
   )
 add_custom_command(
   OUTPUT lua_particle.o
-  COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/particle.lua" lua_particle.o
+  COMMAND ${LUAJIT_BINARY} -bg "${PROJECT_SOURCE_DIR}/lib/particle.lua" lua_particle.o
   DEPENDS lib/particle.lua
   )
 add_custom_command(
   OUTPUT lua_render_texture.o
-  COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/render_texture.lua" lua_render_texture.o
+  COMMAND ${LUAJIT_BINARY} -bg "${PROJECT_SOURCE_DIR}/lib/render_texture.lua" lua_render_texture.o
   DEPENDS lib/render_texture.lua
   )
 add_custom_command(
   OUTPUT lua_sbatch.o
-  COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/sbatch.lua" lua_sbatch.o
+  COMMAND ${LUAJIT_BINARY} -bg "${PROJECT_SOURCE_DIR}/lib/sbatch.lua" lua_sbatch.o
   DEPENDS lib/sbatch.lua
   )
 add_custom_command(
   OUTPUT lua_sprite.o
-  COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/sprite.lua" lua_sprite.o
+  COMMAND ${LUAJIT_BINARY} -bg "${PROJECT_SOURCE_DIR}/lib/sprite.lua" lua_sprite.o
   DEPENDS lib/sprite.lua
   )
 
 add_custom_command(
   OUTPUT lua_texture.o
-  COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/texture.lua" lua_texture.o
+  COMMAND ${LUAJIT_BINARY} -bg "${PROJECT_SOURCE_DIR}/lib/texture.lua" lua_texture.o
   DEPENDS lib/texture.lua
   )
 
 add_custom_command(
   OUTPUT lua_world.o
-  COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/world.lua" lua_world.o
+  COMMAND ${LUAJIT_BINARY} -bg "${PROJECT_SOURCE_DIR}/lib/world.lua" lua_world.o
   DEPENDS lib/world.lua
   )
 add_custom_command(
   OUTPUT lua_anim.o
-  COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/anim.lua" lua_anim.o
+  COMMAND ${LUAJIT_BINARY} -bg "${PROJECT_SOURCE_DIR}/lib/anim.lua" lua_anim.o
   DEPENDS lib/anim.lua
   )
 add_custom_command(
   OUTPUT lua_graphics.o
-  COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/graphics.lua" lua_graphics.o
+  COMMAND ${LUAJIT_BINARY} -bg "${PROJECT_SOURCE_DIR}/lib/graphics.lua" lua_graphics.o
   DEPENDS lib/graphics.lua
   )
 add_custom_command(
   OUTPUT lua_wait.o
-  COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/wait.lua" lua_wait.o
+  COMMAND ${LUAJIT_BINARY} -bg "${PROJECT_SOURCE_DIR}/lib/wait.lua" lua_wait.o
   DEPENDS lib/wait.lua
   )
 add_custom_command(
   OUTPUT lua_vec2.o
-  COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/vec2.lua" lua_vec2.o
+  COMMAND ${LUAJIT_BINARY} -bg "${PROJECT_SOURCE_DIR}/lib/vec2.lua" lua_vec2.o
   DEPENDS lib/vec2.lua
   )
 add_custom_command(
   OUTPUT lua_matrix4.o
-  COMMAND ${LUAJIT_BINARY} -b "${PROJECT_SOURCE_DIR}/lib/matrix4.lua" lua_matrix4.o
+  COMMAND ${LUAJIT_BINARY} -bg "${PROJECT_SOURCE_DIR}/lib/matrix4.lua" lua_matrix4.o
   DEPENDS lib/matrix4.lua
   )
+
+add_custom_command(
+  OUTPUT lua_font.o
+  COMMAND ${LUAJIT_BINARY} -bg "${PROJECT_SOURCE_DIR}/lib/font.lua" lua_font.o
+  DEPENDS lib/font.lua
+  )
+
 

@@ -59,7 +59,7 @@ ev_err_t ev_shader_compile(ev_shader* shader, GLenum type, const char *source)
 
         log[loglength] = '\0';
 
-        ev_error("Error in compiling shader:\n%s", log);
+        ev_log("Error in compiling shader:\n%s", log);
 
         ev_free(log);
 
@@ -115,18 +115,18 @@ ev_err_t ev_program_compile(ev_program* p)
 
     if( p && p->vertex && p->fragment ) {
         if( !p->vertex->id || !p->fragment->id ) {
-            ev_error("shader ids are not set");
+            ev_log("shader ids are not set");
             return EV_FAIL;
         }
 
         if( p->id ) {
-            ev_error("attempting to reassign program id");
+            ev_log("attempting to reassign program id");
             return EV_FAIL;
         }
 
         p->id = glCreateProgram();
         if( !p->id ) {
-            ev_error("glCreateProgram failed");
+            ev_log("glCreateProgram failed");
             return EV_FAIL;
         }
 
@@ -149,7 +149,7 @@ ev_err_t ev_program_compile(ev_program* p)
 
             log[loglength] = '\0';
 
-            ev_error("Error in linking program:\n%s", log);
+            ev_log("Error in linking program:\n%s", log);
 
             ev_free(log);
 
@@ -175,7 +175,7 @@ GLint ev_program_get_attrib_loc(ev_program* p, const char *name)
 {
     int i = glGetAttribLocation(p->id, name);
     if( i < 0 ) {
-        ev_error("can't find attribute: %s", name);
+        ev_log("can't find attribute: %s", name);
     }
     assert( i >= 0 );
     return i;
@@ -188,8 +188,56 @@ GLint ev_program_get_uniform_loc(ev_program *p, const char *name)
 
     int i = glGetUniformLocation(p->id, name);
     if( i < 0 ) {
-        ev_error("can't find uniform: %s", name );
+        ev_log("can't find uniform: %s", name );
     }
     assert( i >= 0 );
     return i;
+}
+
+ev_program* ev_program_create_with_shaders(const char *vertex_shader, const char *fragment_shader)
+{
+    ev_shader  *vertex = NULL;
+    ev_shader  *fragment = NULL;
+    ev_program *program = NULL;
+
+    vertex = ev_shader_create();
+    if( !vertex )
+        return NULL;
+
+    if( ev_shader_compile( vertex, GL_VERTEX_SHADER, vertex_shader) ) {
+        ev_log("vertex shader failed to compile");
+        ev_shader_destroy(vertex);
+        return NULL;
+    }
+
+    fragment = ev_shader_create();
+    if( !fragment )
+        return NULL;
+
+    if( ev_shader_compile( fragment, GL_FRAGMENT_SHADER, fragment_shader) ) {
+        ev_log("fragment shader failed to compile");
+        ev_shader_destroy(vertex);
+        ev_shader_destroy(fragment);
+        return NULL;
+    }
+
+    program = ev_program_create();
+    if( !program ) {
+        ev_shader_destroy(vertex);
+        ev_shader_destroy(fragment);
+        return NULL;
+    }
+
+    ev_program_set_shader(program, vertex, GL_VERTEX_SHADER);
+    ev_program_set_shader(program, fragment, GL_FRAGMENT_SHADER);
+
+    if( ev_program_compile(program) ) {
+        ev_log("program failed to compile");
+        ev_program_destroy(program);
+
+        return NULL;
+    }
+    assert(program);
+    
+    return program;
 }

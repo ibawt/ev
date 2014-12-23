@@ -24,7 +24,7 @@ typedef enum {
 } ev_err_t;
 
 typedef struct ev_app ev_app;
-
+typedef struct ev_font_system ev_font_system;
 ev_app* ev_app_create(uint32_t w, uint32_t h);
 void     ev_app_destroy(ev_app*);
 uint32_t ev_app_get_height(ev_app*);
@@ -145,9 +145,7 @@ function _M.create(width,height)
    app._ev_app = ev_app
    app.width = width
    app.height = height
-
    app.graphics = ev.graphics.create()
-
    app.key_state = {}
 
    return app

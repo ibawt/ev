@@ -13,10 +13,10 @@
 #endif
 
 struct _ev_app {
-    uint32_t      width;
-    uint32_t      height;
-    SDL_Window   *window;
-    SDL_GLContext context;
+    int32_t         width;
+    int32_t         height;
+    SDL_Window     *window;
+    SDL_GLContext   context;
 };
 
 static int initGL(ev_app *app)
@@ -88,7 +88,7 @@ ev_err_t ev_app_init(ev_app *app)
         return EV_FAIL;
     if( initGL(app) )
         return EV_FAIL;
-
+    
     return EV_OK;
 }
 
