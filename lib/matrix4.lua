@@ -2,6 +2,8 @@ local ffi = require('ffi')
 local sin = math.sin
 local cos = math.cos
 local sqrt = math.sqrt
+local memcpy = ffi.copy
+local abs = math.abs
 
 local _M = {}
 _M.__index = _M
@@ -46,45 +48,52 @@ function _M:identity()
 end
 
 function _M:multiply(other)
-   for i=0,3 do
-      self.m[i*4] =
-         self.m[i*4]   * other.m[0] +
-         self.m[i*4+1] * other.m[1*4] +
-         self.m[i*4+2] * other.m[2*4] +
-         self.m[i*4+3] * other.m[3*4]
+   local tmp = ev_matrix4().m
+   local m = self.m
+   local o = other.m
+   
+   tmp[M00] = m[M00] * o[M00] + m[M01] * o[M10] + m[M02] * o[M20] + m[M03] * o[M30]
+   tmp[M01] = m[M00] * o[M01] + m[M01] * o[M11] + m[M02] * o[M21] + m[M03] * o[M31]
+   tmp[M02] = m[M00] * o[M02] + m[M01] * o[M12] + m[M02] * o[M22] + m[M03] * o[M32]
+   tmp[M03] = m[M00] * o[M03] + m[M01] * o[M13] + m[M02] * o[M23] + m[M03] * o[M33]
+   tmp[M10] = m[M10] * o[M00] + m[M11] * o[M10] + m[M12] * o[M20] + m[M13] * o[M30]
+   tmp[M11] = m[M10] * o[M01] + m[M11] * o[M11] + m[M12] * o[M21] + m[M13] * o[M31]
+   tmp[M12] = m[M10] * o[M02] + m[M11] * o[M12] + m[M12] * o[M22] + m[M13] * o[M32]
+   tmp[M13] = m[M10] * o[M03] + m[M11] * o[M13] + m[M12] * o[M23] + m[M13] * o[M33]
+   tmp[M20] = m[M20] * o[M00] + m[M21] * o[M10] + m[M22] * o[M20] + m[M23] * o[M30]
+   tmp[M21] = m[M20] * o[M01] + m[M21] * o[M11] + m[M22] * o[M21] + m[M23] * o[M31]
+   tmp[M22] = m[M20] * o[M02] + m[M21] * o[M12] + m[M22] * o[M22] + m[M23] * o[M32]
+   tmp[M23] = m[M20] * o[M03] + m[M21] * o[M13] + m[M22] * o[M23] + m[M23] * o[M33]
+   tmp[M30] = m[M30] * o[M00] + m[M31] * o[M10] + m[M32] * o[M20] + m[M33] * o[M30]
+   tmp[M31] = m[M30] * o[M01] + m[M31] * o[M11] + m[M32] * o[M21] + m[M33] * o[M31]
+   tmp[M32] = m[M30] * o[M02] + m[M31] * o[M12] + m[M32] * o[M22] + m[M33] * o[M32]
+   tmp[M33] = m[M30] * o[M03] + m[M31] * o[M13] + m[M32] * o[M23] + m[M33] * o[M33]
 
-      self.m[i*4+1] =
-         self.m[i*4]   * other.m[1] +
-         self.m[i*4+1] * other.m[1*4 + 1] +
-         self.m[i*4+2] * other.m[2*4 + 1] +
-         self.m[i*4+3] * other.m[3*4 + 1]
-
-      self.m[i*4+2] =
-         self.m[i*4]   * other.m[2] +
-         self.m[i*4+1] * other.m[1*4 + 2] +
-         self.m[i*4+2] * other.m[2*4 + 2] +
-         self.m[i*4+3] * other.m[3*4 + 2]
-
-      self.m[i*4+3] =
-         self.m[i*4]   * other.m[3] +
-         self.m[i*4+1] * other.m[1*4 + 3] +
-         self.m[i*4+2] * other.m[2*4 + 3] +
-         self.m[i*4+3] * other.m[3*4 + 3]
-   end
+   memcpy(self.m, tmp, 16*4)
 end
 
 function _M:translate(x, y, z)
-   local m = ev.matrix.create()
+   local m = ev_matrix4()
    m:set_translation(x,y,z)
 
    self:multiply(m)
+end
+
+function _M:equals(other)
+   local m = self.m
+   local o = other.m
+   for i = 0, 15 do
+      if abs(o[i] - m[i]) > 0.001 then
+         return false
+      end
+   end
+   return true
 end
 
 function _M:set_scale(x, y, z)
    self:identity()
 
    y = y or x
-   z = z or x
    
    self.m00 = x
    self.m11 = y
@@ -92,6 +101,7 @@ function _M:set_scale(x, y, z)
 end
 
 function _M:set_rotation(angle, x, y, z)
+   -- TODO: verify this
    local c = cos( angle )
    local s = sin( angle )
 
@@ -117,23 +127,31 @@ function _M:set_rotation(angle, x, y, z)
 end
 
 function _M:rotate(angle, x, y, z )
-   local m = ev.matrix.create()
+   local m = ev_matrix4()
    m:set_rotation(angle, x, y, z)
    self:multiply(m)
 end
 
 function _M:scale(x, y, z)
-   local m = ev.matrix.create()
+   local m = ev_matrix4()
 
    m:set_scale(x,y, z)
 
    self:multiply(m)
 end
 
+function _M:add_translation(x,y,z)
+   z = z or 0
+   self.m03 = self.m03 + x
+   self.m13 = self.m13 + y
+   self.m23 = self.m23 + z
+end
+
 function _M:set_translation(x,y,z)
-   self.m30 = x
-   self.m31 = y
-   self.m32 = z
+   z = z or 0
+   self.m03 = x
+   self.m13 = y
+   self.m23 = z
 end
 
 function _M:ortho(left, right, bottom, top, n, f)
@@ -167,10 +185,7 @@ end
 ev_matrix4 = ffi.metatype("ev_matrix4", _M)
 
 function _M.create()
-   local m = ev_matrix4()
-   m:identity()
-
-   return m
+   return ev_matrix4()
 end
 
 return _M

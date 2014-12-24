@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "utils.h"
 #include "uthash.h"
@@ -253,7 +254,7 @@ void *ev_pool_alloc(ev_pool *p)
     return pp;
 }
 
-void  ev_pool_free(ev_pool *p, void *t)
+void ev_pool_free(ev_pool *p, void *t)
 {
     assert( p != NULL );
     assert( t != NULL );
@@ -289,35 +290,4 @@ ev_vec2 ev_random_point(ev_rect *bounds)
     return p;
 }
 
-int ev_mbtow(const char *src, wchar_t **out)
-{
-    wchar_t buff[1024];
-    wchar_t *pbuff = &buff[0];
-    mbstate_t state;
-    const char *end = src + strlen(src);
-    int len;
-    int out_len = 0;
-    wchar_t c;
-
-    len = 0;
-    mbsinit(&state);
-
-    for(;*src;) {
-        len = mbrtowc(&c, src, end - src, &state);
-        if( len == 0 ) {
-            break;
-        }
-        *pbuff++ = c;
-        src += len;
-
-        assert(pbuff <= &buff[0] + sizeof(buff));
-    }
-    *pbuff++ = L'\0';
-    out_len = pbuff - &buff[0];
-
-    *out = ev_malloc(sizeof(wchar_t)*(out_len + 1));
-
-    memcpy( *out, buff, sizeof(wchar_t)*(out_len+1));
-    return out_len;
-}
 

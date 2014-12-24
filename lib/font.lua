@@ -8,7 +8,7 @@ ev_font* ev_font_create(const char *name, float pt_size);
 void     ev_font_destroy(ev_font*);
 void     ev_font_set_position(ev_font*, ev_vec2);
 ev_vec2  ev_font_get_position(ev_font*);
-float    ev_font_set_text(ev_font *font, const char *text);
+float    ev_font_set_text(ev_font *font, const char *text, int len);
 void     ev_font_render(ev_font *, ev_matrix4 *);
 void     ev_font_set_colour(ev_font *font, float r, float g, float b, float a);
 ]]
@@ -45,7 +45,7 @@ function _M:get_position()
 end
 
 function _M:set_text(text)
-   self.width = C.ev_font_set_text(self._ev_font, text)
+   self.width = C.ev_font_set_text(self._ev_font, text, #text)
 end
 
 function _M:render(g)

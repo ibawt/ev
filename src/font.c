@@ -37,14 +37,15 @@ typedef struct {
 } vertex_t;
 
 struct _ev_font {
+    wchar_t    *wbuff;
+    size_t      wbuff_len;
     ev_program *program;
     ev_vec2     position;
     /* freetype-gl things */
     vertex_buffer_t *vbuff;
     texture_font_t  *tfont;
     texture_atlas_t *tatlas;
-    mat4             model,view,projection;
-    float            colour[4];
+    float            colour[4]; /* rgba */
 };
 
 ev_font* ev_font_create(const char *filename, float pt_size)
@@ -53,10 +54,6 @@ ev_font* ev_font_create(const char *filename, float pt_size)
 
     if( font ) {
         memset(font, 0, sizeof(ev_font));
-
-        mat4_set_identity(&font->model);
-        mat4_set_identity(&font->view);
-        mat4_set_identity(&font->projection);
 
         font->tatlas = texture_atlas_new(512,512,1); /* TODO: parameterize */
         font->vbuff = vertex_buffer_new( "vertex:3f,tex_coord:2f,color:4f" );
@@ -96,6 +93,11 @@ void ev_font_destroy(ev_font *font)
     if( font->program ) {
         ev_program_destroy(font->program);
         font->program = NULL;
+    }
+
+    if( font->wbuff ) {
+        ev_free(font->wbuff);
+        font->wbuff = NULL;
     }
 
     ev_free(font);
@@ -190,11 +192,10 @@ void ev_font_render(ev_font *font, ev_matrix4 *transform)
 
     vertex_buffer_render(font->vbuff, GL_TRIANGLES);
 }
-    
 
-float ev_font_set_text(ev_font *font, const char *text)
+float ev_font_set_text(ev_font *font, const char *text, int in_len)
 {
-    wchar_t *wbuff = NULL;
+    int dst_len;
     int len;
     int r;
     float width;
@@ -202,19 +203,30 @@ float ev_font_set_text(ev_font *font, const char *text)
     assert(font);
     assert(text);
 
-    len = ev_mbtow(text, &wbuff);
+    if( in_len < 0 ) {
+        in_len = strlen(text);
+    }
+    /* POSIX lets query the number of chars */
+    dst_len = mbstowcs(NULL, text, 0);
+
+    if(!font->wbuff || dst_len > font->wbuff_len ) {
+        if( font->wbuff ) {
+            ev_free(font->wbuff);
+        }
+        font->wbuff = ev_malloc(sizeof(wchar_t)*dst_len + 1);
+        font->wbuff_len = dst_len;
+    }
+    
+    len = mbstowcs(font->wbuff, text, font->wbuff_len);
 
     assert(len > 0 );
 
-    r = texture_font_load_glyphs(font->tfont, wbuff);
+    r = texture_font_load_glyphs(font->tfont, font->wbuff);
 
     assert(r == 0);
 
-    width = fill_vertex_buff(font, wbuff, len);
+    width = fill_vertex_buff(font, font->wbuff, len);
 
-    if( wbuff ) {
-        ev_free(wbuff);
-    }
     return width;
 }
 

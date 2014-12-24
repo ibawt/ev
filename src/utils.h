@@ -47,8 +47,6 @@ const char* ev_smap_iter_key(ev_smap_iter *k);
 int         ev_smap_iter_next(ev_smap_iter *i);
 void ev_log_bvertex(ev_bvertex *b);
 
-EV_API int ev_mbtow(const char *src, wchar_t **out);
-
 typedef struct {
     void    *buff;
     void    *current;
