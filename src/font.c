@@ -64,7 +64,6 @@ ev_font* ev_font_create(const char *filename, float pt_size)
         
         font->program = ev_program_create_with_shaders(VERTEX_SHADER, FRAGMENT_SHADER);
 
-        mat4_set_orthographic(&font->projection, 0, 800, 0, 600, -1, 1);
         assert( font->program != NULL );
      }
 

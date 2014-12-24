@@ -148,6 +148,7 @@ function _M:add_translation(x,y,z)
 end
 
 function _M:set_translation(x,y,z)
+   self:identity()
    z = z or 0
    self.m03 = x
    self.m13 = y
@@ -185,7 +186,8 @@ end
 ev_matrix4 = ffi.metatype("ev_matrix4", _M)
 
 function _M.create()
-   return ev_matrix4()
+   local m = ev_matrix4()
+   return m
 end
 
 return _M
