@@ -57,7 +57,8 @@ local modules = {
    'wait',
    'vec2',
    'matrix4',
-   'font'
+   'font',
+   'utils'
 }
 
 for i,v in ipairs(modules) do

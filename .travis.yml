@@ -24,3 +24,5 @@ before_script:
 script:
   - make
   - ctest
+  - cd ..
+  - script/lua_test

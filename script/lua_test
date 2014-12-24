@@ -1,0 +1,3 @@
+#!/bin/sh
+
+LUA_PATH="?.lua;vendor/lua/?.lua;vendor/lua/?/init.lua;;" build/ev_lua vendor/lua/busted.lua

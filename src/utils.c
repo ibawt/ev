@@ -1,11 +1,51 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <dirent.h>
 
 #include "utils.h"
 #include "uthash.h"
 #include "evil.h"
 #include "rect.h"
+
+struct _ev_dir {
+    DIR *dir;
+};
+
+ev_dir* ev_dir_open(const char *name)
+{
+    ev_dir *d = ev_malloc(sizeof(ev_dir));
+
+    d->dir = opendir(name);
+    if(!d->dir) {
+        ev_free(d);
+        return NULL;
+    }
+    return d;
+}
+void ev_dir_close(ev_dir *d)
+{
+    assert(d);
+
+    if( d->dir ) {
+        closedir(d->dir);
+        d->dir = NULL;
+    }
+    ev_free(d);
+}
+
+const char *ev_dir_next_entry(ev_dir* d)
+{
+    struct dirent *entry;
+
+    assert(d);
+    if( !d->dir )
+        return NULL;
+    
+    entry = readdir(d->dir);
+
+    return entry ? entry->d_name : NULL;
+}
 
 #define MAX_STR_LEN 1024*16
 
@@ -16,7 +56,6 @@
 /* re-define, specifying alternate functions */
 #define uthash_malloc(sz) ev_malloc(sz)
 #define uthash_free(ptr,sz) ev_free(ptr)
-
 
 void ev_timer_start(ev_timer *t)
 {

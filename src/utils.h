@@ -64,6 +64,12 @@ int     ev_rand(void);
 float   ev_random_number(float min, float max);
 ev_vec2 ev_random_point(ev_rect *bounds);
 
+typedef struct _ev_dir ev_dir;
+
+ev_dir*     ev_dir_open(const char *name);
+void        ev_dir_close(ev_dir *);
+const char *ev_dir_next_entry(ev_dir*);
+
 #ifdef __cplusplus
 }
 #endif
