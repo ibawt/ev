@@ -140,7 +140,7 @@ function _M:create_sprite(...)
       anim:add_frame(self:get_frame(v))
    end
    sprite.animation = anim
-
+   
    return sprite
 end
 

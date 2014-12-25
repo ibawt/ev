@@ -56,18 +56,28 @@ ev_font* ev_font_create(const char *filename, float pt_size)
         memset(font, 0, sizeof(ev_font));
 
         font->tatlas = texture_atlas_new(512,512,1); /* TODO: parameterize */
+        if( !font->tatlas )
+            goto ERROR;
+        
         font->vbuff = vertex_buffer_new( "vertex:3f,tex_coord:2f,color:4f" );
-
+        if( !font->vbuff )
+            goto ERROR;
+        
         font->tfont = texture_font_new_from_file(font->tatlas, pt_size, filename);
-
-        assert(font->tfont != NULL);
+        if( !font->tfont )
+            goto ERROR;
         
         font->program = ev_program_create_with_shaders(VERTEX_SHADER, FRAGMENT_SHADER);
 
-        assert( font->program != NULL );
+        if( !font->program )
+            goto ERROR;
      }
 
     return font;
+
+ ERROR:
+    ev_font_destroy(font);
+    return NULL;
 }
 
 void ev_font_destroy(ev_font *font)
@@ -201,6 +211,8 @@ float ev_font_set_text(ev_font *font, const char *text, int in_len)
     
     assert(font);
     assert(text);
+
+    vertex_buffer_clear(font->vbuff);
 
     if( in_len < 0 ) {
         in_len = strlen(text);
