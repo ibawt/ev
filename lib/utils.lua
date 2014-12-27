@@ -15,10 +15,10 @@ _M.__index = _M
 function _M.dir(name)
    local d = C.ev_dir_open(name)
 
-   if not d then
-      return nil
+   if d == nil then
+      return function() end
    end
-
+   
    local entries = {}
 
    repeat
