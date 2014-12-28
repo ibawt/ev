@@ -341,8 +341,6 @@ ev_vec2 ev_body_get_linear_velocity(ev_body *body)
     return v;
 }
 
-b2ParticleSystem *g_system = NULL;
-
 ev_particle_system* ev_particle_system_create(ev_world* world)
 {
     b2ParticleSystemDef systemDef;
@@ -354,8 +352,12 @@ ev_particle_system* ev_particle_system_create(ev_world* world)
     system->system->SetDestructionByAge(true);
     return system;
 }
+
+
+// TODO: wtf is this?
 void ev_particle_system_destroy(ev_particle_system* sys)
 {
+  assert(true);
 }
 
 ev_particle_group* ev_particle_group_create(ev_particle_system *sys)
@@ -380,6 +382,7 @@ void ev_particle_group_destroy_particles(ev_particle_group *grp)
     }
 }
 
+
 int ev_particle_create(ev_particle_system *system, ev_particle_group *grp, float x, float y, float xvel, float yvel)
 {
     b2ParticleDef def;
@@ -398,6 +401,20 @@ int ev_particle_create(ev_particle_system *system, ev_particle_group *grp, float
     index = system->system->CreateParticle(def);
 
     return index;
+}
+int ev_particle_system_get_length(ev_particle_system *sys)
+{
+  return sys->system->GetParticleCount();
+}
+
+ev_vec2* ev_particle_system_get_position_buffer(ev_particle_system *sys)
+{
+  return (ev_vec2*)sys->system->GetPositionBuffer();
+}
+
+ev_vec2* ev_particle_system_get_velocity_buffer(ev_particle_system *sys)
+{
+  return (ev_vec2*)sys->system->GetVelocityBuffer();
 }
 
 int ev_particle_system_body_contact_count(ev_particle_system *sys)

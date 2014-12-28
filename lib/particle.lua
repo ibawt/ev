@@ -17,15 +17,18 @@ typedef struct {
 
 ev_particle_system* ev_particle_system_create(ev_world*);
 void                ev_particle_system_destroy(ev_particle_system*);
-
 ev_particle_group*  ev_particle_group_create(ev_particle_system*);
 void                ev_particle_group_destroy(ev_particle_group*);
-int ev_particle_create(ev_particle_system*, ev_particle_group *, float, float, float, float);
-void ev_particle_group_destroy_particles(ev_particle_group *grp);
-void ev_particle_system_update(ev_particle_system* sys, float);
-int ev_particle_system_body_contact_count(ev_particle_system *sys);
-int ev_particle_system_body_contact_at(ev_particle_system *s, int index, ev_particle_body_contact *bc);
-void ev_particle_system_destroy_particle(ev_particle_system *s, int i);
+int                 ev_particle_create(ev_particle_system*, ev_particle_group *, float, float, float, float);
+void                ev_particle_group_destroy_particles(ev_particle_group *grp);
+void                ev_particle_system_update(ev_particle_system* sys, float);
+int                 ev_particle_system_body_contact_count(ev_particle_system *sys);
+int                 ev_particle_system_body_contact_at(ev_particle_system *s, int index, ev_particle_body_contact *bc);
+void                ev_particle_system_destroy_particle(ev_particle_system *s, int i);
+int ev_particle_system_get_length(ev_particle_system *sys);
+ev_vec2* ev_particle_system_get_position_buffer(ev_particle_system *sys);
+ev_vec2* ev_particle_system_get_velocity_buffer(ev_particle_system *sys);
+
 ]]
 
 local M = {}
@@ -59,6 +62,13 @@ function System:get_body_contacts()
    return contacts
 end
 
+function System:get_count()
+   return C.ev_particle_system_get_length(self._ev_system)
+end
+
+function System:get_positions()
+   return C.ev_particle_system_get_position_buffer(self._ev_system)
+end
 
 function System:spawn_particle(options)
    return C.ev_particle_create(self._ev_system,

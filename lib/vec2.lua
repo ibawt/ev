@@ -48,6 +48,14 @@ function _M:clamp(min,max)
    end
 end
 
+function _M:cross(o)
+   return self.x * o.y - self.y * o.x
+end
+
+function _M:dot(o)
+   return self.x * o.x + self.y * o.y
+end
+
 function _M:normalize()
    local d = #self
 
