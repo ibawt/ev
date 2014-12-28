@@ -15,7 +15,9 @@ describe('the dir function', function()
          actual[#actual+1] = v
       end
 
-      assert.are.same(table.sort(exepcted), table.sort(actual))
+      table.sort(exepcted)
+      table.sort(actual)
+      assert.are.same(exepcted, actual)
    end)
 
    it('will give back an empty list for a directory that doesnt exist', function()
