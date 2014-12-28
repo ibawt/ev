@@ -113,6 +113,7 @@ function _M:show()
          self.onrender(self.graphics)
       end
 
+      ev.tween.update(dt)
       ev.wait.update(dt)
 
       self:swap_buffers()

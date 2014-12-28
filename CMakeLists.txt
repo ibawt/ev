@@ -65,6 +65,7 @@ set(
   lua_matrix4.o
   lua_font.o
   lua_utils.o
+  lua_tween.o
   lib/ev.lua
   lib/anim.lua
   lib/app.lua
@@ -81,6 +82,7 @@ set(
   lib/matrix4.lua
   lib/font.lua
   lib/utils.lua
+  lib/tween.lua
   vendor/glew/src/glew.c
 )
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_GENERATOR STREQUAL "Ninja")
@@ -264,3 +266,8 @@ add_custom_command(
   DEPENDS lib/utils.lua
   )
 
+add_custom_command(
+  OUTPUT lua_tween.o
+  COMMAND ${LUAJIT_BINARY} -bg "${PROJECT_SOURCE_DIR}/lib/tween.lua" lua_tween.o
+  DEPENDS lib/tween.lua
+  )

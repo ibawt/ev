@@ -58,12 +58,13 @@ local modules = {
    'vec2',
    'matrix4',
    'font',
-   'utils'
+   'utils',
+   'tween'
 }
 
 for i,v in ipairs(modules) do
    ev[v] = require(v)
-   if ev[v].init then
+   if type(ev[v]) == 'table' and ev[v].init then
       ev[v].init(ev)
    end
 end
