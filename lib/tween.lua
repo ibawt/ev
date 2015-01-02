@@ -216,6 +216,7 @@ function _M.tween(options)
    tweens.count = tweens.count + 1
    tweens[tweens.count] = options
    options.time = 0
+   options.begin = options.begin or 0
    options.value = tween_fns[options.curve]
 end
 
@@ -224,7 +225,7 @@ function _M.update(dt)
    while i <= tweens.count do
       local tw = tweens[i]
       tw.time = tw.time + dt
-      tw.target[tw.property] = tw.value(tw.time, tw.begin, tw.duration - tw.begin, dt)
+      tw.target[tw.property] = tw.value(tw.duration, tw.begin, tw.ending - tw.begin, tw.time)
 
       if tw.time > tw.duration then
          if tw.on_complete then

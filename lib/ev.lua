@@ -59,7 +59,8 @@ local modules = {
    'matrix4',
    'font',
    'utils',
-   'tween'
+   'tween',
+   'list'
 }
 
 for i,v in ipairs(modules) do
