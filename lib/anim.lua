@@ -19,7 +19,6 @@ function _M:update(dt)
 
    while self.time >= self.delay do
       self.time = self.time - self.delay
-
       if self.mode == _M.LOOP then
          self.index = self.index + 1
          if self.index > #self.frames then
