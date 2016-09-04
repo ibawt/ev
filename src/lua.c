@@ -6,6 +6,7 @@
 #include "ev_lua.h"
 
 static lua_State *lua_state = NULL;
+
 ev_err_t ev_lua_load_libraries(lua_State *l)
 {
     const char *dir;
