@@ -83,21 +83,20 @@ function _M:show()
    local start_time = self:get_ticks()
    local dt = 0
    local event = ffi.new("ev_event")
-   
+
    local tick_list = {}
    for i=1,101 do
       tick_list[i] = 0
    end
    local tick_index = 1
    local tick_sum = 0
-   
+
    while self.keep_running do
       local t1 = self:get_ticks()
-
       while self:poll_event(event) do
          -- can't do a table index with an enum with ffi :(
          if event.type == "EV_QUIT" then
-            keep_running = false
+            self.keep_running = false
          elseif event.type == "EV_KEYUP" then
             self:keyup(event)
          elseif event.type == "EV_KEYDOWN" then
@@ -105,12 +104,12 @@ function _M:show()
          end
       end
 
-      if self.onupdate then
-         self.onupdate(dt)
+      if self.on_update then
+         self.on_update(dt)
       end
 
-      if self.onrender then
-         self.onrender(self.graphics)
+      if self.on_render then
+         self.on_render(self.graphics)
       end
 
       ev.wait.update(dt)

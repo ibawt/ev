@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "evil.h"
 #include "ev_lua.h"
 #include "application.h"
@@ -18,6 +17,7 @@ int main(int argc, char **argv)
             ret = 1;
         }
     }
+
     ev_lua_destroy();
 
     return ret;

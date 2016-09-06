@@ -1,9 +1,12 @@
 local ev = require 'ev'
 local app = ev.app.create(800,600)
 
-local stage = ev.stage.create()
-local sbatch = ev.sbatch.create()
+local m = ev.matrix4.create()
+m:ortho(0, 800, 600, 0, 1, -1)
 
+local graphics = ev.graphics.create()
+graphics.transform = m
+local sbatch = ev.sbatch.create()
 sbatch:load("flappybird.json")
 
 local texture = ev.texture.create()
@@ -13,6 +16,7 @@ sbatch:set_texture(texture)
 local sprite = sbatch:create_sprite('background1')
 sprite.scale = 4
 sprite:set_position(400,300)
+sbatch:add_sprite(sprite)
 
 local up_pipes = {}
 for i=1,12,1 do
@@ -26,14 +30,13 @@ for i=1,12,1 do
    down_pipes[i].visible = 0
 end
 
-
-app.update = function(dt)
-   print("update: " .. dt)
+app.on_update = function(dt)
+  sbatch:update(dt)
 end
 
-stage:add_sbatch(sbatch)
-
-stage:set_ortho(800,600)
-app.stage = stage
+app.on_render = function()
+  graphics:clear(0, 0, 0, 1)
+  sbatch:render(graphics)
+end
 
 app:show()

@@ -41,7 +41,7 @@ const char *ev_dir_next_entry(ev_dir* d)
     assert(d);
     if( !d->dir )
         return NULL;
-    
+
     entry = readdir(d->dir);
 
     return entry ? entry->d_name : NULL;
@@ -328,5 +328,3 @@ ev_vec2 ev_random_point(ev_rect *bounds)
 
     return p;
 }
-
-

@@ -7,6 +7,7 @@
 #include "texture.h"
 #include "matrix4.h"
 #include "sprite.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -30,7 +31,6 @@ EV_API void       ev_sbatch_destroy_sprite(ev_sbatch *s, int );
 EV_API ev_anim  * ev_sbatch_create_anim(ev_sbatch *batch, ...);
 EV_API ev_bvertex* ev_sbatch_lock(ev_sbatch *batch);
 EV_API void       ev_sbatch_unlock(ev_sbatch*, int);
-    
 
 #ifdef __cplusplus
 }

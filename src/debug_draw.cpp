@@ -70,6 +70,7 @@ ev_program* gen_shader(const char *vertex_shader, const char *fragment_shader)
     }
     return program;
 }
+
 b2DebugDraw::b2DebugDraw(float ratio) : mShader(NULL), mRatio(ratio)
 {
     SetFlags( b2Draw::e_shapeBit | b2Draw::e_centerOfMassBit | b2Draw::e_particleBit);

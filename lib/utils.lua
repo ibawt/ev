@@ -29,7 +29,7 @@ function _M.dir(name)
    until c_str == nil
 
    C.ev_dir_close(d)
-   
+
    local i = 0
 
    return function()

@@ -49,7 +49,7 @@ function _M.create()
    anim.index = 1
    anim.delay = 0.3
    anim.mode = _M.LOOP
-   
+
    return anim
 end
 

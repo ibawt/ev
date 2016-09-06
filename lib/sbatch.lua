@@ -108,9 +108,9 @@ function _M:render(g)
    for _, sprite in ipairs(self.sprites) do
       n = n + sprite:fill(verts + n)
    end
-   
+
    self:unlock(n)
-   
+
    self:draw(g)
 end
 
@@ -140,7 +140,7 @@ function _M:create_sprite(...)
       anim:add_frame(self:get_frame(v))
    end
    sprite.animation = anim
-   
+
    return sprite
 end
 

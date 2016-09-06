@@ -88,7 +88,7 @@ ev_err_t ev_app_init(ev_app *app)
         return EV_FAIL;
     if( initGL(app) )
         return EV_FAIL;
-    
+
     return EV_OK;
 }
 

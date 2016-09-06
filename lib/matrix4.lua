@@ -51,7 +51,7 @@ function _M:multiply(other)
    local tmp = ev_matrix4().m
    local m = self.m
    local o = other.m
-   
+
    tmp[M00] = m[M00] * o[M00] + m[M01] * o[M10] + m[M02] * o[M20] + m[M03] * o[M30]
    tmp[M01] = m[M00] * o[M01] + m[M01] * o[M11] + m[M02] * o[M21] + m[M03] * o[M31]
    tmp[M02] = m[M00] * o[M02] + m[M01] * o[M12] + m[M02] * o[M22] + m[M03] * o[M32]
@@ -94,7 +94,7 @@ function _M:set_scale(x, y, z)
    self:identity()
 
    y = y or x
-   
+
    self.m00 = x
    self.m11 = y
    self.m22 = z
@@ -160,11 +160,11 @@ function _M:ortho(left, right, bottom, top, n, f)
    local x_orth = 2 / ( right - left )
    local y_orth = 2 / ( top - bottom )
    local z_orth = -2 / (f - n )
-   
+
    local tx = -(right + left) / ( right - left )
    local ty = -(top + bottom) / ( top - bottom )
    local tz = -(f + n ) / ( f - n )
-   
+
    self.m00 = x_orth
    self.m10 = 0
    self.m20 = 0
