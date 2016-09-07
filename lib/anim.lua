@@ -33,12 +33,26 @@ function _M:update(dt)
          if self.index > 1 then
             self.index = self.index - 1
          end
+      elseif self.mode == _M.PING_PONG then
+        if self.ping_pong_dir == 1 then
+          self.index = self.index + 1
+          if self.index > #self.frames then
+            self.index = #self.frames
+            self.ping_pong_dir = -1
+          end
+        else
+          self.index = self.index - 1
+          if self.index < 1 then
+            self.index = 1
+            self.ping_pong_dir = 1
+          end
+        end
       end
    end
 end
 
 function _M:current_frame()
-   return self.frames[self.index]
+  return self.frames[self.index]
 end
 
 function _M.create()
@@ -48,6 +62,7 @@ function _M.create()
    anim.time = 0
    anim.index = 1
    anim.delay = 0.3
+   anim.ping_pong_dir = 1
    anim.mode = _M.LOOP
 
    return anim

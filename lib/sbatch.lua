@@ -51,6 +51,7 @@ ffi.metatype("ev_sbatch", { __gc = function(self) C.ev_sbatch_destroy(self) end 
 
 local _M = {}
 _M.__index = _M
+
 local ev
 
 function _M:load(filename)
@@ -83,8 +84,8 @@ function _M:add_sprite(sprite)
    local cap = C.ev_sbatch_get_vbuff_capacity(self._ev_sbatch)
    if cap <= #self.sprites + 1 then
       local err = C.ev_sbatch_set_vbuff_capacity(self._ev_sbatch, math.floor(cap * 3 / 2))
-      if err then
-         return err
+      if err == "EV_FAIL" then
+        return err
       end
    end
    self.sprites[#self.sprites+1] = sprite
@@ -99,7 +100,7 @@ function _M:lock()
 end
 
 function _M:unlock(n)
-   C.ev_sbatch_unlock(self._ev_sbatch, n/6)
+  C.ev_sbatch_unlock(self._ev_sbatch, math.floor(n/6))
 end
 
 function _M:render(g)

@@ -277,7 +277,7 @@ void ev_sbatch_render(ev_sbatch *batch, ev_matrix4 *t)
     int pos,tex,transform,translation,opacity;
 
     assert(batch);
-    
+
     ev_vbuff_bind( batch->vbuff );
     glEnable(GL_TEXTURE_2D);
     ev_texture_bind( batch->texture );
@@ -304,9 +304,9 @@ void ev_sbatch_render(ev_sbatch *batch, ev_matrix4 *t)
     glVertexAttribPointer(opacity, 1, GL_FLOAT, GL_TRUE, sizeof(ev_bvertex), (void*)offsetof(ev_bvertex, opacity));
     glEnable(GL_BLEND);
     glBlendFunc(batch->blend_func.src, batch->blend_func.dst);
-    
+
     glDrawArrays(GL_TRIANGLES, 0, batch->num_filled_sprites*EV_SPRITE_NUM_VERTS);
-    
+
     glDisableVertexAttribArray(opacity);
     glDisableVertexAttribArray(translation);
     glDisableVertexAttribArray(transform);

@@ -101,18 +101,18 @@ local function fill_batch_verts(frame)
    bv[2].u = frame.texture_rect.origin.x + frame.texture_rect.size.w
    bv[2].v = frame.texture_rect.origin.y + frame.texture_rect.size.h
 
-   
+
    bv[3].x = frame.size.w/2
    bv[3].y = frame.size.h/2
    bv[3].u = frame.texture_rect.origin.x + frame.texture_rect.size.w
    bv[3].v = frame.texture_rect.origin.y + frame.texture_rect.size.h
-   
+
    -- bottom left
    bv[4].x = -frame.size.w/2
    bv[4].y = frame.size.h/2
    bv[4].u = frame.texture_rect.origin.x
    bv[4].v = frame.texture_rect.origin.y + frame.texture_rect.size.h
-   
+
    bv[5].x = -frame.size.w/2
    bv[5].y = -frame.size.h/2
    bv[5].u = frame.texture_rect.origin.x
