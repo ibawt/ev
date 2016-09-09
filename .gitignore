@@ -26,3 +26,4 @@ build
 /test/test_animation
 /test/test_matrix4
 /test/test_qtree
+/test_app/.DS_Store

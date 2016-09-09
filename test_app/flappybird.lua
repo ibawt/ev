@@ -87,21 +87,68 @@ bird.position.x = width/2
 bird.position.y = height/2
 bird.scale = scale
 bird.animation.mode = bird.animation.PING_PONG
+bird.y_vel = 0
+bird.animation.delay = 0.1
 
 local ground = sbatch:create_sprite('ground')
 ground.scale = scale
-ground.position.x = width/2
+ground.position.x = 0
 ground.position.y = height - 56
 sbatch:add_sprite(ground)
+
+local ground2 = sbatch:create_sprite('ground')
+ground2.scale = scale
+ground2.position.x = 168
+ground2.position.y = height - 56
+sbatch:add_sprite(ground2)
+
+local function update_ground(dt)
+  local speed = 20
+  ground.position.x = ground.position.x - speed * dt
+  ground2.position.x = ground2.position.x - speed * dt
+
+  if ground.position.x < 0 then
+    ground.position.x = width
+  end
+
+  if ground2.position.x < 0 then
+    ground2.position.x = width
+  end
+end
+
+local function update_bird(dt)
+  bird.position.y = bird.position.y + bird.y_vel * dt
+
+  bird.y_vel = bird.y_vel + 450*dt
+
+  if bird.y_vel < 0 then
+    bird.rotation = 45
+  elseif bird.y_vel > 0 and not bird.tween then
+      bird.tween = ev.tween.tween(bird, 'rotation', 0, -2, 1)
+  end
+end
 
 app.on_update = function(dt)
   sbatch:update(dt)
   pipes:update(dt)
+
+  update_ground(dt)
+  update_bird(dt)
 end
 
 app.on_render = function()
   graphics:clear(0, 0, 0, 1)
   sbatch:render(graphics)
+end
+
+app.on_keydown = function(key)
+  if key == "Space" then
+    bird.y_vel = -250
+    if bird.tween then
+      bird.tween:cancel()
+      bird.tween = nil
+    end
+  end
 end
 
 app:show()

@@ -59,8 +59,8 @@ function _M:keyup(event)
    local key = ffi.string(event.key_name)
    self.key_state[key] = false
 
-   if self.onkeyup then
-      self.onkeyup(key)
+   if self.on_keyup then
+      self.on_keyup(key)
    end
 end
 
@@ -68,8 +68,8 @@ function _M:keydown(event)
    assert(event.key_name, "key_name is NULL")
    local key = ffi.string(event.key_name)
    self.key_state[key] = true
-   if self.onkeydown then
-      self.onkeydown(key)
+   if self.on_keydown then
+      self.on_keydown(key)
    end
 end
 
@@ -113,6 +113,7 @@ function _M:show()
       end
 
       ev.wait.update(dt)
+      ev.tween.update_all(dt)
 
       self:swap_buffers()
 

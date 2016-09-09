@@ -58,7 +58,8 @@ local modules = {
    'vec2',
    'matrix4',
    'font',
-   'utils'
+   'utils',
+   'tween'
 }
 
 for i,v in ipairs(modules) do
