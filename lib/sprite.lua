@@ -119,6 +119,42 @@ local function fill_batch_verts(frame)
    bv[5].v = frame.texture_rect.origin.y
 end
 
+local function rect_intersects(self, other)
+  local i = other.left > self.right or
+    other.right < self.left or
+    other.top > self.bottom or
+    other.bottom < self.top
+  return not i
+end
+
+local function square(x)
+  return x * x
+end
+
+local function circle_intersects_rectangle(circle, rectangle)
+  local circle_distance_x = math.abs(circle.x - rectangle.x)
+  local circle_distance_y = math.abs(circle.y - rectangle.y)
+
+  if circle_distance_x > (rectangle.width/2 + circle.radius) then
+    return false
+  end
+  if circle_distance_y > (rectangle.height/2 + circle.radius) then
+    return false
+  end
+
+  if circle_distance_x <= rectangle.width/2 then
+    return true
+  end
+  if circle_distance_y <= recangle.height/2 then
+    return true
+  end
+
+  local corner_dist_squared = square(circle_distance_x - rectangle.width/2) +
+    square(circle_distance_y - rectangle.height/2)
+
+  return corner_dist_squared <= square(circle.radius)
+end
+
 function _M:set_quad(w, h, left, top, right, bottom)
    if not self.animation then
       self.animation = ev.anim.create()

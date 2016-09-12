@@ -295,7 +295,7 @@ ev_err_t ev_ssheet_load_file(ev_ssheet *sheet, const char *path)
 
     sheet->frames = parse_frames(json_object_get(root, "frames"), ev_smap_get(sheet->metadata, "size") );
     if( !sheet->frames ) {
-        ev_log("frame parsging failed");
+        ev_log("frame parsing failed");
         json_decref(root);
         ev_smap_destroy(sheet->metadata);
         sheet->metadata = NULL;

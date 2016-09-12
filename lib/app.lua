@@ -30,7 +30,7 @@ void     ev_app_destroy(ev_app*);
 uint32_t ev_app_get_height(ev_app*);
 uint32_t ev_app_get_width(ev_app*);
 float    ev_app_get_fps(ev_app*);
-ev_err_t ev_app_init(ev_app* );
+ev_err_t ev_app_init(ev_app* , const char *);
 void     ev_app_quit(ev_app*);
 ev_err_t ev_app_start(ev_app*);
 int      ev_app_get_ticks(ev_app *app);
@@ -94,7 +94,6 @@ function _M:show()
    while self.keep_running do
       local t1 = self:get_ticks()
       while self:poll_event(event) do
-         -- can't do a table index with an enum with ffi :(
          if event.type == "EV_QUIT" then
             self.keep_running = false
          elseif event.type == "EV_KEYUP" then
@@ -136,9 +135,9 @@ function _M:show()
    C.ev_app_quit(self._ev_app)
 end
 
-function _M.create(width,height)
+function _M.create(name, width,height)
    local ev_app = C.ev_app_create(width, height)
-   C.ev_app_init(ev_app)
+   C.ev_app_init(ev_app, name)
 
    local app = {}
    setmetatable(app, _M)

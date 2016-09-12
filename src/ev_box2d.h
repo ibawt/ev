@@ -20,13 +20,13 @@ typedef enum {
 
 typedef struct {
     ev_body_shape_type shape;
-    float         radius; /* CIRCLE */
-    ev_size       size;   /* BOX */
-    float         density;
-    float         friction;
-    float         restitution;
-    unsigned int  category_bits;
-    unsigned int  mask_bits;
+    float              radius; /* CIRCLE */
+    ev_size            size;   /* BOX */
+    float              density;
+    float              friction;
+    float              restitution;
+    unsigned int       category_bits;
+    unsigned int       mask_bits;
 } ev_body_shape;
 
 typedef struct {

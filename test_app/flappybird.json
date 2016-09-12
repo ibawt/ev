@@ -75,6 +75,15 @@
             "spriteSourceSize": "{168, 56}",
             "spriteTrimmed": true,
             "textureRect": "{{292, 0}, {168, 56}}"
+        },
+        "start_button": {
+            "aliases": [],
+            "spriteColorRect": "{{354, 118}, {406, 174}}",
+            "spriteOffset": "{0, 0}",
+            "spriteSize": "{52, 29}",
+            "spriteSourceSize": "{52, 29}",
+            "spriteTrimmed": true,
+            "textureRect": "{{354, 118}, {52, 29}}"
         }
     },
     "metadata": {

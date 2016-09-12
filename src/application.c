@@ -41,7 +41,7 @@ static int initGL(ev_app *app)
     return EV_OK;
 }
 
-static ev_err_t initSDL(ev_app *app)
+static ev_err_t initSDL(ev_app *app, const char *name)
 {
     int flags = IMG_INIT_JPG | IMG_INIT_PNG;
 
@@ -55,7 +55,11 @@ static ev_err_t initSDL(ev_app *app)
         return EV_FAIL;
     }
 
-    app->window = SDL_CreateWindow("ev", SDL_WINDOWPOS_UNDEFINED,
+    if(!name) {
+        name = "ev";
+    }
+
+    app->window = SDL_CreateWindow(name, SDL_WINDOWPOS_UNDEFINED,
                                    SDL_WINDOWPOS_UNDEFINED,
                                    app->width, app->height,
                                    SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
@@ -81,11 +85,11 @@ static ev_err_t initSDL(ev_app *app)
     return EV_OK;
 }
 
-ev_err_t ev_app_init(ev_app *app)
+ev_err_t ev_app_init(ev_app *app, const char *name)
 {
     assert( app != NULL );
 
-    if( initSDL(app)  )
+    if( initSDL(app, name)  )
         return EV_FAIL;
     if( initGL(app) )
         return EV_FAIL;

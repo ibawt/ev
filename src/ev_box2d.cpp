@@ -118,7 +118,7 @@ static ev_vec2 convert_vector(const b2Vec2& v)
 
     vv.x = v.x * PTM_RATIO;
     vv.y = v.y * PTM_RATIO;
-    
+
     return vv;
 }
 
@@ -422,7 +422,7 @@ int ev_particle_system_body_contact_at(ev_particle_system *s, int index, ev_part
     bc->normal = convert_vector(c->normal);
     bc->mass = c->mass;
     bc->position = convert_vector( *(s->system->GetPositionBuffer() + c->index));
-    
+
     return 0;
 }
 

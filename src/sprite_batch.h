@@ -14,7 +14,7 @@ extern "C" {
 
 EV_API ev_sbatch* ev_sbatch_create(void);
 EV_API void       ev_sbatch_destroy(ev_sbatch*);
-EV_API void       ev_sbatch_render(ev_sbatch*, ev_matrix4 *);
+EV_API void       ev_sbatch_render(ev_sbatch*, ev_matrix4 *, unsigned int);
 EV_API ev_err_t   ev_sbatch_load(ev_sbatch*, const char*);
 EV_API ev_sframe* ev_sbatch_get_sframe(ev_sbatch*, const char* );
 EV_API void       ev_sbatch_set_texture(ev_sbatch*, ev_texture*);

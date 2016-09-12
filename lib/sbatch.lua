@@ -31,7 +31,7 @@ typedef struct ev_texture ev_texture;
 
 ev_sbatch* ev_sbatch_create(void);
 void       ev_sbatch_destroy(ev_sbatch*);
-void       ev_sbatch_render(ev_sbatch*, ev_matrix4* );
+void       ev_sbatch_render(ev_sbatch*, ev_matrix4*, unsigned int);
 ev_err_t   ev_sbatch_load(ev_sbatch*, const char*);
 ev_sframe* ev_sbatch_get_sframe(ev_sbatch*, const char* );
 void       ev_sbatch_set_texture(ev_sbatch*, ev_texture*);
@@ -92,7 +92,7 @@ function _M:add_sprite(sprite)
 end
 
 function _M:set_capacity(num_sprites)
-   C.ev_sbatch_set_vbuff_capacity(self._ev_sbatch, num_sprites)
+   return C.ev_sbatch_set_vbuff_capacity(self._ev_sbatch, num_sprites)
 end
 
 function _M:lock()
@@ -112,35 +112,18 @@ function _M:render(g)
 
    self:unlock(n)
 
-   self:draw(g)
-end
-
-function _M:render_iter(g, iter)
-   local verts = self:lock()
-   local n = 0
-   for sprite in iter() do
-      n = n + sprite:fill(verts + n)
-   end
-   self:unlock(n)
-
-   self:draw(g)
-end
-
-function _M:draw(g)
-   C.ev_sbatch_render(self._ev_sbatch, g.transform)
-end
-
-function _M:filled_sprites()
-   return C.ev_sbatch_num_filled_sprites(self._ev_sbatch)
+   return C.ev_sbatch_render(self._ev_sbatch, g.transform, n/6)
 end
 
 function _M:create_sprite(...)
    local sprite = ev.sprite.create()
    local anim = ev.anim.create()
-   for i,v in ipairs({...}) do
+   for _,v in ipairs({...}) do
       anim:add_frame(self:get_frame(v))
    end
    sprite.animation = anim
+
+   self:add_sprite(sprite)
 
    return sprite
 end
@@ -157,8 +140,10 @@ function _M.create()
    local sbatch = {}
    setmetatable(sbatch, _M)
    sbatch._ev_sbatch = C.ev_sbatch_create()
+   if not sbatch._ev_sbatch  then
+     return nil
+   end
    sbatch.sprites = {}
-   sbatch.name = "Sprite Batch"
    return sbatch
 end
 
