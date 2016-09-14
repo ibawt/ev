@@ -1,50 +1,91 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#ifndef WIN32
 #include <dirent.h>
+#else
+#include <Windows.h>
+#endif
 
 #include "utils.h"
 #include "uthash.h"
 #include "evil.h"
 #include "rect.h"
 
+
 struct _ev_dir {
+#ifndef WIN32
     DIR *dir;
+#else
+	ev_bool first;
+	WIN32_FIND_DATA findData;
+	HANDLE handle;
+#endif
 };
 
 ev_dir* ev_dir_open(const char *name)
 {
     ev_dir *d = ev_malloc(sizeof(ev_dir));
-
+#ifndef WIN32
     d->dir = opendir(name);
     if(!d->dir) {
         ev_free(d);
         return NULL;
     }
+#else
+	d->handle = FindFirstFile(name, &d->findData);
+	if (d->handle == INVALID_HANDLE_VALUE) {
+		ev_free(d);
+		return NULL;
+	}
+	d->first = EV_TRUE;
+#endif
     return d;
 }
 void ev_dir_close(ev_dir *d)
 {
     assert(d);
-
+#ifndef WIN32
     if( d->dir ) {
         closedir(d->dir);
         d->dir = NULL;
     }
+#else
+	if (d->handle != INVALID_HANDLE_VALUE) {
+		FindClose(d->handle);
+		d->handle = INVALID_HANDLE_VALUE;
+	}
+#endif
     ev_free(d);
 }
 
 const char *ev_dir_next_entry(ev_dir* d)
 {
-    struct dirent *entry;
-
-    assert(d);
+ #ifndef WIN32
+	struct dirent *entry;
+	assert(d);
     if( !d->dir )
         return NULL;
 
     entry = readdir(d->dir);
 
     return entry ? entry->d_name : NULL;
+#else
+	if (!d->first) {
+		if (FindNextFile(d->handle, &d->findData)) {
+			return d->findData.cFileName;
+		}
+		else {
+			return NULL;
+		}
+	}
+	else {
+		if (d->findData.cFileName == NULL) {
+			return NULL;
+		}
+		return d->findData.cFileName;
+	}
+#endif
 }
 
 #define MAX_STR_LEN 1024*16
@@ -169,7 +210,7 @@ ev_err_t ev_smap_put(ev_smap* map, const char *key, void *val)
             return EV_FAIL;
 
         memset(n, 0, sizeof(node));
-        n->key = strdup(key);
+        n->key = _strdup(key);
         n->value = val;
         HASH_ADD_KEYPTR( hh, map->head, n->key, strlen(n->key), n);
         return EV_OK;

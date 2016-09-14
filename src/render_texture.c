@@ -1,6 +1,7 @@
 #include "texture.h"
 #include "render_texture.h"
 #include <assert.h>
+#include <string.h>
 
 ev_rtex* ev_rtex_create(int width, int height)
 {
@@ -73,7 +74,7 @@ void ev_rtex_unbind(ev_rtex *rtex)
 {
     assert(rtex != NULL);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(rtex->viewport[0], rtex->viewport[1], rtex->viewport[2], rtex->viewport[3]);
+    glViewport((GLint)rtex->viewport[0], (GLint)rtex->viewport[1], (GLint)rtex->viewport[2], (GLint)rtex->viewport[3]);
 }
 
 void ev_rtex_render(ev_rtex *r)

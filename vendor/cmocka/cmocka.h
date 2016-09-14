@@ -86,8 +86,6 @@ int __stdcall IsDebuggerPresent();
 #define _UINTPTR_T
 #ifdef _WIN32
 
-/* WIN32 is an ILP32 platform */
-typedef unsigned long uintptr_t;
 
 /* what about 64-bit windows?
  * what's the right preprocessor symbol?

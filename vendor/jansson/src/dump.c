@@ -191,7 +191,7 @@ static int do_dump(const json_t *json, size_t flags, int depth,
         case JSON_INTEGER:
         {
             char buffer[MAX_INTEGER_STR_LENGTH];
-            int size;
+            int64_t size;
 
             size = snprintf(buffer, MAX_INTEGER_STR_LENGTH,
                             "%" JSON_INTEGER_FORMAT,
@@ -199,7 +199,7 @@ static int do_dump(const json_t *json, size_t flags, int depth,
             if(size < 0 || size >= MAX_INTEGER_STR_LENGTH)
                 return -1;
 
-            return dump(buffer, size, data);
+            return dump(buffer, (size_t)size, data);
         }
 
         case JSON_REAL:

@@ -57,25 +57,25 @@ ev_font* ev_font_create(const char *filename, float pt_size)
 
         font->tatlas = texture_atlas_new(512,512,1); /* TODO: parameterize */
         if( !font->tatlas )
-            goto ERROR;
+            goto _ERROR;
         
         font->vbuff = vertex_buffer_new( "vertex:3f,tex_coord:2f,color:4f" );
         if( !font->vbuff )
-            goto ERROR;
+            goto _ERROR;
         
         font->tfont = texture_font_new_from_file(font->tatlas, pt_size, filename);
         if( !font->tfont )
-            goto ERROR;
+            goto _ERROR;
         
         font->program = ev_program_create_with_shaders(VERTEX_SHADER, FRAGMENT_SHADER);
 
         if( !font->program )
-            goto ERROR;
+            goto _ERROR;
      }
 
     return font;
 
- ERROR:
+ _ERROR:
     ev_font_destroy(font);
     return NULL;
 }
@@ -139,8 +139,8 @@ static float fill_vertex_buff(ev_font *font, const wchar_t *text, int len)
             s1 = glyph->s1;
             t1 = glyph->t1;
 
-            vertices[0].x = x0;
-            vertices[0].y = y0;
+            vertices[0].x = (float)x0;
+            vertices[0].y = (float)y0;
             vertices[0].z = 0;
             vertices[0].s = s0;
             vertices[0].t = t0;
@@ -150,8 +150,8 @@ static float fill_vertex_buff(ev_font *font, const wchar_t *text, int len)
             vertices[0].a = font->colour[3];
             
 
-            vertices[1].x = x0;
-            vertices[1].y = y1;
+            vertices[1].x = (float)x0;
+            vertices[1].y = (float)y1;
             vertices[1].z = 0;
             vertices[1].s = s0;
             vertices[1].t = t1;
@@ -160,8 +160,8 @@ static float fill_vertex_buff(ev_font *font, const wchar_t *text, int len)
             vertices[1].b = font->colour[2];
             vertices[1].a = font->colour[3];
 
-            vertices[2].x = x1;
-            vertices[2].y = y1;
+            vertices[2].x = (float)x1;
+            vertices[2].y = (float)y1;
             vertices[2].z = 0;
             vertices[2].s = s1;
             vertices[2].t = t1;
@@ -170,8 +170,8 @@ static float fill_vertex_buff(ev_font *font, const wchar_t *text, int len)
             vertices[2].b = font->colour[2];
             vertices[2].a = font->colour[3];
 
-            vertices[3].x = x1;
-            vertices[3].y = y0;
+            vertices[3].x = (float)x1;
+            vertices[3].y = (float)y0;
             vertices[3].z = 0;
             vertices[3].s = s1;
             vertices[3].t = t0;
@@ -204,7 +204,7 @@ void ev_font_render(ev_font *font, ev_matrix4 *transform)
 
 float ev_font_set_text(ev_font *font, const char *text, int in_len)
 {
-    int dst_len;
+    unsigned dst_len;
     int len;
     int r;
     float width;

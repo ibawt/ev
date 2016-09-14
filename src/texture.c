@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <string.h>
 
 #include "texture.h"
 #include "ev_lua.h"

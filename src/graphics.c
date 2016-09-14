@@ -1,4 +1,5 @@
 #include "graphics.h"
+#include <string.h>
 
 struct _ev_graphics {
 #ifdef WIN32

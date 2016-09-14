@@ -34,6 +34,7 @@ find_path(SDL2_IMAGE_INCLUDE_DIR
   HINTS
     ${PC_SDL2_IMAGE_INCLUDEDIR}
     ${PC_SDL2_IMAGE_INCLUDE_DIRS}
+    c:/lib/SDL2_image/include
     /SDL2_image/include
   PATH_SUFFIXES SDL2
 )
@@ -43,6 +44,7 @@ find_library(SDL2_IMAGE_LIBRARY
   HINTS
     ${PC_SDL2_IMAGE_LIBDIR}
     ${PC_SDL2_IMAGE_LIBRARY_DIRS}
+    c:/lib/SDL2_image/lib/x86
     /SDL2_image/lib
   PATH_SUFFIXES x86
 )

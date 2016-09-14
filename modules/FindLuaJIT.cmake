@@ -7,7 +7,7 @@ SET (LUA_INCLUDE_DIRS
   /usr/local/include/luajit-2.1
   /usr/local/include/luajit-2.0
   /opt/boxen/homebrew/include/luajit-2.0
-  C:/LuaJIT-2.0.3/src
+  C:/lib/LuaJIT/src
         )
 
 
@@ -16,13 +16,13 @@ FIND_PATH (LUA_INCLUDE_DIR lua.h ${LUA_INCLUDE_DIRS} NO_DEFAULT_PATH)
 FIND_LIBRARY (LUA_LIBRARY NAMES ${LUA_LIBRARY_NAME} lua51 PATHS /usr/lib /usr/local/lib
   /usr/local/lib
   /opt/boxen/homebrew/lib
-  C:/LuaJIT-2.0.3/src
+  C:/lib/LuaJIT/src
   )
 
 FIND_PROGRAM(LUAJIT_BINARY luajit
   /usr/local/bin
   /usr/bin
-  C:/LuaJIT-2.0.3/src
+  C:/lib/LuaJIT/src
   )
 
 MESSAGE(${LUA_INCLUDE_DIR})
