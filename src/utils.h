@@ -26,7 +26,6 @@ typedef struct {
 void ev_array_create(ev_array *);
 void ev_array_push(ev_array *a, void *o);
 void ev_array_destroy(ev_array *a);
-
 typedef struct _ev_smap ev_smap;
 typedef void (*ev_smap_delete)(void*);
 

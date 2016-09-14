@@ -16,7 +16,6 @@
 #if defined(_MSC_VER)
 #include <BaseTsd.h>
 typedef SSIZE_T ssize_t;
-/* #define strdup _strdup */
 /* #define snprintf _snprintf */
 #undef main
 #endif

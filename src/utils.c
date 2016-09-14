@@ -17,9 +17,9 @@ struct _ev_dir {
 #ifndef WIN32
     DIR *dir;
 #else
-	ev_bool first;
-	WIN32_FIND_DATA findData;
-	HANDLE handle;
+    ev_bool first;
+    WIN32_FIND_DATA findData;
+    HANDLE handle;
 #endif
 };
 
@@ -33,12 +33,12 @@ ev_dir* ev_dir_open(const char *name)
         return NULL;
     }
 #else
-	d->handle = FindFirstFile(name, &d->findData);
-	if (d->handle == INVALID_HANDLE_VALUE) {
-		ev_free(d);
-		return NULL;
-	}
-	d->first = EV_TRUE;
+  d->handle = FindFirstFile(name, &d->findData);
+  if (d->handle == INVALID_HANDLE_VALUE) {
+    ev_free(d);
+    return NULL;
+  }
+  d->first = EV_TRUE;
 #endif
     return d;
 }
@@ -51,10 +51,10 @@ void ev_dir_close(ev_dir *d)
         d->dir = NULL;
     }
 #else
-	if (d->handle != INVALID_HANDLE_VALUE) {
-		FindClose(d->handle);
-		d->handle = INVALID_HANDLE_VALUE;
-	}
+  if (d->handle != INVALID_HANDLE_VALUE) {
+    FindClose(d->handle);
+    d->handle = INVALID_HANDLE_VALUE;
+  }
 #endif
     ev_free(d);
 }
@@ -62,8 +62,8 @@ void ev_dir_close(ev_dir *d)
 const char *ev_dir_next_entry(ev_dir* d)
 {
  #ifndef WIN32
-	struct dirent *entry;
-	assert(d);
+  struct dirent *entry;
+  assert(d);
     if( !d->dir )
         return NULL;
 
@@ -71,20 +71,20 @@ const char *ev_dir_next_entry(ev_dir* d)
 
     return entry ? entry->d_name : NULL;
 #else
-	if (!d->first) {
-		if (FindNextFile(d->handle, &d->findData)) {
-			return d->findData.cFileName;
-		}
-		else {
-			return NULL;
-		}
-	}
-	else {
-		if (d->findData.cFileName == NULL) {
-			return NULL;
-		}
-		return d->findData.cFileName;
-	}
+  if (!d->first) {
+    if (FindNextFile(d->handle, &d->findData)) {
+      return d->findData.cFileName;
+    }
+    else {
+      return NULL;
+    }
+  }
+  else {
+    if (d->findData.cFileName == NULL) {
+      return NULL;
+    }
+    return d->findData.cFileName;
+  }
 #endif
 }
 
@@ -210,7 +210,7 @@ ev_err_t ev_smap_put(ev_smap* map, const char *key, void *val)
             return EV_FAIL;
 
         memset(n, 0, sizeof(node));
-        n->key = _strdup(key);
+        n->key = ev_strdup(key);
         n->value = val;
         HASH_ADD_KEYPTR( hh, map->head, n->key, strlen(n->key), n);
         return EV_OK;
